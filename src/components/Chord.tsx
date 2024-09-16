@@ -1,22 +1,14 @@
-// Chords.tsx
-
-import React, { useEffect, useState } from 'react';
 import { Chord as ChordModel } from '../models/Chord';
 import { GuitarNote } from '../models/Note';
-import { generateChordPositions } from '../utils/chordUtils';
+
 
 interface ChordProps {
   chord: ChordModel;
   fretboard: GuitarNote[][];
+  positions: GuitarNote[];  // Passed directly as a prop now
 }
 
-const Chord: React.FC<ChordProps> = ({ chord, fretboard }) => {
-  const [positions, setPositions] = useState<GuitarNote[]>([]);
-
-  useEffect(() => {
-    setPositions(generateChordPositions(chord, fretboard));
-  }, [chord, fretboard]);
-
+export const Chord: React.FC<ChordProps> = ({ positions }) => {
   return (
     <div className="chord">
       {positions.map((note, index) => (
@@ -27,6 +19,3 @@ const Chord: React.FC<ChordProps> = ({ chord, fretboard }) => {
     </div>
   );
 };
-
-export default Chord;
-

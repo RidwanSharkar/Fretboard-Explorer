@@ -9,7 +9,7 @@ export const constructFretboard = (strings: number, frets: number): GuitarNote[]
 
   for (let string = 0; string < strings; string++) {
     fretboard[string] = [];
-    let noteIndex = semitones.indexOf(notes[string]);
+    const noteIndex = semitones.indexOf(notes[string]);
     for (let fret = 0; fret < frets; fret++) {
       fretboard[string].push({
         string,

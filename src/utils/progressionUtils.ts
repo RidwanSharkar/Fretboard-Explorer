@@ -66,7 +66,7 @@ export function generateChordProgression(isMinorKey: boolean, selectedKey: strin
 
     let currentChord: RomanNumeral = startingOptions[Math.floor(Math.random() * startingOptions.length)];
 
-    let progression: ChordProgression[] = [{
+    const progression: ChordProgression[] = [{
         ...getChordFromRomanNumeral(currentChord, selectedKey, notes, isMinorKey),
         numeral: currentChord
     }];

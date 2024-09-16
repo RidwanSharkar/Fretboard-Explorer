@@ -1,8 +1,5 @@
 // src/utils/chordUtils.ts
 
-import { Chord } from '../models/Chord';
-import { GuitarNote } from '../models/Note';
-
 export interface ChordInfo {
   root: string;
   type: ChordType;
@@ -27,9 +24,3 @@ export const chordFormulas: { [key in ChordType]: number[] } = {
   major9: [0, 4, 7, 11, 2],
   majoradd9: [0, 4, 7, 2]
 };
-
-export const generateChordPositions = (chord: Chord, fretboard: GuitarNote[][]): GuitarNote[] => {
-  const notePositions: GuitarNote[] = [];
-  return notePositions;
-};
-
