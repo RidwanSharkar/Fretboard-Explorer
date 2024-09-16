@@ -6,7 +6,6 @@ import { constructFretboard, possibleChord } from './utils/fretboardUtils';
 import { GuitarNote, ChordPosition } from './models/Note';
 import { chordFormulas } from './utils/chordUtils';
 import { playNote } from './utils/midiUtils';
-import { generateChordProgressions, ChordProgression } from './utils/progressionUtils';
 
 /*=====================================================================================================================*/
 const notes = ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#'];
@@ -33,10 +32,6 @@ const App: React.FC = () =>
 
     const [isProgressionPlaying, setIsProgressionPlaying] = useState(false);
 
-    const [generatedProgression, setGeneratedProgression] = useState<ChordProgression[]>([]);
-    const [playedProgression, setPlayedProgression] = useState<ChordPosition[][]>([]);
-    const [savedProgression, setSavedProgression] = useState<ChordPosition[][]>([]);
-    const [showSavedProgression, setShowSavedProgression] = useState(false);
 
 /*=====================================================================================================================*/
 
@@ -141,8 +136,6 @@ const App: React.FC = () =>
             setActiveNotes(newValidChords[randomIndex].map(pos => ({
                 note: fretboard[pos.string][pos.fret].name,
                 interval: '' })));
-
-            setPlayedProgression(prev => [...prev, newValidChords[randomIndex]]);
             setIsPlayable(true);
         }
         else {
@@ -151,90 +144,6 @@ const App: React.FC = () =>
             setActiveNotes([]);
     }, [ fretboard, includeSeventh, includeNinth, selectedKey, isMinorKey, updateChordNotes ]);
 
-    
-/*=====================================================================================================================*/
-/*=================================================CHORD PROGRESSION===================================================*/
-/*=====================================================================================================================*/
-
-    const convertProgressionToPositions = useCallback((progression: ChordProgression[]): ChordPosition[][] => {
-        return progression.map(chord => findChordPositions(chord.root, chord.type, fretboard));
-    }, [ fretboard ]);
-
-    const findChordPositions = (root: string, type: keyof typeof chordFormulas, fretboard: GuitarNote[][]): ChordPosition[] => {
-        const rootIndex = notes.indexOf(root);
-        const noteNames = chordFormulas[type].map(interval => notes[(rootIndex + interval) % 12]);
-        const positions = possibleChord(fretboard, noteNames);
-        return positions.flat();
-    };
-
-    /*=================================================================================================================*/
-    const handleGenerateProgression = useCallback(() => {
-        if (!selectedKey) return;
-        setSelectedChord(null);
-        setActiveNotes([]);
-        setActivePositions([]);
-        const progression = generateChordProgressions(isMinorKey, selectedKey);
-        setGeneratedProgression(progression as ChordProgression[]);
-    }, [selectedKey, isMinorKey]);
-    /*=================================================================================================================*/
-
-    const playGeneratedProgression = useCallback(() => {
-        if (generatedProgression.length === 0) return;
-        setIsProgressionPlaying(true);
-        setPlayedProgression([]);
-        
-        generatedProgression.forEach((chord, index) => {
-            setTimeout(() => {
-                playRandomChordFromKey(chord.root, chord.type);
-                if (index === generatedProgression.length - 1) {
-                  setIsProgressionPlaying(false); // End of progression
-                }
-              }, index * 625);
-            });
-    }, [generatedProgression, playRandomChordFromKey]);
-
-    /*=================================================================================================================*/
-    
-    const handleSaveProgression = useCallback(() => {
-        setIsProgressionPlaying(true);
-        setSavedProgression([activePositions]);
-        if (!savedProgression)
-        {
-            const positions = convertProgressionToPositions(generatedProgression);
-            setPlayedProgression(positions);
-            setSavedProgression([activePositions]);
-            setShowSavedProgression(true);
-        
-            playedProgression.forEach((chordPositions, index) => {
-                setTimeout(() => {
-                    setActivePositions(chordPositions);
-                }, index * 1000);
-            });
-        }
-        else
-        {   
-            //setShowSavedProgression(true);
-            playedProgression.forEach((chordPositions, index) => {
-                setTimeout(() => {
-                    setActivePositions(chordPositions);
-                }, index * 1000);
-            });
-        }
-        setIsProgressionPlaying(false);
-
-    }, [activePositions, generatedProgression, convertProgressionToPositions, playedProgression, savedProgression]);
-    
-
-    /*=================================================================================================================*/
-
-    const handleClearSavedProgression = useCallback(() => {
-        setSavedProgression([]);
-        setShowSavedProgression(false); 
-    }, []);
-
-/*=====================================================================================================================*/
-/*=================================================CHORD PROGRESSION===================================================*/
-/*=====================================================================================================================*/
 
     const handleChordSelection = useCallback((root: string, type: keyof typeof chordFormulas) => 
     {
@@ -453,20 +362,6 @@ interface Theme {
 
     /*=================================================================================================================*/
 
-    const getChordTypeDisplay = (type: keyof typeof chordFormulas) => {
-        switch (type) {
-            case 'minor':
-                return 'm';
-            case 'major':
-                return 'M';
-            case 'diminished':
-                return '°';
-            default:
-                return type;
-        }
-    };
-
-    const progressionToDisplay = showSavedProgression ? savedProgression : generatedProgression;
 
     const radiusMajor = 150;
     const radiusMinor = 98;
@@ -535,40 +430,8 @@ interface Theme {
                     ))}
                 </div>
 
-                
-                <div className="progression-actions">
-                    <button onClick={handleGenerateProgression} >Generate</button>
-                    <button onClick={playGeneratedProgression} >Play</button>
-                    <button onClick={handleSaveProgression} disabled={!playedProgression.length || isProgressionPlaying}>Save</button>
-                    <button onClick={handleClearSavedProgression} disabled={savedProgression.length === 0}>Clear</button>
-                </div>
 
-
-                {progressionToDisplay.length > 0 && (
-                <div className="chord-grid">
-                    {progressionToDisplay.map((item: ChordProgression | ChordPosition[], index: number) => (
-                    <React.Fragment key={index}>
-                        <div className="chord-column">
-                        <div className="chord-name">
-                            {Array.isArray(item) ?
-                            item.map(pos => `Position: String ${pos.string}, Fret ${pos.fret}`).join(', ') :
-                            `${item.root}${getChordTypeDisplay(item.type)}`}
-                        </div>
-                        <div className="chord-degree">
-                            {Array.isArray(item) ? '' : `${item.numeral}`}
-                        </div>
-                        </div>
-                        {index < progressionToDisplay.length - 1 && (
-                        <div className="chord-separator">
-                            <div>-</div>
-                            <div>-</div>
-                        </div>
-                        )}
-                    </React.Fragment>
-                    ))}
-                </div>
-                )}
-                
+    
 
             </header>
         </div>
