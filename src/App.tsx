@@ -6,6 +6,8 @@ import { constructFretboard, possibleChord } from './utils/fretboardUtils';
 import { GuitarNote, ChordPosition } from './models/Note';
 import { chordFormulas } from './utils/chordUtils';
 import { playNote } from './utils/midiUtils';
+import Header from '../public/Header.svg';  // Adjust this path based on where the image is saved
+
 
 /*=====================================================================================================================*/
 const notes = ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#'];
@@ -363,12 +365,17 @@ interface Theme {
     /*=================================================================================================================*/
 
 
-    const radiusMajor = 150;
-    const radiusMinor = 98;
+    const radiusMajor = 175;
+    const radiusMinor = 93;
     
     return (
         <div className="App">
             <header className="App-header">
+            <div className="header-container">
+            <div className="header-image-container">
+                <img src={Header} alt="Header" className="header-image" />
+            </div>
+
             <div className="circle-container">
                 {keys.map((key, index) => {
                     const angleMajor = index * (360 / keys.length) - 90;
@@ -382,23 +389,24 @@ interface Theme {
         return (
             <React.Fragment key={key}>
                 <button
-                    className={`circle-button ${isSelectedMajor ? 'selected' : ''}`}
+                    className={`circle-button1 ${isSelectedMajor ? 'selected' : ''}`}
                     style={{ transform: `translate(${xMajor}px, ${yMajor}px)` }}
                     onClick={() => handleKeySelection(key, false)}
                 >
-                    {key} Major
+                    
                 </button>
                 <button
-                    className={`circle-button minor ${isSelectedMinor ? 'selected' : ''}`}
+                    className={`circle-button2 minor ${isSelectedMinor ? 'selected' : ''}`}
                     style={{ transform: `translate(${xMinor}px, ${yMinor}px)` }}
                     onClick={() => handleKeySelection(key, true)}
                 >
-                    {key} Minor
+                    
                 </button>
             </React.Fragment>);})}
 
 
-                <div className="circle-text">Select Key</div>
+                <div className="circle-text"></div>
+                </div>
                 </div>
 
                 <div className="key-display">

@@ -5,7 +5,7 @@ import { GuitarNote } from '../models/Note';
 interface ChordProps {
   chord: ChordModel;
   fretboard: GuitarNote[][];
-  positions: GuitarNote[];  // Passed directly as a prop now
+  positions: GuitarNote[];  
 }
 
 export const Chord: React.FC<ChordProps> = ({ positions }) => {
