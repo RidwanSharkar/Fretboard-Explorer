@@ -6,7 +6,7 @@ import { constructFretboard, possibleChord } from './utils/fretboardUtils';
 import { GuitarNote, ChordPosition } from './models/Note';
 import { chordFormulas } from './utils/chordUtils';
 import { playNote } from './utils/midiUtils';
-import Header from '../public/Header.png';  // Adjust this path based on where the image is saved
+import Header from '../public/Background.jpg';  // Adjust this path based on where the image is saved
 
 
 /*=====================================================================================================================*/
@@ -32,7 +32,7 @@ const App: React.FC = () =>
     const clearActivePositions = () => {setActivePositions([]);};
     const [isPlayable, setIsPlayable] = useState(false); // MIDI
 
-    const [isProgressionPlaying, setIsProgressionPlaying] = useState(false);
+    const [isProgressionPlaying, setIsProgressionPlaying] = useState(false); //depreciated
 
 
 /*=====================================================================================================================*/
@@ -150,6 +150,7 @@ const App: React.FC = () =>
     const handleChordSelection = useCallback((root: string, type: keyof typeof chordFormulas) => 
     {
         //resetToggles();
+        setIsPlayable(false);
         clearActivePositions();
         setIsProgressionPlaying(false);
         setSelectedChord({ root, type });
@@ -188,24 +189,15 @@ const App: React.FC = () =>
 
 /*=================================================================================================================*/
 
-    /* DORMANT
     const cycleChords = (direction: 'next' | 'prev') => {
         if (validChords.length > 0) {
-            let newIndex = direction === 'next' 
+            const newIndex = direction === 'next' 
                 ? (currentChordIndex + 1) % validChords.length 
                 : (currentChordIndex - 1 + validChords.length) % validChords.length;
             setCurrentChordIndex(newIndex);
             setActivePositions(validChords[newIndex]);
         }
-    }; */
-
-    /*  
-    <button onClick={() => cycleChords('prev')} disabled={validChords.length <= 1} className="toggle-button">Prev</button>
-    <button onClick={() => cycleChords('next')} disabled={validChords.length <= 1} className="toggle-button">Next</button> 
-    <button onClick={playChord} disabled={!isPlayable} className="toggle-button">Play</button>      
-    */
-  
-/*=================================================================================================================*/
+    }; 
 
 /* MOVE */
 interface Theme {
@@ -287,6 +279,7 @@ interface Theme {
 
 
     const handleKeySelection = (key: string, isMinor: boolean) => {
+        setIsPlayable(false);
         setSelectedChord(null);
         setSelectedKey(key);
         setIsMinorKey(isMinor);
@@ -365,19 +358,14 @@ interface Theme {
     /*=================================================================================================================*/
 
 
-    const radiusMajor = 175;
-    const radiusMinor = 93;
+    const radiusMajor = 179;
+    const radiusMinor = 102;
+    const elliptical = 1.03;
     
     return (
         <div className="App">
             <header className="App-header">
-
-
-
-
-
-                <div className="fretboard-content">
-                <div className="header-container">
+            <div className="header-container">
             <div className="header-image-container">
                 <img src={Header} alt="Header" className="header-image" />
             </div>
@@ -385,12 +373,12 @@ interface Theme {
             <div className="circle-container">
                 {keys.map((key, index) => {
                     const angleMajor = index * (360 / keys.length) - 90;
-                    const xMajor = radiusMajor * Math.cos(angleMajor * Math.PI / 180);
+                    const xMajor = radiusMajor * Math.cos(angleMajor * Math.PI / 180) * elliptical;
                     const yMajor = radiusMajor * Math.sin(angleMajor * Math.PI / 180);
                     const isSelectedMajor = selectedKey === key && !isMinorKey;
                     const angleMinor = angleMajor - 90; 
-                    const xMinor = radiusMinor * Math.cos(angleMinor * Math.PI / 180);
-                    const yMinor = radiusMinor * Math.sin(angleMinor * Math.PI / 180);
+                    const xMinor = radiusMinor * Math.cos(angleMinor * Math.PI / 180) * elliptical;
+                    const yMinor = radiusMinor * Math.sin(angleMinor * Math.PI / 180) ;
                     const isSelectedMinor = selectedKey === key && isMinorKey;
         return (
             <React.Fragment key={key}>
@@ -410,42 +398,45 @@ interface Theme {
                 </button>
             </React.Fragment>);})}
 
+
                 <div className="circle-text"></div>
                 </div>
                 </div>
 
-                
-                    <div className="key-display">
-                        Chords in the Key of <span className="text-highlight">{selectedKey} {isMinorKey ? 'Minor' : 'Major'}</span>
-                    </div>
+                <div className="key-display">
+                    Chords in the Key of <span className="text-highlight">{selectedKey} {isMinorKey ? 'Minor' : 'Major'}</span>
+                </div>
 
 
-                    {/* Chord Buttons */}
-                    <div className = "row">
-                        {renderChordsForSelectedKey()}
-                        {renderRandomChordButtons()}
-                    </div>
+                {/* Chord Buttons */}
+                <div className = "row">
+                    {renderChordsForSelectedKey()}
+                    {renderRandomChordButtons()}
+                </div>
 
-                    {/* Fretboard and toggles container */}
-                    <div className="fretboard-container">
-                        <Fretboard notes={fretboard} activeNotes={activeNotes} highlightAll={highlightAll} activePositions={activePositions} clearActivePositions={clearActivePositions} isProgressionPlaying={isProgressionPlaying}  currentTheme={currentTheme}  />
-                        <div className="toggle-buttons">
-                            <button onClick={toggleSeventh} className={`toggle-button ${includeSeventh ? 'active' : ''}`}>7th</button>
-                            <button onClick={toggleNinth} className={`toggle-button ${includeNinth ? 'active' : ''}`}>9th</button>
-                            <button onClick={toggleHighlightAll} className={`toggle-button ${highlightAll ? 'active' : ''}`}>All</button>
-                            <button onClick={findAndHighlightChord} disabled={!selectedChord} className="toggle-button">Find</button>
-                        </div>
-                    </div>
-
-                    <div className="fret-labels">
-                        {Array.from({ length: 16 }).map((_, index) => (  
-                            <div className="fret-label" key={index}>{index}</div>
-                        ))}
+                {/* Fretboard and toggles container */}
+                <div className="fretboard-container">
+                    <Fretboard notes={fretboard} activeNotes={activeNotes} highlightAll={highlightAll} activePositions={activePositions} clearActivePositions={clearActivePositions} isProgressionPlaying={isProgressionPlaying}  currentTheme={currentTheme}  />
+                    <div className="toggle-buttons">
+                        <button onClick={toggleSeventh} className={`toggle-button ${includeSeventh ? 'active' : ''}`}>7th</button>
+                        <button onClick={toggleNinth} className={`toggle-button ${includeNinth ? 'active' : ''}`}>9th</button>
+                        <button onClick={toggleHighlightAll} className={`toggle-button ${highlightAll ? 'active' : ''}`}>All</button>
+                        <button onClick={findAndHighlightChord} disabled={!selectedChord} className="toggle-button">Find</button>
+                        <button onClick={() => cycleChords('prev')} disabled={validChords.length <= 1} className="toggle-button">Prev</button>
+                        <button onClick={() => cycleChords('next')} disabled={validChords.length <= 1} className="toggle-button">Next</button> 
+                        <button onClick={playChord} disabled={!isPlayable} className="toggle-button">Play</button>
                     </div>
                 </div>
 
 
-    
+                <div className="fret-labels">
+                    {Array.from({ length: 16 }).map((_, index) => (  
+                        <div className="fret-label" key={index}>
+                            {index === 0 ? '\u00A0' : index}  {/* Inserts a non-breaking space for the 0 fret */}
+                        </div>
+                    ))}
+                </div>
+
 
             </header>
         </div>
