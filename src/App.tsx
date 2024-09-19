@@ -358,9 +358,9 @@ interface Theme {
     /*=================================================================================================================*/
 
 
-    const radiusMajor = 179;
+    const radiusMajor = 178.5;
     const radiusMinor = 102;
-    const elliptical = 1.03;
+    const elliptical = 1.025;
     
     return (
         <div className="App">
