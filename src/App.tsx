@@ -377,8 +377,8 @@ interface Theme {
                     const yMajor = radiusMajor * Math.sin(angleMajor * Math.PI / 180);
                     const isSelectedMajor = selectedKey === key && !isMinorKey;
                     const angleMinor = angleMajor - 90; 
-                    const xMinor = radiusMinor * Math.cos(angleMinor * Math.PI / 180) * 1.07 + 4;
-                    const yMinor = radiusMinor * Math.sin(angleMinor * Math.PI / 180) - 2;
+                    const xMinor = radiusMinor * Math.cos(angleMinor * Math.PI / 180) * 1.065 + 3;
+                    const yMinor = radiusMinor * Math.sin(angleMinor * Math.PI / 180) - 1;
                     const isSelectedMinor = selectedKey === key && isMinorKey;
         return (
             <React.Fragment key={key}>

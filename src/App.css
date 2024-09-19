@@ -142,8 +142,8 @@ button:hover {
 
 .circle-button2 {
   position: absolute;
-  width: 50px;
-  height: 50px;
+  width: 49.25px;
+  height: 49.25px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -151,6 +151,24 @@ button:hover {
   background-color: rgba(0, 0, 0, 0);
   border-radius: 100px;
 }
+
+/* Gold ring */
+.circle-button1.selected, .circle-button2.selected {
+  box-shadow: 0 0 15px 5px gold;  
+  border: 2px solid gold;        
+}
+
+/* scale effect */
+.circle-button1.selected, .circle-button2.selected {
+  transform: scale(1.1); 
+}
+
+.circle-button1:hover, .circle-button2:hover {
+  box-shadow: 0 0 10px 2px gold;  
+  background-color: rgba(255, 215, 0, 0.2); 
+  transition: all 0.3s ease; 
+}
+
 
 
 
@@ -231,7 +249,7 @@ button:disabled {
   padding-top: 0px;
 }
 
-/* NEEDS TO BE ALIGNED BETTER to fretboard dynamically */
+/* NEEDS TO BE ALIGNED BETTER to fretboard dynamically for exended range* */
 .fret-label {
   width: 44px; 
   text-align: center;
