@@ -1,30 +1,41 @@
 /* App.css */
 
+.fretboard-content {
+  background-color: var(--background-color);  /* Non-transparent background */
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);  /* Optional: shadow for better distinction */
+  max-width: 60%;                            /* Limit width to 60% */
+  min-width: 850px;                          /* Minimum width to prevent shrinking too much */
+  margin: 0 auto;                            /* Center the container horizontally */
+  position: relative;
+}
+
 .header-container {
   position: relative;
   width: 100%;
-  height: 50vh; /* Adjust this value as needed */
+  height: 50vh; 
   overflow: hidden;
 }
 
 .header-image-container {
-  position: absolute;
-  top: 0;
-  left: 0;
+  position: relative;                      /* Ensure the image container takes up the proper space */
   width: 100%;
-  height: 100%;
+  height: auto;                            /* Height will adjust based on the image's aspect ratio */
+  display: flex;
+  justify-content: center;                 /* Center the image horizontally */
 }
 
 .header-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  width: auto;                             /* Maintain aspect ratio */
+  height: 100%;                            /* Ensure the full circle is shown */
+  object-fit: contain;                     /* Ensure the full image is displayed without being cut off */
 }
 
 
 .App {
   text-align: center;
-  padding-top: 0px;
+  padding-top: 10px;
 }
 
 .App-link {
@@ -55,14 +66,17 @@
 
 body {
   margin: 0;
-  background-color: var(--background-color);              /* Header background */
+  background-image: url('./Header2.svg');  /* background-color: var(--background-color);  */
+  background-size: cover;                     
+  background-position: center;                
+  background-repeat: no-repeat;               
+               /* Header background */
   color: white; 
   overflow: hidden; 
 }
 /* swapped? */
 .App-header {
-  background-color: var(--background-color);              /* ACTUAL background */
-  /* background-color: #154016; */
+  background-color: transparent;      /* ACTUAL background-color: var(--background-color); */
   min-height: 100vh;
   display: block;
   align-items: center;
@@ -86,7 +100,7 @@ button {
   background-color: var(--button-color);              /* PLAY BUTTON COLOR */
 }
 button:hover {
-  background-color: rgba(0, 0, 0, 0);             /* HOVER CHORD  background-color: var(--hover-color);*/
+  background-color: var(--hover-color);             /* HOVER CHORD  background-color: var(--hover-color);*/
 }
 .play-buttons button:hover {
   background-color: var(--hover-color);              /* HOVER PLAY */
@@ -221,7 +235,7 @@ button:disabled {
   align-items: flex-start; 
   width: 100%; 
   height: auto; 
-  padding: 20px; 
+  padding: 0px; 
   padding-bottom: 0px;
 }
 

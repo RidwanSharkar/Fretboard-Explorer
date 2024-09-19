@@ -6,7 +6,7 @@ import { constructFretboard, possibleChord } from './utils/fretboardUtils';
 import { GuitarNote, ChordPosition } from './models/Note';
 import { chordFormulas } from './utils/chordUtils';
 import { playNote } from './utils/midiUtils';
-import Header from '../public/Header.svg';  // Adjust this path based on where the image is saved
+import Header from '../public/Header.png';  // Adjust this path based on where the image is saved
 
 
 /*=====================================================================================================================*/
@@ -371,7 +371,13 @@ interface Theme {
     return (
         <div className="App">
             <header className="App-header">
-            <div className="header-container">
+
+
+
+
+
+                <div className="fretboard-content">
+                <div className="header-container">
             <div className="header-image-container">
                 <img src={Header} alt="Header" className="header-image" />
             </div>
@@ -404,38 +410,38 @@ interface Theme {
                 </button>
             </React.Fragment>);})}
 
-
                 <div className="circle-text"></div>
                 </div>
                 </div>
 
-                <div className="key-display">
-                    Chords in the Key of <span className="text-highlight">{selectedKey} {isMinorKey ? 'Minor' : 'Major'}</span>
-                </div>
-
-
-                {/* Chord Buttons */}
-                <div className = "row">
-                    {renderChordsForSelectedKey()}
-                    {renderRandomChordButtons()}
-                </div>
-
-                {/* Fretboard and toggles container */}
-                <div className="fretboard-container">
-                    <Fretboard notes={fretboard} activeNotes={activeNotes} highlightAll={highlightAll} activePositions={activePositions} clearActivePositions={clearActivePositions} isProgressionPlaying={isProgressionPlaying}  currentTheme={currentTheme}  />
-                    <div className="toggle-buttons">
-                        <button onClick={toggleSeventh} className={`toggle-button ${includeSeventh ? 'active' : ''}`}>7th</button>
-                        <button onClick={toggleNinth} className={`toggle-button ${includeNinth ? 'active' : ''}`}>9th</button>
-                        <button onClick={toggleHighlightAll} className={`toggle-button ${highlightAll ? 'active' : ''}`}>All</button>
-                        <button onClick={findAndHighlightChord} disabled={!selectedChord} className="toggle-button">Find</button>
+                
+                    <div className="key-display">
+                        Chords in the Key of <span className="text-highlight">{selectedKey} {isMinorKey ? 'Minor' : 'Major'}</span>
                     </div>
-                </div>
 
 
-                <div className="fret-labels">
-                    {Array.from({ length: 16 }).map((_, index) => (  
-                        <div className="fret-label" key={index}>{index}</div>
-                    ))}
+                    {/* Chord Buttons */}
+                    <div className = "row">
+                        {renderChordsForSelectedKey()}
+                        {renderRandomChordButtons()}
+                    </div>
+
+                    {/* Fretboard and toggles container */}
+                    <div className="fretboard-container">
+                        <Fretboard notes={fretboard} activeNotes={activeNotes} highlightAll={highlightAll} activePositions={activePositions} clearActivePositions={clearActivePositions} isProgressionPlaying={isProgressionPlaying}  currentTheme={currentTheme}  />
+                        <div className="toggle-buttons">
+                            <button onClick={toggleSeventh} className={`toggle-button ${includeSeventh ? 'active' : ''}`}>7th</button>
+                            <button onClick={toggleNinth} className={`toggle-button ${includeNinth ? 'active' : ''}`}>9th</button>
+                            <button onClick={toggleHighlightAll} className={`toggle-button ${highlightAll ? 'active' : ''}`}>All</button>
+                            <button onClick={findAndHighlightChord} disabled={!selectedChord} className="toggle-button">Find</button>
+                        </div>
+                    </div>
+
+                    <div className="fret-labels">
+                        {Array.from({ length: 16 }).map((_, index) => (  
+                            <div className="fret-label" key={index}>{index}</div>
+                        ))}
+                    </div>
                 </div>
 
 
