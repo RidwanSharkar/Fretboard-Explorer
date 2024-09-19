@@ -1,15 +1,17 @@
 /* App.css */
 
 .fretboard-content {
-  background-color: var(--background-color);  /* Non-transparent background */
+  background-color: var(--background-color);  
   padding: 20px;
   border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);  /* Optional: shadow for better distinction */
-  max-width: 60%;                            /* Limit width to 60% */
-  min-width: 850px;                          /* Minimum width to prevent shrinking too much */
-  margin: 0 auto;                            /* Center the container horizontally */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);  
+  max-width: 850px;                         
+  min-width: 850px;                          
+  width: 80%;                                
+  margin: 0 auto;                             
   position: relative;
 }
+
 
 .header-container {
   position: relative;
@@ -19,17 +21,17 @@
 }
 
 .header-image-container {
-  position: relative;                      /* Ensure the image container takes up the proper space */
+  position: relative;                      
   width: 100%;
-  height: auto;                            /* Height will adjust based on the image's aspect ratio */
+  height: auto;                        
   display: flex;
-  justify-content: center;                 /* Center the image horizontally */
+  justify-content: center;                 
 }
 
 .header-image {
-  width: auto;                             /* Maintain aspect ratio */
-  height: 100%;                            /* Ensure the full circle is shown */
-  object-fit: contain;                     /* Ensure the full image is displayed without being cut off */
+  width: auto;                     
+  height: auto;                      
+  object-fit: contain;                     
 }
 
 
@@ -47,21 +49,7 @@
   pointer-events: none;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
+/*====================================================================================*/
 /*  var(--background-color), var(--button-color), var(--hover-color)*/
 
 body {
@@ -70,7 +58,6 @@ body {
   background-size: cover;                     
   background-position: center;                
   background-repeat: no-repeat;               
-               /* Header background */
   color: white; 
   overflow: hidden; 
 }
@@ -116,7 +103,6 @@ button:hover {
   background-color: var(--hover-color);      /* TOGGLE */
   color: white; 
 }
-
 
 /*====================================================================================*/
 
@@ -165,8 +151,6 @@ button:hover {
   border-radius: 100px;
 }
 
-
-
 /*====================================================================================*/ 
 
 .chord-buttons, .chord-labels {
@@ -191,18 +175,6 @@ button:hover {
   text-align: center; 
 }
 
-
-
-
-/*====================================================================================*/
-
-.key-display {
-  font-size: 20px;
-  color: #FFF; /* Chords in Key Text */
-  margin: 10px 0;
-  text-align: center;
-}
-
 /*====================================================================================*/
 
 .toggle-buttons {
@@ -225,9 +197,14 @@ button:disabled {
   cursor: not-allowed; /* X hover cursor */
 }
 
-
-
 /*====================================================================================*/
+
+.key-display {
+  font-size: 20px;
+  color: #FFF; /* Chords in Key Text */
+  margin: 10px 0;
+  text-align: center;
+}
 
 .fretboard-container {
   display: flex;
@@ -243,10 +220,9 @@ button:disabled {
   position: relative; 
   padding: 10px;
   padding-bottom: 0px;
-  padding-top: 0px;
+  padding-top: 10px;
 }
 
-/* NEEDS TO BE ALIGNED BETTER to fretboard dynamically */
 .fret-label {
   width: 44px; 
   text-align: center;
@@ -286,42 +262,9 @@ button:disabled {
   margin-top: 10px;
 }
 
-/*====================================================================================*/
-
-.generate-controls {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 20px;
-}
-
-.generate-controls select {
-  margin-right: 10px;
-}
-
-.generated-progression {
-  margin-top: 5px;
-  font-size: 18px;
-  font-weight: bold;
-}
 
 /*====================================================================================*/
 
-.generated-progression {
-  text-align: center;
-}
-
-.chord-names, .chord-degrees {
-  display: flex;
-  justify-content: center;
-  gap: 20px; 
-}
-
-.chord-names div, .chord-degrees div {
-  min-width: 50px; 
-}
-
-/*====================================================================================*/
 
 .chord-grid {
   display: flex;
@@ -350,3 +293,19 @@ button:disabled {
   grid-row: 2;
 }
 
+/*====================================================================================*/
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
