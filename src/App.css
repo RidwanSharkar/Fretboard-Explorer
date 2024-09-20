@@ -142,8 +142,8 @@ button:hover {
 
 .circle-button2 {
   position: absolute;
-  width: 49.25px;
-  height: 49.25px;
+  width: 42px;
+  height: 42px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -154,17 +154,33 @@ button:hover {
 
 /* Gold ring */
 .circle-button1.selected, .circle-button2.selected {
-  box-shadow: 0 0 15px 5px gold;  
-  border: 2px solid gold;        
+  border: 3px transparent var(--hover-color);
+  animation: pulse 3s infinite;
+  box-shadow: 0 0 15px 5px var(--hover-color);
 }
 
-/* scale effect */
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 10px 2px var(--hover-color);
+  }
+  50% {
+    box-shadow: 0 0 20px 10px var(--hover-color);
+  }
+  100% {
+    box-shadow: 0 0 10px 2px var(--hover-color);
+  }
+}
+
+
+
+
+/* GO O O O O B O OBO OBOB OOB scale effect */
 .circle-button1.selected, .circle-button2.selected {
   transform: scale(1.1); 
 }
 
 .circle-button1:hover, .circle-button2:hover {
-  box-shadow: 0 0 10px 2px gold;  
+  box-shadow: 0 0 10px 2px var(--hover-color);  
   background-color: rgba(255, 215, 0, 0.2); 
   transition: all 0.3s ease; 
 }

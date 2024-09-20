@@ -359,7 +359,7 @@ interface Theme {
 
 
     const radiusMajor = 178.5;
-    const radiusMinor = 97;
+    const radiusMinor = 100;
     const elliptical = 1.025;
     
     return (
@@ -377,7 +377,7 @@ interface Theme {
                     const yMajor = radiusMajor * Math.sin(angleMajor * Math.PI / 180);
                     const isSelectedMajor = selectedKey === key && !isMinorKey;
                     const angleMinor = angleMajor - 90; 
-                    const xMinor = radiusMinor * Math.cos(angleMinor * Math.PI / 180) * 1.065 + 3;
+                    const xMinor = radiusMinor * Math.cos(angleMinor * Math.PI / 180) * 1.03 + 1;
                     const yMinor = radiusMinor * Math.sin(angleMinor * Math.PI / 180) - 1;
                     const isSelectedMinor = selectedKey === key && isMinorKey;
         return (
