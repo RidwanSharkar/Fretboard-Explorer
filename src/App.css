@@ -174,10 +174,20 @@ button:hover {
 
 
 
-/* GO O O O O B O OBO OBOB OOB scale effect */
 .circle-button1.selected, .circle-button2.selected {
-  transform: scale(1.1); 
+  box-shadow: 
+    inset var(--hover-color),  
+    var(--hover-color),     
+    var(--hover-color),    
+    var(--hover-color);   
+  
+  transform: scale(1.1) translateY(-5px); 
+  
+  transition: all 0.3s ease;
+  outline: 4px solid var(--hover-color);
+  outline-offset: 3px;
 }
+
 
 .circle-button1:hover, .circle-button2:hover {
   box-shadow: 0 0 10px 2px var(--hover-color);  
