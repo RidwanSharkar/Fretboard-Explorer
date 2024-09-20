@@ -214,7 +214,7 @@ interface Theme {
 
   const themes: Record<string, KeyThemes> = {
     A: {
-        major: { backgroundColor: '#51282c', buttonColor: '#E7717D', hoverColor: '#faffb4', fretboardColor: '#eacaca'  },
+        major: { backgroundColor: '#C06030', buttonColor: '#E67E30', hoverColor: '#FFE0B2', fretboardColor: '#eacaca'  },
         minor: { backgroundColor: '#ffcd89', buttonColor: '#ff9e44', hoverColor: '#fdfea6', fretboardColor: '#ffe8c9'  }
     },
     'A#': {
@@ -223,16 +223,16 @@ interface Theme {
     },
 
     C: {
-        major: { backgroundColor: '#04814f', buttonColor: '#54bc6c', hoverColor: '#8efc9e', fretboardColor: '#ade3b6'  },
+        major: { backgroundColor: '#224d29', buttonColor: '#54bc6c', hoverColor: '#8efc9e', fretboardColor: '#bffbb7'  },
         minor: { backgroundColor: '#51282c', buttonColor: '#E7717D', hoverColor: '#8efc9e', fretboardColor: '#eacaca'  }
     },
     'C#': {
-        major: { backgroundColor: '#224d29', buttonColor: '#4fb45e', hoverColor: '#8efc9e', fretboardColor: '#ade3b6'  },
-        minor: { backgroundColor: '#51282c', buttonColor: '#E7717D', hoverColor: '#09bca4', fretboardColor: '#eacaca'  }
+        major: { backgroundColor: '#04814f', buttonColor: '#4fb45e', hoverColor: '#8efc9e', fretboardColor: '#ade3b6'  },
+        minor: { backgroundColor: '#317478', buttonColor: '#30A7A7', hoverColor: '#09bca4', fretboardColor: '#eacaca'  }
     },
     
     D: {
-        major: { backgroundColor: '#282c34', buttonColor: '#4597ba', hoverColor: '#77C3EC', fretboardColor: '#D6EAF8'  },
+        major: { backgroundColor: '#5899d1', buttonColor: '#66beff', hoverColor: '#b1e5f2', fretboardColor: '#b8ddf1'  },
         minor: { backgroundColor: '#5899d1', buttonColor: '#66beff', hoverColor: '#b1e5f2', fretboardColor: '#b8ddf1'  }
     },
     'D#': {
@@ -246,12 +246,12 @@ interface Theme {
       },
 
     F: {
-        major: { backgroundColor: '#7851A9', buttonColor: '#B57EDC', hoverColor: '#e2c4f2', fretboardColor: '#D7BDE2'  },
-        minor: { backgroundColor: '#6A0DAD', buttonColor: '#B57EDC', hoverColor: '#e2c4f2', fretboardColor: '#D7BDE2' }
+        major: { backgroundColor: '#352D49', buttonColor: '#B57EDC', hoverColor: '#e2c4f2', fretboardColor: '#D7BDE2'  },
+        minor: { backgroundColor: '#482D54', buttonColor: '#B57EDC', hoverColor: '#e2c4f2', fretboardColor: '#D7BDE2' }
     },
     'F#': {
         major: { backgroundColor: '#76448A', buttonColor: '#AF7AC5', hoverColor: '#D7BDE2', fretboardColor: '#D7BDE2'  },
-        minor: { backgroundColor: '#1B4F72', buttonColor: '#4597ba', hoverColor: '#82d3ff', fretboardColor: '#F5EEF8'  }
+        minor: { backgroundColor: '#7851A9', buttonColor: '#B57EDC', hoverColor: '#e2c4f2', fretboardColor: '#D7BDE2'  }
     },
 
     G: {
@@ -264,7 +264,7 @@ interface Theme {
     },
 
     B: {
-        major: { backgroundColor: '#51282c', buttonColor: '#E7717D', hoverColor: '#4CAF50', fretboardColor: '#eacaca'  },
+        major: { backgroundColor: '#51282c', buttonColor: '#E7717D', hoverColor: '#FFF9C4', fretboardColor: '#eacaca'  },
         minor: { backgroundColor: '#ffcd89', buttonColor: '#ff9e44', hoverColor: '#ff811b', fretboardColor: '#ffe8c9'  }
     },
   };
@@ -386,7 +386,7 @@ interface Theme {
       
     
       const radiusMajor = 30.75;
-      const radiusMinor = 20;
+      const radiusMinor = 19.75;
       
       return (
         <div className="fixed-viewport">
@@ -399,11 +399,11 @@ interface Theme {
                 {keys.map((key, index) => {
                   const angleMajor = index * (360 / keys.length) - 90;
                   const xMajor = radiusMajor * Math.cos(angleMajor * Math.PI / 180) * 0.695 - 0.25;
-                  const yMajor = radiusMajor * Math.sin(angleMajor * Math.PI / 180) * 1.1 + 0.6 ;
+                  const yMajor = radiusMajor * Math.sin(angleMajor * Math.PI / 180) * 1.1 + 0.8 ;
       
                   const angleMinor = angleMajor - 90;
-                  const xMinor = radiusMinor * Math.cos(angleMinor * Math.PI / 180) * 0.570 - 0.18;
-                  const yMinor = radiusMinor * Math.sin(angleMinor * Math.PI / 180) * 0.9 + 0.7 ;
+                  const xMinor = radiusMinor * Math.cos(angleMinor * Math.PI / 180) * 0.58 - 0.18;
+                  const yMinor = radiusMinor * Math.sin(angleMinor * Math.PI / 180) * 0.9 + 0.6 ;
       
                   const isSelectedMajor = selectedKey === key && !isMinorKey;
                   const isSelectedMinor = selectedKey === key && isMinorKey;
@@ -426,8 +426,8 @@ interface Theme {
                         style={{
                           left: `${50 + xMinor}%`,
                           top: `${50 + yMinor}%`,
-                          width: '46x',
-                          height: '46px',
+                          width: '40px',
+                          height: '40px',
                         }}
                         onClick={() => handleKeySelection(key, true)}
                       >

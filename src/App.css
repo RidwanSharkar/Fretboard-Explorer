@@ -189,7 +189,7 @@ button:hover {
 
 
 .circle-button1.selected, .circle-button2.selected {
-  border: 3px transparent var(--hover-color);
+  border: 4px transparent var(--hover-color);
   animation: pulse 3s infinite;
   box-shadow: 0 0 15px 5px var(--hover-color);
 }
@@ -218,15 +218,15 @@ button:hover {
   
   
   transition: all 0.3s ease;
-  outline: 3px solid var(--hover-color);
-  outline-offset: -3px;
+  outline: 3.2px solid var(--hover-color);
+  outline-offset: 0.5px;
 }
 
 
 .circle-button1:hover, .circle-button2:hover {
   box-shadow: 0 0 10px 2px var(--hover-color);  
   background-color: rgba(255, 215, 0, 0.2); 
-  transition: all 0.3s ease; 
+  transition: all 0.25s ease; 
 }
 
 
