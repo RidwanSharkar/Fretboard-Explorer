@@ -398,11 +398,11 @@ interface Theme {
               <div className="circle-container">
                 {keys.map((key, index) => {
                   const angleMajor = index * (360 / keys.length) - 90;
-                  const xMajor = radiusMajor * Math.cos(angleMajor * Math.PI / 180) * 0.7 - 0.1;
-                  const yMajor = radiusMajor * Math.sin(angleMajor * Math.PI / 180) * 1.1 + 0.7 ;
+                  const xMajor = radiusMajor * Math.cos(angleMajor * Math.PI / 180) * 0.695 - 0.25;
+                  const yMajor = radiusMajor * Math.sin(angleMajor * Math.PI / 180) * 1.1 + 0.6 ;
       
                   const angleMinor = angleMajor - 90;
-                  const xMinor = radiusMinor * Math.cos(angleMinor * Math.PI / 180) * 0.58 - 0.18;
+                  const xMinor = radiusMinor * Math.cos(angleMinor * Math.PI / 180) * 0.570 - 0.18;
                   const yMinor = radiusMinor * Math.sin(angleMinor * Math.PI / 180) * 0.9 + 0.7 ;
       
                   const isSelectedMajor = selectedKey === key && !isMinorKey;
@@ -426,8 +426,8 @@ interface Theme {
                         style={{
                           left: `${50 + xMinor}%`,
                           top: `${50 + yMinor}%`,
-                          width: '47.5x',
-                          height: '47.5px',
+                          width: '46x',
+                          height: '46px',
                         }}
                         onClick={() => handleKeySelection(key, true)}
                       >
@@ -469,7 +469,7 @@ interface Theme {
                 <div className="fret-labels">
                     {Array.from({ length: 16 }).map((_, index) => (  
                         <div className="fret-label" key={index}>
-                            {index === 0 ? '\u00A0' : index}  {/* Inserts a non-breaking space for the 0 fret */}
+                            {index === 0 ? '\u00A0' : index} 
                         </div>
                     ))}
                 </div>

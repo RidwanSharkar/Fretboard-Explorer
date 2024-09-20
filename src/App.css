@@ -3,10 +3,10 @@
 .header-container {
   position: relative;
   width: 100%;
-  max-width: 924px;  /* Constrain the header to 850px */
+  max-width: 924px;  
   height: 55vh; 
   overflow: hidden;
-  margin: 0 auto;  /* Center the container */
+  margin: 0 auto;  
 }
 
 
@@ -132,10 +132,10 @@ button:hover {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);  /* Center the circle-container */
+  transform: translate(-50%, -50%);  
   width: 100%;
   height: 100%;
-  max-width: 855px;  /* Set max width to align with the image */
+  max-width: 855px;  
   max-height: 855px;
   z-index: 10;
 }
@@ -153,9 +153,9 @@ button:hover {
 
   .circle-button1, .circle-button2 {
     position: absolute;
-    width: clamp(50px, 50px, 50px); /* Min 40px, Ideal 5vw, Max 50px */
-    height: clamp(50px, 50px, 50px); /* Min 40px, Ideal 5vw, Max 50px */
-    background-color: rgba(0, 0, 0, 0); /* Semi-transparent red */
+    width: clamp(50px, 50px, 50px); 
+    height: clamp(50px, 50px, 50px); 
+    background-color: rgba(0, 0, 0, 0); 
     border: none;
     border-radius: 50%;
     transform: translate(-50%, -50%);
@@ -165,26 +165,26 @@ button:hover {
 
 
   .fixed-viewport {
-    width: 1080px;  /* Fixed width based on your design */
-    height: 1080px;  /* Fixed height based on your design */
-    overflow-x: auto;  /* Enable horizontal scrolling (if the content exceeds the viewport width) */
-    overflow-y: hidden;  /* Hide vertical overflow */
-    margin: 0 auto;  /* Center the viewport horizontally */
+    width: 924px;  
+    height: 1080px;  
+    overflow-x: auto;  
+    overflow-y: hidden;  
+    margin: 0 auto;  
     position: relative;
-    transform-origin: top left;  /* Ensure scaling happens from the top-left corner */
+    transform-origin: top left;  
   }
   
   @media (max-width: 1920px), (max-height: 1080px) {
     .fixed-viewport {
-      transform: scale(calc(100vw / 1440)); /* Scale proportionally to window width */
-      height: calc(900px * (100vw / 1440)); /* Adjust height proportionally */
+      transform: scale(calc(100vw / 1440));
+      height: calc(900px * (100vw / 1440)); 
     }
   }
   
   html, body {
     width: 100%;
     height: 100%;
-    overflow: hidden; /* Prevent scrolling */
+    overflow: hidden;
   }
 
 
