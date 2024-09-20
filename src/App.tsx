@@ -11,7 +11,6 @@ import Header from '/Header3.jpg';  // Adjust this path based on where the image
 
 /*=====================================================================================================================*/
 const notes = ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#'];
-const keys = ['C', 'G', 'D', 'A', 'E', 'B', 'F#', 'C#', 'G#', 'D#', 'A#', 'F'];
 /*const intervals = ['R', 'm2', 'M2', 'm3', 'M3', 'P4', 'T', 'P5', 'm6', 'M6', 'm7', 'M7'];*/
 /*=====================================================================================================================*/
 
@@ -357,8 +356,8 @@ interface Theme {
 
     /*=================================================================================================================*/
 
-    //DISABLE ZOOM
-
+    //DISABLE USER ZOOM
+/*
     useEffect(() => {
         const handleWheel = (event: WheelEvent) => {
           if (event.ctrlKey) {
@@ -380,47 +379,59 @@ interface Theme {
           document.removeEventListener('keydown', handleKeyDown);
         };
       }, []);
+    */
     
 
-
-    const radiusMajor = 175.75;
-    const radiusMinor = 93;
-
-    return (
+      const centerX = 425;  // Center X (half of the max width, 850px)
+      const centerY = 300;  // Adjust this based on your desired layout
+      const radius = 200;   // Distance from the center of the circle to the buttons
+      const keys = ['C', 'G', 'D', 'A', 'E', 'B', 'F#', 'C#', 'G#', 'D#', 'A#', 'F'];  // Updated keys array
+      
+      // Calculate positions for each key
+      const buttonPositions = keys.map((key, index) => {
+        const angle = (index / keys.length) * 2 * Math.PI;  // Distribute buttons equally in a circle
+        const x = centerX + radius * Math.cos(angle);  // Calculate x position
+        const y = centerY + radius * Math.sin(angle);  // Calculate y position
+        return { key, x, y };
+      });
+      
+      return (
         <div className="App">
-            <header className="App-header">
+          <header className="App-header">
             <div className="header-container">
-            <div className="header-image-container">
-                <img src={Header} alt="Header" className="header-image" />
-            </div>
-
-            <div className="circle-container">
-                {keys.map((key, index) => {
-                    const angleMajor = index * (360 / keys.length) - 90;
-                    const xMajor = radiusMajor * Math.cos(angleMajor * Math.PI / 180) * 1.04;
-                    const yMajor = radiusMajor * Math.sin(angleMajor * Math.PI / 180);
-                    const isSelectedMajor = selectedKey === key && !isMinorKey;
-                    const angleMinor = angleMajor - 90; 
-                    const xMinor = radiusMinor * Math.cos(angleMinor * Math.PI / 180) * 1.045 + 0;
-                    const yMinor = radiusMinor * Math.sin(angleMinor * Math.PI / 180) - 0;
-                    const isSelectedMinor = selectedKey === key && isMinorKey;
-        return (
-            <React.Fragment key={key}>
-                <button
-                    className={`circle-button1 ${isSelectedMajor ? 'selected' : ''}`}
-                    style={{ transform: `translate(${xMajor}px, ${yMajor}px)` }}
-                    onClick={() => handleKeySelection(key, false)}
-                >
-                    
-                </button>
-                <button
-                    className={`circle-button2 minor ${isSelectedMinor ? 'selected' : ''}`}
-                    style={{ transform: `translate(${xMinor}px, ${yMinor}px)` }}
-                    onClick={() => handleKeySelection(key, true)}
-                >
-                    
-                </button>
-            </React.Fragment>);})}
+              <img src={Header} alt="Header" className="header-image" />
+      
+              <div className="circle-container">
+                {buttonPositions.map(({ key, x, y }) => {
+                  const isSelectedMajor = selectedKey === key && !isMinorKey;
+                  const isSelectedMinor = selectedKey === key && isMinorKey;
+      
+                  return (
+                    <React.Fragment key={key}>
+                      <button
+                        className={`circle-button1 ${isSelectedMajor ? 'selected' : ''}`}
+                        style={{
+                          left: `${x}px`,   // Manually positioned based on x
+                          top: `${y}px`,    // Manually positioned based on y
+                          width: '40px',    // Set a fixed width
+                          height: '40px',   // Set a fixed height
+                        }}
+                        onClick={() => handleKeySelection(key, false)}
+                      >
+                      </button>
+                      <button
+                        className={`circle-button2 minor ${isSelectedMinor ? 'selected' : ''}`}
+                        style={{
+                          left: `${x}px`,   // Manually positioned based on x
+                          top: `${y}px`,    // Manually positioned based on y (can offset for minor button)
+                          width: '40px',
+                          height: '40px',
+                        }}
+                        onClick={() => handleKeySelection(key, true)}
+                      >
+                      </button>
+                    </React.Fragment>
+                    );})}
 
 
                 <div className="circle-text"></div>
