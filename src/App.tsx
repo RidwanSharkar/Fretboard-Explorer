@@ -11,6 +11,7 @@ import Header from '/Header3.jpg';  // Adjust this path based on where the image
 
 /*=====================================================================================================================*/
 const notes = ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#'];
+const keys = ['C', 'G', 'D', 'A', 'E', 'B', 'F#', 'C#', 'G#', 'D#', 'A#', 'F'];
 /*const intervals = ['R', 'm2', 'M2', 'm3', 'M3', 'P4', 'T', 'P5', 'm6', 'M6', 'm7', 'M7'];*/
 /*=====================================================================================================================*/
 
@@ -356,8 +357,9 @@ interface Theme {
 
     /*=================================================================================================================*/
 
-    //DISABLE USER ZOOM
-/*
+    //DISABLE ZOOM
+
+
     useEffect(() => {
         const handleWheel = (event: WheelEvent) => {
           if (event.ctrlKey) {
@@ -379,30 +381,30 @@ interface Theme {
           document.removeEventListener('keydown', handleKeyDown);
         };
       }, []);
-    */
     
 
-      const centerX = 425;  // Center X (half of the max width, 850px)
-      const centerY = 300;  // Adjust this based on your desired layout
-      const radius = 200;   // Distance from the center of the circle to the buttons
-      const keys = ['C', 'G', 'D', 'A', 'E', 'B', 'F#', 'C#', 'G#', 'D#', 'A#', 'F'];  // Updated keys array
       
-      // Calculate positions for each key
-      const buttonPositions = keys.map((key, index) => {
-        const angle = (index / keys.length) * 2 * Math.PI;  // Distribute buttons equally in a circle
-        const x = centerX + radius * Math.cos(angle);  // Calculate x position
-        const y = centerY + radius * Math.sin(angle);  // Calculate y position
-        return { key, x, y };
-      });
+    
+      const radiusMajor = 30.75;
+      const radiusMinor = 20;
       
       return (
+        <div className="fixed-viewport">
         <div className="App">
           <header className="App-header">
             <div className="header-container">
               <img src={Header} alt="Header" className="header-image" />
       
               <div className="circle-container">
-                {buttonPositions.map(({ key, x, y }) => {
+                {keys.map((key, index) => {
+                  const angleMajor = index * (360 / keys.length) - 90;
+                  const xMajor = radiusMajor * Math.cos(angleMajor * Math.PI / 180) * 0.7 - 0.1;
+                  const yMajor = radiusMajor * Math.sin(angleMajor * Math.PI / 180) * 1.1 + 0.7 ;
+      
+                  const angleMinor = angleMajor - 90;
+                  const xMinor = radiusMinor * Math.cos(angleMinor * Math.PI / 180) * 0.58 - 0.18;
+                  const yMinor = radiusMinor * Math.sin(angleMinor * Math.PI / 180) * 0.9 + 0.7 ;
+      
                   const isSelectedMajor = selectedKey === key && !isMinorKey;
                   const isSelectedMinor = selectedKey === key && isMinorKey;
       
@@ -411,10 +413,10 @@ interface Theme {
                       <button
                         className={`circle-button1 ${isSelectedMajor ? 'selected' : ''}`}
                         style={{
-                          left: `${x}px`,   // Manually positioned based on x
-                          top: `${y}px`,    // Manually positioned based on y
-                          width: '40px',    // Set a fixed width
-                          height: '40px',   // Set a fixed height
+                          left: `${50 + xMajor}%`,
+                          top: `${50 + yMajor}%`,
+                          width: '80px',  
+                          height: '80px', 
                         }}
                         onClick={() => handleKeySelection(key, false)}
                       >
@@ -422,10 +424,10 @@ interface Theme {
                       <button
                         className={`circle-button2 minor ${isSelectedMinor ? 'selected' : ''}`}
                         style={{
-                          left: `${x}px`,   // Manually positioned based on x
-                          top: `${y}px`,    // Manually positioned based on y (can offset for minor button)
-                          width: '40px',
-                          height: '40px',
+                          left: `${50 + xMinor}%`,
+                          top: `${50 + yMinor}%`,
+                          width: '47.5x',
+                          height: '47.5px',
                         }}
                         onClick={() => handleKeySelection(key, true)}
                       >
@@ -474,6 +476,7 @@ interface Theme {
 
 
             </header>
+            </div>
         </div>
     );
 };
