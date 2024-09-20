@@ -6,7 +6,7 @@ import { constructFretboard, possibleChord } from './utils/fretboardUtils';
 import { GuitarNote, ChordPosition } from './models/Note';
 import { chordFormulas } from './utils/chordUtils';
 import { playNote } from './utils/midiUtils';
-import Header from '../public/Background.jpg';  // Adjust this path based on where the image is saved
+import Header from '/Header3.jpg';  // Adjust this path based on where the image is saved
 
 
 /*=====================================================================================================================*/
@@ -357,10 +357,35 @@ interface Theme {
 
     /*=================================================================================================================*/
 
+    //DISABLE ZOOM
 
-    const radiusMajor = 177.5;
-    const radiusMinor = 97.5;
+    useEffect(() => {
+        const handleWheel = (event: WheelEvent) => {
+          if (event.ctrlKey) {
+            event.preventDefault();
+          }
+        };
+        const handleKeyDown = (event: KeyboardEvent) => {
+          if (
+            (event.ctrlKey && (event.key === '+' || event.key === '=' || event.key === '-')) || 
+            event.metaKey
+          ) {
+            event.preventDefault();
+          }
+        };
+        document.addEventListener('wheel', handleWheel, { passive: false });
+        document.addEventListener('keydown', handleKeyDown);
+        return () => {
+          document.removeEventListener('wheel', handleWheel);
+          document.removeEventListener('keydown', handleKeyDown);
+        };
+      }, []);
     
+
+
+    const radiusMajor = 175.75;
+    const radiusMinor = 93;
+
     return (
         <div className="App">
             <header className="App-header">
@@ -372,12 +397,12 @@ interface Theme {
             <div className="circle-container">
                 {keys.map((key, index) => {
                     const angleMajor = index * (360 / keys.length) - 90;
-                    const xMajor = radiusMajor * Math.cos(angleMajor * Math.PI / 180) * 1.035;
+                    const xMajor = radiusMajor * Math.cos(angleMajor * Math.PI / 180) * 1.04;
                     const yMajor = radiusMajor * Math.sin(angleMajor * Math.PI / 180);
                     const isSelectedMajor = selectedKey === key && !isMinorKey;
                     const angleMinor = angleMajor - 90; 
-                    const xMinor = radiusMinor * Math.cos(angleMinor * Math.PI / 180) * 1.065 + 2.5;
-                    const yMinor = radiusMinor * Math.sin(angleMinor * Math.PI / 180) - 0.5 ;
+                    const xMinor = radiusMinor * Math.cos(angleMinor * Math.PI / 180) * 1.045 + 0;
+                    const yMinor = radiusMinor * Math.sin(angleMinor * Math.PI / 180) - 0;
                     const isSelectedMinor = selectedKey === key && isMinorKey;
         return (
             <React.Fragment key={key}>
