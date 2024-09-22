@@ -6,7 +6,7 @@ import { constructFretboard, possibleChord } from './utils/fretboardUtils';
 import { GuitarNote, ChordPosition } from './models/Note';
 import { chordFormulas } from './utils/chordUtils';
 import { playNote } from './utils/midiUtils';
-import Header from '/CircleOfFifths.jpg';
+import Header from '/CircleOfFifths.png';
 
 
 /*=====================================================================================================================*/
@@ -214,12 +214,12 @@ interface Theme {
 
   const themes: Record<string, KeyThemes> = {
     A: {
-        major: { backgroundColor: '#C06030', buttonColor: '#E67E30', hoverColor: '#FFE0B2', fretboardColor: '#eacaca'  },
-        minor: { backgroundColor: '#ffcd89', buttonColor: '#ff9e44', hoverColor: '#fdfea6', fretboardColor: '#ffe8c9'  }
+        major: { backgroundColor: '#C06030', buttonColor: '#ff9e44', hoverColor: '#FFE0B2', fretboardColor: '#ffd7b5'  },
+        minor: { backgroundColor: '#e57a65', buttonColor: '#ffb7a9', hoverColor: '#f8cfb9', fretboardColor: '#ffdbd4'  }
     },
     'A#': {
-        major: { backgroundColor: '#51282c', buttonColor: '#E7717D', hoverColor: '#e67c1a', fretboardColor: '#eacaca'  },
-        minor: { backgroundColor: '#ffcd89', buttonColor: '#ff9e44', hoverColor: '#ff811b', fretboardColor: '#ffe8c9'  }
+        major: { backgroundColor: '#51282c', buttonColor: '#E7717D', hoverColor: '#fcab8e', fretboardColor: '#eacaca'  },
+        minor: { backgroundColor: '#ff9e44', buttonColor: '#ffcd89', hoverColor: '#eac37e', fretboardColor: '#ffe8c9'  }
     },
 
     C: {
@@ -227,12 +227,12 @@ interface Theme {
         minor: { backgroundColor: '#51282c', buttonColor: '#E7717D', hoverColor: '#8efc9e', fretboardColor: '#eacaca'  }
     },
     'C#': {
-        major: { backgroundColor: '#04814f', buttonColor: '#4fb45e', hoverColor: '#8efc9e', fretboardColor: '#ade3b6'  },
-        minor: { backgroundColor: '#317478', buttonColor: '#30A7A7', hoverColor: '#09bca4', fretboardColor: '#eacaca'  }
+        major: { backgroundColor: '#04814f', buttonColor: '#5cafa0', hoverColor: '#8edfcf', fretboardColor: '#b1e8e0'  },
+        minor: { backgroundColor: '#317478', buttonColor: '#30A7A7', hoverColor: '#8edfcf', fretboardColor: '#eacaca'  }
     },
     
     D: {
-        major: { backgroundColor: '#5899d1', buttonColor: '#66beff', hoverColor: '#b1e5f2', fretboardColor: '#b8ddf1'  },
+        major: { backgroundColor: '#4a7a9b', buttonColor: '#77C3EC', hoverColor: '#8ec9fc', fretboardColor: '#b8ddf1'  },
         minor: { backgroundColor: '#5899d1', buttonColor: '#66beff', hoverColor: '#b1e5f2', fretboardColor: '#b8ddf1'  }
     },
     'D#': {
@@ -250,22 +250,22 @@ interface Theme {
         minor: { backgroundColor: '#482D54', buttonColor: '#B57EDC', hoverColor: '#e2c4f2', fretboardColor: '#D7BDE2' }
     },
     'F#': {
-        major: { backgroundColor: '#76448A', buttonColor: '#AF7AC5', hoverColor: '#D7BDE2', fretboardColor: '#D7BDE2'  },
+        major: { backgroundColor: '#76448A', buttonColor: '#AF7AC5', hoverColor: '#fc8efc', fretboardColor: '#D7BDE2'  },
         minor: { backgroundColor: '#7851A9', buttonColor: '#B57EDC', hoverColor: '#e2c4f2', fretboardColor: '#D7BDE2'  }
     },
 
     G: {
-        major: { backgroundColor: '#441414', buttonColor: '#e64949', hoverColor: '#F1948A', fretboardColor: '#E6B0AA'  },
+        major: { backgroundColor: '#441414', buttonColor: '#e64949', hoverColor: '#fc8e8e', fretboardColor: '#E6B0AA'  },
         minor: { backgroundColor: '#441414', buttonColor: '#e64949', hoverColor: '#fca7a7', fretboardColor: '#eacaca'  }
       },
     'G#': {
-        major: { backgroundColor: '#441414', buttonColor: '#e64949', hoverColor: '#e1693f', fretboardColor: '#E6B0AA'  },
+        major: { backgroundColor: '#441414', buttonColor: '#e64949', hoverColor: '#fc9e8e', fretboardColor: '#E6B0AA'  },
         minor: { backgroundColor: '#441414', buttonColor: '#e64949', hoverColor: '#fca7a7', fretboardColor: '#eacaca'  }
     },
 
     B: {
-        major: { backgroundColor: '#51282c', buttonColor: '#E7717D', hoverColor: '#FFF9C4', fretboardColor: '#eacaca'  },
-        minor: { backgroundColor: '#ffcd89', buttonColor: '#ff9e44', hoverColor: '#ff811b', fretboardColor: '#ffe8c9'  }
+        major: { backgroundColor: '#51282c', buttonColor: '#E7717D', hoverColor: '#eac37e', fretboardColor: '#eacaca'  },
+        minor: { backgroundColor: '#d1995c', buttonColor: '#f4c47c', hoverColor: '#eac37e', fretboardColor: '#ffe8c9'  }
     },
   };
   

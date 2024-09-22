@@ -180,7 +180,7 @@ html, body {
 
 
 .circle-button1.selected, .circle-button2.selected {
-  border: 4px transparent var(--hover-color);
+  border: 8px transparent var(--hover-color);
   animation: pulse 3s infinite;
   box-shadow: 0 0 15px 5px var(--hover-color);
 }
