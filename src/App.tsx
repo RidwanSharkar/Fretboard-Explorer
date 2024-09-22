@@ -359,7 +359,7 @@ interface Theme {
 
     //DISABLE ZOOM
 
-
+/*
     useEffect(() => {
         const handleWheel = (event: WheelEvent) => {
           if (event.ctrlKey) {
@@ -381,7 +381,7 @@ interface Theme {
           document.removeEventListener('keydown', handleKeyDown);
         };
       }, []);
-    
+    */
 
       
     
@@ -440,6 +440,7 @@ interface Theme {
                 </div>
                 </div>
 
+            <div className="fretboard-and-buttons-container">
                 <div className="key-display">
                     Chords in the Key of <span className="text-highlight">{selectedKey} {isMinorKey ? 'Minor' : 'Major'}</span>
                 </div>
@@ -474,6 +475,7 @@ interface Theme {
                     ))}
                 </div>
 
+            </div>
 
             </header>
             </div>
