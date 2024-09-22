@@ -6,7 +6,7 @@ import { constructFretboard, possibleChord } from './utils/fretboardUtils';
 import { GuitarNote, ChordPosition } from './models/Note';
 import { chordFormulas } from './utils/chordUtils';
 import { playNote } from './utils/midiUtils';
-import Header from '/CircleOfFifths.png';
+import Header from '/CircleOfFifths.jpg';
 
 
 /*=====================================================================================================================*/
