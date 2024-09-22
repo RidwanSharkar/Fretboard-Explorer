@@ -297,6 +297,10 @@ button:disabled {
 
 .fretboard {
   position: relative; 
+  width: 100%; 
+  max-width: 100%; 
+  height: auto; 
+  overflow-x: auto; 
   padding: 10px;
   padding-bottom: 0px;
   padding-top: 0px;
