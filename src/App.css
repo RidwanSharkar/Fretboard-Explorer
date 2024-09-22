@@ -231,6 +231,7 @@ html, body {
   flex-wrap: nowrap;  
 }
 
+
 .button, .label {
   width: 80px;  
   margin: 0 5px; 
@@ -282,13 +283,14 @@ button:disabled {
 /*====================================================================================*/
 
 .fretboard-container {
-  flex-grow: 1; /*NEW scaling for cutoff*/
+  flex: 1; /*NEW scaling for cutoff*/
   display: flex;
   justify-content: center; 
   align-items: flex-start; 
   width: 100%; 
   height: auto; 
-  max-height: calc(100vh - 519px); /* Ensure it doesn't exceed available viewport height */
+  max-height: calc(100vh - 519px);
+  min-height: 0;
   padding: 20px; 
   padding-bottom: 0px;
   padding-top: 10px;
@@ -297,10 +299,6 @@ button:disabled {
 
 .fretboard {
   position: relative; 
-  width: 100%; 
-  max-width: 100%; 
-  height: auto; 
-  overflow-x: auto; 
   padding: 10px;
   padding-bottom: 0px;
   padding-top: 0px;
