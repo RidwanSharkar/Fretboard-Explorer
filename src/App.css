@@ -288,9 +288,11 @@ button:disabled {
   align-items: flex-start; 
   width: 100%; 
   height: auto; 
+  max-height: calc(100vh - 519px); /* Ensure it doesn't exceed available viewport height */
   padding: 20px; 
   padding-bottom: 0px;
   padding-top: 10px;
+  overflow: auto;
 }
 
 .fretboard {
