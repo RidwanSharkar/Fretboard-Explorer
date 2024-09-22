@@ -288,9 +288,7 @@ button:disabled {
   justify-content: center; 
   align-items: flex-start; 
   width: 100%; 
-  height: auto; 
-  max-height: calc(100vh - 519px);
-  min-height: 0;
+  max-height: calc(100vh - 660px);
   padding: 20px; 
   padding-bottom: 0px;
   padding-top: 10px;
