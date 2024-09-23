@@ -176,6 +176,13 @@ html, body {
   overflow: hidden;
 }
 
+@media (max-width: 1080) {
+  html, body {
+    overflow-x: auto;
+    overflow-y: auto; 
+  }
+}
+
 
 .circle-button1.selected, .circle-button2.selected {
   border: 8px transparent var(--hover-color);
