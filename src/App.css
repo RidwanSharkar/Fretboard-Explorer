@@ -160,14 +160,13 @@ button:hover {
   height: auto;  
   overflow: auto;
   margin: 0 auto;  
-  position: relative;
   -webkit-overflow-scrolling: touch;
 }
   
 @media (max-width: 1920px), (max-height: 1080px) {
   .fixed-viewport {
-    transform: scale(calc(100vw / 1440));
-    height: calc(900px * (100vw / 1440)); 
+      transform: none;
+      height: auto;
   }
 }
 
