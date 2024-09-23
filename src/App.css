@@ -158,11 +158,10 @@ button:hover {
 .fixed-viewport {
   width: 924px;  
   height: auto;  
-  overflow-x: auto;  
-  overflow-y: hidden;  
+  overflow: auto;
   margin: 0 auto;  
   position: relative;
-  transform-origin: top left;  
+  -webkit-overflow-scrolling: touch;
 }
   
 @media (max-width: 1920px), (max-height: 1080px) {
