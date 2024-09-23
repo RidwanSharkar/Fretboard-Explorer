@@ -158,7 +158,6 @@ button:hover {
 .fixed-viewport {
   width: 924px;
   min-height: 100vh;
-  height: auto;  
   overflow-x: auto; 
   overflow-y: auto;
   margin: 0 auto; 
@@ -172,6 +171,7 @@ body {
 @media (max-width: 768px) {
   body {
     overflow-x: auto; 
+    overflow-y: auto; 
   }
 }
 
