@@ -382,8 +382,154 @@ interface Theme {
         };
       }, []);
     */
-
       
+      /* switch to intervals so dont need to store these */
+      const keyNeighbors: KeyNeighbors = {
+        'C': {
+          neighbors: [
+            { key: 'F', degree: 'IV', isMinor: false },
+            { key: 'G', degree: 'V', isMinor: false },
+            { key: 'D', degree: 'ii', isMinor: true },
+            { key: 'E', degree: 'iii', isMinor: true },
+            { key: 'A', degree: 'vi', isMinor: true },
+            ],
+        },
+        'G': {
+            neighbors: [
+              { key: 'C', degree: 'IV', isMinor: false },
+              { key: 'D', degree: 'V', isMinor: false },
+              { key: 'A', degree: 'ii', isMinor: true },
+              { key: 'B', degree: 'iii', isMinor: true },
+              { key: 'E', degree: 'vi', isMinor: true },
+            ],
+        },
+
+        'D': {
+        neighbors: [
+            { key: 'G', degree: 'IV', isMinor: false },
+            { key: 'A', degree: 'V', isMinor: false },
+            { key: 'E', degree: 'ii', isMinor: true },
+            { key: 'F#', degree: 'iii', isMinor: true },
+            { key: 'B', degree: 'vi', isMinor: true },
+            ],
+        },
+        
+        'A': {
+            neighbors: [
+                { key: 'D', degree: 'IV', isMinor: false },
+                { key: 'E', degree: 'V', isMinor: false },
+                { key: 'B', degree: 'ii', isMinor: true },
+                { key: 'C#', degree: 'iii', isMinor: true },
+                { key: 'F#', degree: 'vi', isMinor: true },
+            ],
+        },
+
+
+        'E': {
+            neighbors: [
+                { key: 'A', degree: 'IV', isMinor: false },
+                { key: 'B', degree: 'V', isMinor: false },
+                { key: 'F#', degree: 'ii', isMinor: true },
+                { key: 'G#', degree: 'iii', isMinor: true },
+                { key: 'C#', degree: 'vi', isMinor: true },
+            ],
+        },
+
+        'B': {
+            neighbors: [
+                { key: 'E', degree: 'IV', isMinor: false },
+                { key: 'F#', degree: 'V', isMinor: false },
+                { key: 'C#', degree: 'ii', isMinor: true },
+                { key: 'D#', degree: 'iii', isMinor: true },
+                { key: 'G#', degree: 'vi', isMinor: true },
+            ],
+        },
+
+        'F#': {
+        neighbors: [
+            { key: 'B', degree: 'IV', isMinor: false },
+            { key: 'C#', degree: 'V', isMinor: false },
+            { key: 'G#', degree: 'ii', isMinor: true },
+            { key: 'A#', degree: 'iii', isMinor: true },
+            { key: 'D#', degree: 'vi', isMinor: true },
+            ],
+        },
+
+
+        'C#': {
+            neighbors: [
+              { key: 'F#', degree: 'IV', isMinor: false },
+              { key: 'G#', degree: 'V', isMinor: false },
+              { key: 'D#', degree: 'ii', isMinor: true },
+              { key: 'F', degree: 'iii', isMinor: true },
+              { key: 'A#', degree: 'vi', isMinor: true },
+            ],
+          },
+
+        'G#': {
+        neighbors: [
+            { key: 'C#', degree: 'IV', isMinor: false },
+            { key: 'D#', degree: 'V', isMinor: false },
+            { key: 'A#', degree: 'ii', isMinor: true },
+            { key: 'C', degree: 'iii', isMinor: true },
+            { key: 'F', degree: 'vi', isMinor: true },
+            ],
+        },
+
+        'D#': {
+        neighbors: [
+            { key: 'G#', degree: 'IV', isMinor: false },
+            { key: 'A#', degree: 'V', isMinor: false },
+            { key: 'F', degree: 'ii', isMinor: true },
+            { key: 'G', degree: 'iii', isMinor: true },
+            { key: 'C', degree: 'vi', isMinor: true },
+            ],
+        },
+
+        'A#': {
+        neighbors: [
+            { key: 'D#', degree: 'IV', isMinor: false },
+            { key: 'F', degree: 'V', isMinor: false },
+            { key: 'C', degree: 'ii', isMinor: true },
+            { key: 'D', degree: 'iii', isMinor: true },
+            { key: 'G', degree: 'vi', isMinor: true },
+            ],
+        },
+
+        'F': {
+        neighbors: [
+            { key: 'A#', degree: 'IV', isMinor: false },
+            { key: 'C', degree: 'V', isMinor: false },
+            { key: 'G', degree: 'ii', isMinor: true },
+            { key: 'A', degree: 'iii', isMinor: true },
+            { key: 'D', degree: 'vi', isMinor: true },
+            ],
+        },
+
+
+
+      };
+
+
+      const degreeToHoverLevel: { [degree: string]: number } = {
+        'ii': 1,    
+        'iii': 2,
+        'IV': 3,
+        'V': 4,
+        'vi': 5,   
+      };
+      
+      interface KeyNeighbor {
+        key: string;
+        degree: string;
+        isMinor: boolean;
+      }
+      
+      interface KeyNeighbors {
+        [key: string]: {
+          neighbors: KeyNeighbor[];
+        };
+      }
     
       const radiusMajor = 30.75;
       const radiusMinor = 19.75;
@@ -407,22 +553,39 @@ interface Theme {
       
                   const isSelectedMajor = selectedKey === key && !isMinorKey;
                   const isSelectedMinor = selectedKey === key && isMinorKey;
-      
+
+                  const neighborData = keyNeighbors[selectedKey]?.neighbors.find(
+                    (neighbor) => neighbor.key.replace('m', '') === key
+                  );
+                
+                  let hoverClass = '';
+                  let degreeLabel = '';
+
+                  if (neighborData) {
+                    const hoverLevel = degreeToHoverLevel[neighborData.degree];
+                    hoverClass = `hover-effect-${hoverLevel}`;
+                    degreeLabel = neighborData.degree;
+                  }
+  
                   return (
                     <React.Fragment key={key}>
                       <button
-                        className={`circle-button1 ${isSelectedMajor ? 'selected' : ''}`}
+                        className={`circle-button1 ${isSelectedMajor ? 'selected' : ''} ${!isSelectedMajor && !isSelectedMinor && !neighborData?.isMinor ? hoverClass : ''}`}
                         style={{
                           left: `${50 + xMajor}%`,
                           top: `${50 + yMajor}%`,
-                          width: '80px',  
-                          height: '80px', 
+                          width: '80px',
+                          height: '80px',
                         }}
                         onClick={() => handleKeySelection(key, false)}
                       >
+                        {/* Label for neighboring Major */}
+                        {degreeLabel && !neighborData?.isMinor && (
+                          <span className="degree-label">{degreeLabel}</span>
+                        )}
                       </button>
                       <button
-                        className={`circle-button2 minor ${isSelectedMinor ? 'selected' : ''}`}
+                        className={`circle-button2 minor ${isSelectedMinor ? 'selected' : ''} ${!isSelectedMajor && !isSelectedMinor && neighborData?.isMinor ? hoverClass : ''}`}
                         style={{
                           left: `${50 + xMinor}%`,
                           top: `${50 + yMinor}%`,
@@ -431,6 +594,10 @@ interface Theme {
                         }}
                         onClick={() => handleKeySelection(key, true)}
                       >
+                        {/* Label for neighboring minor */}
+                        {degreeLabel && neighborData?.isMinor && (
+                          <span className="degree-label">{degreeLabel}</span>
+                        )}
                       </button>
                     </React.Fragment>
                     );})}
