@@ -221,16 +221,24 @@ body {
 
 /* SPLIT FOR FUTURE ADDITIONS */ 
 .hover-effect-1 {
-  box-shadow: 0 0 10px 3.5px var(--hover-color);  
+  box-shadow: 0 0 15px 3.5px var(--hover-color);  
   background-color: rgba(255, 215, 0, 0.15); 
   transition: all 0.25s ease; 
 }
 
 .hover-effect-2 {
-  box-shadow: 0 0 10px 3.5px var(--hover-color);  
+  box-shadow: 0 0 15px 3.5px var(--hover-color);  
   background-color: rgba(255, 215, 0, 0.15); 
   transition: all 0.25s ease; 
 }
+
+.hover-effect-5 {
+  box-shadow: 0 0 15px 3.5px var(--hover-color);  
+  background-color: rgba(255, 215, 0, 0.15); 
+  transition: all 0.25s ease; 
+}
+
+/* Placeholder Major*/
 
 .hover-effect-3 {
   box-shadow: 0 0 20px 4px var(--hover-color);  
@@ -244,26 +252,9 @@ body {
   transition: all 0.25s ease; 
 }
 
-.hover-effect-5 {
-  box-shadow: 0 0 10px 3.5px var(--hover-color);  
-  background-color: rgba(255, 215, 0, 0.15); 
-  transition: all 0.25s ease; 
-}
 
-/*
 .degree-label {
-  background-color: rgba(0, 0, 0, 0.5);
-  text-align: center;
-  color: var(--hover-color);
-  opacity: 1;
-  display: flex;
-  font-family: 'Times New Roman', serif;
-  border-radius: 50%;
-  align-items: center;
-  justify-content: center;
-}*/
-.degree-label {
-  background-color: rgba(0, 0, 0, 0.45);
+  background-color: rgba(0, 0, 0, 0.4);
   position: absolute;
   top: 50%;
   left: 50%;
@@ -274,32 +265,30 @@ body {
   border-radius: 50%;
   color: var(--hover-color);
   font-family: 'Times New Roman', serif;
+  -webkit-text-stroke: 0.0px black; 
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  
 }
 
 
 .degree-label.major {
   font-size: 30px;
-  width: 70px;
-  height: 70px;
+  width: 76px;
+  height: 76px;
 }
 
 .degree-label.minor {
   font-size: 20px;
-  width: 35px;
-  height: 35px;
+  width: 38px;
+  height: 38px;
 }
 
 /*   
 letter-spacing: 0.1em;
 animation: fadeIn 3s ease-in-out forwards;
 
-  background: linear-gradient(45deg, red, blue);
-  -webkit-background-clip: text;
-  color: transparent; 
-
-  WEBKIT VS NON?
   -webkit-text-stroke: 1px black; 
-  text-stroke: 1px black; 
+
 
 font-family: 'Playfair Display', serif;
   color: rgba(var(--hover-color-rgb), 0.5);

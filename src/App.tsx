@@ -383,7 +383,7 @@ interface Theme {
       }, []);
     */
       
-      /* switch to intervals so dont need to store these */
+      /*    FULL CONTROL INCASE FUTURE LOGIC CHANGE -> MOVE*** */
       const keyNeighbors: KeyNeighbors = {
         'C': {
           neighbors: [
@@ -395,6 +395,18 @@ interface Theme {
             { key: 'B', degree: 'vii°', isMinor: true }
             ],
         },
+        'Am': {
+            neighbors: [
+              { key: 'B', degree: 'ii°', isMinor: true },
+              { key: 'C', degree: 'III', isMinor: false },
+              { key: 'D', degree: 'iv', isMinor: true },
+              { key: 'E', degree: 'v', isMinor: true },
+              { key: 'F', degree: 'VI', isMinor: false },
+              { key: 'G', degree: 'VII', isMinor: false },
+            ],
+          },
+
+
         'G': {
             neighbors: [
               { key: 'C', degree: 'IV', isMinor: false },
@@ -405,6 +417,17 @@ interface Theme {
               { key: 'F#', degree: 'vii°', isMinor: true }
             ],
         },
+        'Em': {
+            neighbors: [
+              { key: 'F#', degree: 'ii°', isMinor: true },
+              { key: 'G', degree: 'III', isMinor: false },
+              { key: 'A', degree: 'iv', isMinor: true },
+              { key: 'B', degree: 'v', isMinor: true },
+              { key: 'C', degree: 'VI', isMinor: false },
+              { key: 'D', degree: 'VII', isMinor: false },
+            ],
+        },
+
 
         'D': {
             neighbors: [
@@ -414,6 +437,16 @@ interface Theme {
                 { key: 'F#', degree: 'iii', isMinor: true },
                 { key: 'B', degree: 'vi', isMinor: true },
                 { key: 'C#', degree: 'vii°', isMinor: true }
+            ],
+        },
+        'Bm': {
+            neighbors: [
+              { key: 'C#', degree: 'ii°', isMinor: true },
+              { key: 'D', degree: 'III', isMinor: false },
+              { key: 'E', degree: 'iv', isMinor: true },
+              { key: 'F#', degree: 'v', isMinor: true },
+              { key: 'G', degree: 'VI', isMinor: false },
+              { key: 'A', degree: 'VII', isMinor: false },
             ],
         },
         
@@ -428,6 +461,16 @@ interface Theme {
                 { key: 'G#', degree: 'vii°', isMinor: true }
             ],
         },
+        'F#m': {
+            neighbors: [
+              { key: 'G#', degree: 'ii°', isMinor: true },
+              { key: 'A', degree: 'III', isMinor: false },
+              { key: 'B', degree: 'iv', isMinor: true },
+              { key: 'C#', degree: 'v', isMinor: true },
+              { key: 'D', degree: 'VI', isMinor: false },
+              { key: 'E', degree: 'VII', isMinor: false },
+            ],
+        },
 
 
         'E': {
@@ -440,6 +483,17 @@ interface Theme {
                 { key: 'D#', degree: 'vii°', isMinor: true }
             ],
         },
+        'C#m': {
+            neighbors: [
+              { key: 'D#', degree: 'ii°', isMinor: true },
+              { key: 'E', degree: 'III', isMinor: false },
+              { key: 'F#', degree: 'iv', isMinor: true },
+              { key: 'G#', degree: 'v', isMinor: true },
+              { key: 'A', degree: 'VI', isMinor: false },
+              { key: 'B', degree: 'VII', isMinor: false },
+            ],
+        },
+
 
         'B': {
             neighbors: [
@@ -451,6 +505,17 @@ interface Theme {
                 { key: 'A#', degree: 'vii°', isMinor: true }
             ],
         },
+        'G#m': {
+            neighbors: [
+              { key: 'A#', degree: 'ii°', isMinor: true },
+              { key: 'B', degree: 'III', isMinor: false },
+              { key: 'C#', degree: 'iv', isMinor: true },
+              { key: 'D#', degree: 'v', isMinor: true },
+              { key: 'E', degree: 'VI', isMinor: false },
+              { key: 'F#', degree: 'VII', isMinor: false },
+            ],
+        },
+
 
         'F#': {
             neighbors: [
@@ -460,7 +525,17 @@ interface Theme {
                 { key: 'A#', degree: 'iii', isMinor: true },
                 { key: 'D#', degree: 'vi', isMinor: true },
                 { key: 'F', degree: 'vii°', isMinor: true }
-                ],
+            ],
+        },
+        'D#m': {
+            neighbors: [
+              { key: 'F', degree: 'ii°', isMinor: true },
+              { key: 'F#', degree: 'III', isMinor: false },
+              { key: 'G#', degree: 'iv', isMinor: true },
+              { key: 'A#', degree: 'v', isMinor: true },
+              { key: 'B', degree: 'VI', isMinor: false },
+              { key: 'C#', degree: 'VII', isMinor: false },
+            ],
         },
 
 
@@ -474,6 +549,16 @@ interface Theme {
               { key: 'C', degree: 'vii°', isMinor: true }
             ],
           },
+        'A#m': {
+            neighbors: [
+              { key: 'C', degree: 'ii°', isMinor: true },
+              { key: 'C#', degree: 'III', isMinor: false },
+              { key: 'D#', degree: 'iv', isMinor: true },
+              { key: 'F', degree: 'v', isMinor: true },
+              { key: 'F#', degree: 'VI', isMinor: false },
+              { key: 'G#', degree: 'VII', isMinor: false },
+            ],
+        },
 
         'G#': {
             neighbors: [
@@ -483,6 +568,16 @@ interface Theme {
                 { key: 'C', degree: 'iii', isMinor: true },
                 { key: 'F', degree: 'vi', isMinor: true },
                 { key: 'G', degree: 'vii°', isMinor: true }
+            ],
+        },
+        'Fm': {
+            neighbors: [
+              { key: 'G', degree: 'ii°', isMinor: true },
+              { key: 'G#', degree: 'III', isMinor: false },
+              { key: 'A#', degree: 'iv', isMinor: true },
+              { key: 'C', degree: 'v', isMinor: true },
+              { key: 'C#', degree: 'VI', isMinor: false },
+              { key: 'D#', degree: 'VII', isMinor: false },
             ],
         },
 
@@ -496,6 +591,17 @@ interface Theme {
                 { key: 'D', degree: 'vii°', isMinor: true }
             ],
         },
+        'Cm': {
+            neighbors: [
+              { key: 'D', degree: 'ii°', isMinor: true },
+              { key: 'D#', degree: 'III', isMinor: false },
+              { key: 'F', degree: 'iv', isMinor: true },
+              { key: 'G', degree: 'v', isMinor: true },
+              { key: 'G#', degree: 'VI', isMinor: false },
+              { key: 'A#', degree: 'VII', isMinor: false },
+            ],
+        },
+
 
         'A#': {
         neighbors: [
@@ -507,6 +613,17 @@ interface Theme {
             { key: 'A', degree: 'vii°', isMinor: true }
             ],
         },
+        'Gm': {
+            neighbors: [
+              { key: 'A', degree: 'ii°', isMinor: true },
+              { key: 'A#', degree: 'III', isMinor: false },
+              { key: 'C', degree: 'iv', isMinor: true },
+              { key: 'D', degree: 'v', isMinor: true },
+              { key: 'D#', degree: 'VI', isMinor: false },
+              { key: 'F', degree: 'VII', isMinor: false },
+            ],
+        },
+
 
         'F': {
         neighbors: [
@@ -518,18 +635,34 @@ interface Theme {
                 { key: 'E', degree: 'vii°', isMinor: true }
             ],
         },
-
-
+        'Dm': {
+            neighbors: [
+              { key: 'E', degree: 'ii°', isMinor: true },
+              { key: 'F', degree: 'III', isMinor: false },
+              { key: 'G', degree: 'iv', isMinor: true },
+              { key: 'A', degree: 'v', isMinor: true },
+              { key: 'A#', degree: 'VI', isMinor: false },
+              { key: 'C', degree: 'VII', isMinor: false },
+            ],
+        },
 
       };
 
 
+      /* Baseline hover types */
       const degreeToHoverLevel: { [degree: string]: number } = {
-        'ii': 1,    
+        'ii': 1,
+        'ii°': 1,
         'iii': 2,
-        'IV': 3,
+        'III': 4,
+        'IV': 4,
+        'iv': 2,
         'V': 4,
-        'vi': 5,   
+        'v': 2,
+        'vi': 2,
+        'VI': 5,
+        'VII': 5,
+        'vii°': 2,   
       };
       
       interface KeyNeighbor {
@@ -556,64 +689,80 @@ interface Theme {
       
               <div className="circle-container">
                 {keys.map((key, index) => {
-                  const angleMajor = index * (360 / keys.length) - 90;
-                  const xMajor = radiusMajor * Math.cos(angleMajor * Math.PI / 180) * 0.695 - 0.25;
-                  const yMajor = radiusMajor * Math.sin(angleMajor * Math.PI / 180) * 1.1 + 0.8 ;
-      
-                  const angleMinor = angleMajor - 90;
-                  const xMinor = radiusMinor * Math.cos(angleMinor * Math.PI / 180) * 0.58 - 0.18;
-                  const yMinor = radiusMinor * Math.sin(angleMinor * Math.PI / 180) * 0.9 + 0.6 ;
-      
-                  const isSelectedMajor = selectedKey === key && !isMinorKey;
-                  const isSelectedMinor = selectedKey === key && isMinorKey;
-
-                  const neighborData = keyNeighbors[selectedKey]?.neighbors.find(
-                    (neighbor) => neighbor.key.replace('m', '') === key
-                  );
+                const angleMajor = index * (360 / keys.length) - 90;
+                const xMajor = radiusMajor * Math.cos(angleMajor * Math.PI / 180) * 0.695 - 0.25;
+                const yMajor = radiusMajor * Math.sin(angleMajor * Math.PI / 180) * 1.1 + 0.8 ;
+    
+                const angleMinor = angleMajor - 90;
+                const xMinor = radiusMinor * Math.cos(angleMinor * Math.PI / 180) * 0.58 - 0.18;
+                const yMinor = radiusMinor * Math.sin(angleMinor * Math.PI / 180) * 0.9 + 0.6 ;
                 
-                  let hoverClass = '';
-                  let degreeLabel = '';
+                
+                const isSelectedMajor = selectedKey === key && !isMinorKey;
+                const isSelectedMinor = selectedKey === key && isMinorKey;
 
-                  if (neighborData) {
-                    const hoverLevel = degreeToHoverLevel[neighborData.degree];
-                    hoverClass = `hover-effect-${hoverLevel}`;
-                    degreeLabel = neighborData.degree;
-                  }
-  
-                  return (
+                const selectedKeyFull = selectedKey + (isMinorKey ? 'm' : '');
+
+
+                const neighborDataMajor = keyNeighbors[selectedKeyFull]?.neighbors.find(
+                    (neighbor) => neighbor.key === key && !neighbor.isMinor);
+                const neighborDataMinor = keyNeighbors[selectedKeyFull]?.neighbors.find(
+                    (neighbor) => neighbor.key === key && neighbor.isMinor);
+
+                // Major
+                let hoverClassMajor = '';
+                let degreeLabelMajor = '';
+
+                if (neighborDataMajor) {
+                    const hoverLevel = degreeToHoverLevel[neighborDataMajor.degree];
+                    hoverClassMajor = `hover-effect-${hoverLevel}`;
+                    degreeLabelMajor = neighborDataMajor.degree;
+                }
+
+                // Minor
+                let hoverClassMinor = '';
+                let degreeLabelMinor = '';
+
+                if (neighborDataMinor) {
+                    const hoverLevel = degreeToHoverLevel[neighborDataMinor.degree];
+                    hoverClassMinor = `hover-effect-${hoverLevel}`;
+                    degreeLabelMinor = neighborDataMinor.degree;
+                }
+
+                return (
                     <React.Fragment key={key}>
-                      <button
-                        className={`circle-button1 ${isSelectedMajor ? 'selected' : ''} ${!isSelectedMajor && !isSelectedMinor && !neighborData?.isMinor ? hoverClass : ''}`}
+                    <button
+                        className={`circle-button1 ${isSelectedMajor ? 'selected' : ''} ${hoverClassMajor}`}
                         style={{
-                          left: `${50 + xMajor}%`,
-                          top: `${50 + yMajor}%`,
-                          width: '80px',
-                          height: '80px',
+                        left: `${50 + xMajor}%`,
+                        top: `${50 + yMajor}%`,
+                        width: '80px',
+                        height: '80px',
                         }}
                         onClick={() => handleKeySelection(key, false)}
-                      >
-                        {/* Label for neighboring Major */}
-                        {degreeLabel && !neighborData?.isMinor && (
-                          <span className="degree-label major">{degreeLabel}</span>
+                    >
+                        {/* Major Label Intervals */}
+                        {degreeLabelMajor && (
+                        <span className="degree-label major">{degreeLabelMajor}</span>
                         )}
-                      </button>
-                      <button
-                        className={`circle-button2 ${isSelectedMinor ? 'selected' : ''} ${!isSelectedMajor && !isSelectedMinor && neighborData?.isMinor ? hoverClass : ''}`}
+                    </button>
+                    <button
+                        className={`circle-button2 ${isSelectedMinor ? 'selected' : ''} ${hoverClassMinor}`}
                         style={{
-                          left: `${50 + xMinor}%`,
-                          top: `${50 + yMinor}%`,
-                          width: '40px',
-                          height: '40px',
+                        left: `${50 + xMinor}%`,
+                        top: `${50 + yMinor}%`,
+                        width: '40px',
+                        height: '40px',
                         }}
                         onClick={() => handleKeySelection(key, true)}
-                      >
-                        {/* Label for neighboring minor */}
-                        {degreeLabel && neighborData?.isMinor && (
-                          <span className="degree-label minor">{degreeLabel}</span>
+                    >
+                        {/* minor Label Intervals */}
+                        {degreeLabelMinor && (
+                        <span className="degree-label minor">{degreeLabelMinor}</span>
                         )}
-                      </button>
+                    </button>
                     </React.Fragment>
-                    );})}
+                );})}
 
 
                 <div className="circle-text"></div>
