@@ -392,6 +392,7 @@ interface Theme {
             { key: 'D', degree: 'ii', isMinor: true },
             { key: 'E', degree: 'iii', isMinor: true },
             { key: 'A', degree: 'vi', isMinor: true },
+            { key: 'B', degree: 'vii°', isMinor: true }
             ],
         },
         'G': {
@@ -401,16 +402,18 @@ interface Theme {
               { key: 'A', degree: 'ii', isMinor: true },
               { key: 'B', degree: 'iii', isMinor: true },
               { key: 'E', degree: 'vi', isMinor: true },
+              { key: 'F#', degree: 'vii°', isMinor: true }
             ],
         },
 
         'D': {
-        neighbors: [
-            { key: 'G', degree: 'IV', isMinor: false },
-            { key: 'A', degree: 'V', isMinor: false },
-            { key: 'E', degree: 'ii', isMinor: true },
-            { key: 'F#', degree: 'iii', isMinor: true },
-            { key: 'B', degree: 'vi', isMinor: true },
+            neighbors: [
+                { key: 'G', degree: 'IV', isMinor: false },
+                { key: 'A', degree: 'V', isMinor: false },
+                { key: 'E', degree: 'ii', isMinor: true },
+                { key: 'F#', degree: 'iii', isMinor: true },
+                { key: 'B', degree: 'vi', isMinor: true },
+                { key: 'C#', degree: 'vii°', isMinor: true }
             ],
         },
         
@@ -421,6 +424,8 @@ interface Theme {
                 { key: 'B', degree: 'ii', isMinor: true },
                 { key: 'C#', degree: 'iii', isMinor: true },
                 { key: 'F#', degree: 'vi', isMinor: true },
+                { key: 'C#', degree: 'vi', isMinor: true },
+                { key: 'G#', degree: 'vii°', isMinor: true }
             ],
         },
 
@@ -432,6 +437,7 @@ interface Theme {
                 { key: 'F#', degree: 'ii', isMinor: true },
                 { key: 'G#', degree: 'iii', isMinor: true },
                 { key: 'C#', degree: 'vi', isMinor: true },
+                { key: 'D#', degree: 'vii°', isMinor: true }
             ],
         },
 
@@ -442,17 +448,19 @@ interface Theme {
                 { key: 'C#', degree: 'ii', isMinor: true },
                 { key: 'D#', degree: 'iii', isMinor: true },
                 { key: 'G#', degree: 'vi', isMinor: true },
+                { key: 'A#', degree: 'vii°', isMinor: true }
             ],
         },
 
         'F#': {
-        neighbors: [
-            { key: 'B', degree: 'IV', isMinor: false },
-            { key: 'C#', degree: 'V', isMinor: false },
-            { key: 'G#', degree: 'ii', isMinor: true },
-            { key: 'A#', degree: 'iii', isMinor: true },
-            { key: 'D#', degree: 'vi', isMinor: true },
-            ],
+            neighbors: [
+                { key: 'B', degree: 'IV', isMinor: false },
+                { key: 'C#', degree: 'V', isMinor: false },
+                { key: 'G#', degree: 'ii', isMinor: true },
+                { key: 'A#', degree: 'iii', isMinor: true },
+                { key: 'D#', degree: 'vi', isMinor: true },
+                { key: 'F', degree: 'vii°', isMinor: true }
+                ],
         },
 
 
@@ -463,26 +471,29 @@ interface Theme {
               { key: 'D#', degree: 'ii', isMinor: true },
               { key: 'F', degree: 'iii', isMinor: true },
               { key: 'A#', degree: 'vi', isMinor: true },
+              { key: 'C', degree: 'vii°', isMinor: true }
             ],
           },
 
         'G#': {
-        neighbors: [
-            { key: 'C#', degree: 'IV', isMinor: false },
-            { key: 'D#', degree: 'V', isMinor: false },
-            { key: 'A#', degree: 'ii', isMinor: true },
-            { key: 'C', degree: 'iii', isMinor: true },
-            { key: 'F', degree: 'vi', isMinor: true },
+            neighbors: [
+                { key: 'C#', degree: 'IV', isMinor: false },
+                { key: 'D#', degree: 'V', isMinor: false },
+                { key: 'A#', degree: 'ii', isMinor: true },
+                { key: 'C', degree: 'iii', isMinor: true },
+                { key: 'F', degree: 'vi', isMinor: true },
+                { key: 'G', degree: 'vii°', isMinor: true }
             ],
         },
 
         'D#': {
-        neighbors: [
-            { key: 'G#', degree: 'IV', isMinor: false },
-            { key: 'A#', degree: 'V', isMinor: false },
-            { key: 'F', degree: 'ii', isMinor: true },
-            { key: 'G', degree: 'iii', isMinor: true },
-            { key: 'C', degree: 'vi', isMinor: true },
+            neighbors: [
+                { key: 'G#', degree: 'IV', isMinor: false },
+                { key: 'A#', degree: 'V', isMinor: false },
+                { key: 'F', degree: 'ii', isMinor: true },
+                { key: 'G', degree: 'iii', isMinor: true },
+                { key: 'C', degree: 'vi', isMinor: true },
+                { key: 'D', degree: 'vii°', isMinor: true }
             ],
         },
 
@@ -493,16 +504,18 @@ interface Theme {
             { key: 'C', degree: 'ii', isMinor: true },
             { key: 'D', degree: 'iii', isMinor: true },
             { key: 'G', degree: 'vi', isMinor: true },
+            { key: 'A', degree: 'vii°', isMinor: true }
             ],
         },
 
         'F': {
         neighbors: [
-            { key: 'A#', degree: 'IV', isMinor: false },
-            { key: 'C', degree: 'V', isMinor: false },
-            { key: 'G', degree: 'ii', isMinor: true },
-            { key: 'A', degree: 'iii', isMinor: true },
-            { key: 'D', degree: 'vi', isMinor: true },
+                { key: 'A#', degree: 'IV', isMinor: false },
+                { key: 'C', degree: 'V', isMinor: false },
+                { key: 'G', degree: 'ii', isMinor: true },
+                { key: 'A', degree: 'iii', isMinor: true },
+                { key: 'D', degree: 'vi', isMinor: true },
+                { key: 'E', degree: 'vii°', isMinor: true }
             ],
         },
 
@@ -581,11 +594,11 @@ interface Theme {
                       >
                         {/* Label for neighboring Major */}
                         {degreeLabel && !neighborData?.isMinor && (
-                          <span className="degree-label">{degreeLabel}</span>
+                          <span className="degree-label major">{degreeLabel}</span>
                         )}
                       </button>
                       <button
-                        className={`circle-button2 minor ${isSelectedMinor ? 'selected' : ''} ${!isSelectedMajor && !isSelectedMinor && neighborData?.isMinor ? hoverClass : ''}`}
+                        className={`circle-button2 ${isSelectedMinor ? 'selected' : ''} ${!isSelectedMajor && !isSelectedMinor && neighborData?.isMinor ? hoverClass : ''}`}
                         style={{
                           left: `${50 + xMinor}%`,
                           top: `${50 + yMinor}%`,
@@ -596,7 +609,7 @@ interface Theme {
                       >
                         {/* Label for neighboring minor */}
                         {degreeLabel && neighborData?.isMinor && (
-                          <span className="degree-label">{degreeLabel}</span>
+                          <span className="degree-label minor">{degreeLabel}</span>
                         )}
                       </button>
                     </React.Fragment>
