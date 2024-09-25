@@ -177,9 +177,9 @@ body {
 
 
 .circle-button1.selected, .circle-button2.selected {
-  border: 8px transparent var(--hover-color);
+  border: 20px transparent var(--hover-color);
   animation: pulse 2s infinite;  
-  box-shadow: 0 0 30px 10px var(--hover-color); 
+  box-shadow: 0 0 15px 10px var(--hover-color); 
 }
 
 @keyframes pulse {
@@ -221,40 +221,40 @@ body {
 
 /* SPLIT FOR FUTURE ADDITIONS */ 
 .hover-effect-1 {
-  box-shadow: 0 0 20px 4px var(--hover-color);  
-  background-color: rgba(255, 215, 0, 0.1); 
+  box-shadow: 0 0 20px 7px var(--hover-color);  
+  background-color: rgba(255, 215, 0, 0); 
   transition: all 0.25s ease; 
 }
 
 .hover-effect-2 {
-  box-shadow: 0 0 20px 4px var(--hover-color);  
-  background-color: rgba(255, 215, 0, 0.1); 
+  box-shadow: 0 0 20px 7px var(--hover-color);  
+  background-color: rgba(255, 215, 0, 0); 
   transition: all 0.25s ease; 
 }
 
 .hover-effect-5 {
-  box-shadow: 0 0 20px 4px var(--hover-color);  
-  background-color: rgba(255, 215, 0, 0.1); 
+  box-shadow: 0 0 20px 7px var(--hover-color);  
+  background-color: rgba(255, 215, 0, 0); 
   transition: all 0.25s ease; 
 }
 
 /* Placeholder Major*/
 
 .hover-effect-3 {
-  box-shadow: 0 0 20px 4px var(--hover-color);  
-  background-color: rgba(255, 215, 0, 0.1); 
+  box-shadow: 0 0 20px 6px var(--hover-color);  
+  background-color: rgba(255, 215, 0, 0); 
   transition: all 0.25s ease; 
 }
 
 .hover-effect-4 {
-  box-shadow: 0 0 20px 4px var(--hover-color);  
-  background-color: rgba(255, 215, 0, 0.1); 
+  box-shadow: 0 0 20px 6px var(--hover-color);  
+  background-color: rgba(255, 215, 0, 0); 
   transition: all 0.25s ease; 
 }
 
 
 .degree-label {
-  background-color: rgba(0, 0, 0, 0.3);
+  background-color: rgba(0, 0, 0, 0.10);
   position: absolute;
   top: 50%;
   left: 50%;
@@ -265,8 +265,13 @@ body {
   border-radius: 50%;
   color: var(--hover-color);
   font-family: 'Times New Roman', serif;
-  -webkit-text-stroke: 0.0px black; 
+  -webkit-text-stroke: 0.4px var(--hover-color);  
   text-shadow: 4px 4px 10px rgba(0, 0, 0, 1);
+  
+  border: none;
+  background-image: radial-gradient(circle, rgba(0, 0, 0, 0.25) 30%, rgba(0, 0, 0, 0.001) 60%, transparent 100%);
+  background-origin: border-box;
+  background-clip: content-box, border-box;
 }
 
 
