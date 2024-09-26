@@ -265,7 +265,7 @@ body {
   border-radius: 50%;
   color: var(--hover-color);
   font-family: 'Times New Roman', serif;
-  -webkit-text-stroke: 0.4px var(--hover-color);  
+  -webkit-text-stroke: 0px var(--hover-color);  
   text-shadow: 4px 4px 10px rgba(0, 0, 0, 1);
   
   border: none;

@@ -199,7 +199,7 @@ const App: React.FC = () =>
         }
     }; 
 
-/* MOVE */
+/* MOVE ---- #eac37e ----FRAME COLOR*/
 interface Theme {
     backgroundColor: string;
     buttonColor: string;
@@ -214,7 +214,7 @@ interface Theme {
 
   const themes: Record<string, KeyThemes> = {
     A: {
-        major: { backgroundColor: '#C06030', buttonColor: '#ff9e44', hoverColor: '#FFE0B2', fretboardColor: '#ffd7b5'  },
+        major: { backgroundColor: '#DB5A42', buttonColor: '#F48668', hoverColor: '#FFE0B2', fretboardColor: '#ffd7b5'  },
         minor: { backgroundColor: '#e57a65', buttonColor: '#ffb7a9', hoverColor: '#f8cfb9', fretboardColor: '#ffdbd4'  }
     },
     'A#': {
@@ -223,16 +223,16 @@ interface Theme {
     },
 
     C: {
-        major: { backgroundColor: '#224d29', buttonColor: '#54bc6c', hoverColor: '#8efc9e', fretboardColor: '#bffbb7'  },
+        major: { backgroundColor: '#2e6938', buttonColor: '#54bc6c', hoverColor: '#8efc9e', fretboardColor: '#bffbb7'  },
         minor: { backgroundColor: '#51282c', buttonColor: '#E7717D', hoverColor: '#8efc9e', fretboardColor: '#eacaca'  }
     },
     'C#': {
-        major: { backgroundColor: '#04814f', buttonColor: '#5cafa0', hoverColor: '#8edfcf', fretboardColor: '#b1e8e0'  },
+        major: { backgroundColor: '#0B6E4F', buttonColor: '#45CB85', hoverColor: '#8edfcf', fretboardColor: '#b1e8e0'  },
         minor: { backgroundColor: '#317478', buttonColor: '#30A7A7', hoverColor: '#8edfcf', fretboardColor: '#eacaca'  }
     },
     
     D: {
-        major: { backgroundColor: '#4a7a9b', buttonColor: '#77C3EC', hoverColor: '#8ec9fc', fretboardColor: '#b8ddf1'  },
+        major: { backgroundColor: '#4D7EA8', buttonColor: '#77C3EC', hoverColor: '#8ec9fc', fretboardColor: '#b8ddf1'  },
         minor: { backgroundColor: '#5899d1', buttonColor: '#66beff', hoverColor: '#b1e5f2', fretboardColor: '#b8ddf1'  }
     },
     'D#': {
@@ -241,16 +241,16 @@ interface Theme {
     },
 
     E: {
-        major: { backgroundColor: '#282c34', buttonColor: '#4597ba', hoverColor: '#77C3EC', fretboardColor: '#b8ddf1'  },
+        major: { backgroundColor: '#003459', buttonColor: '#4597ba', hoverColor: '#77C3EC', fretboardColor: '#b8ddf1'  },
         minor: { backgroundColor: '#1B4F72', buttonColor: '#4597ba', hoverColor: '#82d3ff', fretboardColor: '#b8ddf1'  }
       },
 
     F: {
-        major: { backgroundColor: '#352D49', buttonColor: '#B57EDC', hoverColor: '#e2c4f2', fretboardColor: '#D7BDE2'  },
+        major: { backgroundColor: '#39304A', buttonColor: '#B57EDC', hoverColor: '#e2c4f2', fretboardColor: '#D7BDE2'  },
         minor: { backgroundColor: '#482D54', buttonColor: '#B57EDC', hoverColor: '#e2c4f2', fretboardColor: '#D7BDE2' }
     },
     'F#': {
-        major: { backgroundColor: '#76448A', buttonColor: '#AF7AC5', hoverColor: '#fc8efc', fretboardColor: '#D7BDE2'  },
+        major: { backgroundColor: '#52489C', buttonColor: '#AF7AC5', hoverColor: '#fc8efc', fretboardColor: '#D7BDE2'  },
         minor: { backgroundColor: '#7851A9', buttonColor: '#B57EDC', hoverColor: '#e2c4f2', fretboardColor: '#D7BDE2'  }
     },
 
@@ -259,7 +259,7 @@ interface Theme {
         minor: { backgroundColor: '#441414', buttonColor: '#e64949', hoverColor: '#fca7a7', fretboardColor: '#eacaca'  }
       },
     'G#': {
-        major: { backgroundColor: '#441414', buttonColor: '#e64949', hoverColor: '#fc9e8e', fretboardColor: '#E6B0AA'  },
+        major: { backgroundColor: '#F25F5C', buttonColor: '#F4A698', hoverColor: '#fc9e8e', fretboardColor: '#E6B0AA'  },
         minor: { backgroundColor: '#441414', buttonColor: '#e64949', hoverColor: '#fca7a7', fretboardColor: '#eacaca'  }
     },
 
@@ -736,8 +736,8 @@ interface Theme {
                         style={{
                         left: `${50 + xMajor}%`,
                         top: `${50 + yMajor}%`,
-                        width: '80px',
-                        height: '80px',
+                        width: '78px',
+                        height: '78px',
                         }}
                         onClick={() => handleKeySelection(key, false)}
                     >
