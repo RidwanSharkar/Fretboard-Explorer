@@ -13,8 +13,6 @@ OVERVIEW:
 
 • The program takes user input for a chord, key, or chord progression and computes all possible fingerings across the fretboard.
 
-• Fretboard supports specification of chord criteria (e.g. skipping strings for voicing) or modifications to match user preferences for finger patterns.
-
 • MIDI integration allows users to hear the exact chord displayed on the screen and throughout the generated chord progression. Randomly generated chord progressions that the user likes can be saved for future use.
 
 ![image](https://github.com/user-attachments/assets/8d7e77fb-0a6b-46e4-a4fd-fe15c00a5eca)
