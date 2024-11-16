@@ -1,25 +1,20 @@
-**Fretboard Explorer**
-
-________________________________________________________________________________________________________________
-
+# Fretboard Explorer
+Interactive Guitar Fretboard for Music Theory Exploration
 
 ![image](https://github.com/user-attachments/assets/a525c10c-324b-4832-bb84-d2d52cb60875)
 
-________________________________________________________________________________________________________________
-
-OVERVIEW:
+## Overview:
 
 • Fretboard Explorer is designed for guitarists who want to explore music theory and chord progressions, and their corresponding finger-positions across the fretboard.
 
 • The program takes user input for a chord, key, or chord progression and computes all possible fingerings across the fretboard.
 
-• MIDI integration allows users to hear the exact chord displayed on the screen and throughout the generated chord progression. Randomly generated chord progressions that the user likes can be saved for future use.
+• MIDI integration allows users to hear the exact chord displayed on the screen.
 
 ![image](https://github.com/user-attachments/assets/8d7e77fb-0a6b-46e4-a4fd-fe15c00a5eca)
 
-________________________________________________________________________________________________________________
 
-[IMPLEMENTATION 1] INTRACTIVE FRETBOARD FOR MUSIC THEORY EXPLORATION
+## Design:
 
 • An array of all of the notes in the western scale [A, A#, B, C, C#, D, D#, E, F, F#, G, G#] are iterated through to extract the correct notes from the appropriate chord formula. For instance, the C Major chord consists of 1-3-5, or C-E-G, and will be highlighted upon user selection.
 
