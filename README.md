@@ -1,8 +1,8 @@
 # Fretboard Explorer
+**Interactive Guitar Fretboard for Music Theory Exploration**
 
-## Interactive Guitar Fretboard for Music Theory Exploration
+![Fretboardx](https://github.com/user-attachments/assets/c3515850-8987-48e9-89f7-4e2d84e0c55b)
 
-![image](https://github.com/user-attachments/assets/a525c10c-324b-4832-bb84-d2d52cb60875)
 
 ## Overview:
 
@@ -12,7 +12,8 @@
 
 • MIDI integration allows users to hear the exact chord displayed on the screen.
 
-![image](https://github.com/user-attachments/assets/8d7e77fb-0a6b-46e4-a4fd-fe15c00a5eca)
+![image](https://github.com/user-attachments/assets/a525c10c-324b-4832-bb84-d2d52cb60875)
+![image](https://github.com/user-attachments/assets/44774bcd-434e-4faf-bea0-37ddf467547b)
 
 
 ## Design:
@@ -22,3 +23,5 @@
 • Each chord belongs to a set of chords: [ I ii iii IV V VI Vii ] that form a 'key', all twelve of which are implemented as buttons on the Circle of Fifths for the user to explore.
 
 • Once chord notes are displayed, an algorithm will determine which combinations of these available notes within the selected chord can be considered a "valid chord", meaning that they are actually physically playable on the guitar in real life. This involves eliminating the possibility of more than one note per string, or that no 2 notes be 5 frets apart (for instance, depending on the length of your fingers). Various chord customization parameters, such as "no open notes", or "don't skip strings" are available as well.
+
+![image](https://github.com/user-attachments/assets/ae259107-9a44-4978-a5e8-812b6b81cd02)
