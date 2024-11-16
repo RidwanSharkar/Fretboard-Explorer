@@ -1,5 +1,6 @@
 # Fretboard Explorer
-Interactive Guitar Fretboard for Music Theory Exploration
+
+## Interactive Guitar Fretboard for Music Theory Exploration
 
 ![image](https://github.com/user-attachments/assets/a525c10c-324b-4832-bb84-d2d52cb60875)
 
