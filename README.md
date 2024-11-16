@@ -12,7 +12,7 @@
 
 • MIDI integration allows users to hear the exact chord displayed on the screen.
 
-![image](https://github.com/user-attachments/assets/a525c10c-324b-4832-bb84-d2d52cb60875)
+
 ![image](https://github.com/user-attachments/assets/44774bcd-434e-4faf-bea0-37ddf467547b)
 
 
