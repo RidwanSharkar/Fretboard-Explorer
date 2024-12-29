@@ -12,9 +12,9 @@ Interactive react app designed for guitarists who want to explore music theory a
 ---
 
 ## Usage: 
-- Row 1 chord name buttons will display all the notes across the fretboard that the chord consists of. At this point, the user may specify chord qualities such as including 7th or 9th notes before pressing the 'find' button in the right-hand column.   
+- Row 1 chord name buttons will display all the notes across the fretboard that the chord consists of. At this point, the user may specify chord qualities such as including 7th or 9th notes before pressing the 'Find' button in the right-hand column.   
 
-- Row 2 buttons under the chord names will play a random chord of the key's scale degree to explore quick relationships, while the 'next', 'prev', and 'play' buttons on the right-hand column may be used to manually search a chord shape or voicing.
+- Row 2 buttons under the chord names will play a random chord of the key's scale degree to explore quick relationships, while the 'Next', 'Prev', and 'Play' buttons on the right-hand column may be used to manually search a chord shape or voicing.
 
 ![image](https://github.com/user-attachments/assets/44774bcd-434e-4faf-bea0-37ddf467547b)
 
