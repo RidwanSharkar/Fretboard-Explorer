@@ -1,20 +1,24 @@
 # Fretboard Explorer
-**Interactive Guitar Fretboard for Music Theory Exploration**
-
-![Fretboardx](https://github.com/user-attachments/assets/c3515850-8987-48e9-89f7-4e2d84e0c55b)
-
+Interactive react app designed for guitarists who want to explore music theory and chords along with their corresponding finger-positions across the fretboard.
 
 ## Overview:
 
-• Fretboard Explorer is designed for guitarists who want to explore music theory and chord progressions, and their corresponding finger-positions across the fretboard.
+- The program takes user input for a chord, key, or chord progression and computes all possible fingerings across the fretboard.
 
-• The program takes user input for a chord, key, or chord progression and computes all possible fingerings across the fretboard.
+- MIDI integration allows users to hear the exact chord displayed on the screen.
 
-• MIDI integration allows users to hear the exact chord displayed on the screen.
+![Fretboardx](https://github.com/user-attachments/assets/c3515850-8987-48e9-89f7-4e2d84e0c55b)
 
+---
+
+## Usage: 
+- Row 1 chord name buttons will display all the notes across the fretboard that the chord consists of. At this point, the user may specify chord qualities such as including 7th or 9th notes before pressing the 'find' button in the right-hand column.   
+
+- Row 2 buttons under the chord names will play a random chord of the key's scale degree to explore quick relationships, while the 'next', 'prev', and 'play' buttons on the right-hand column may be used to manually search a chord shape or voicing.
 
 ![image](https://github.com/user-attachments/assets/44774bcd-434e-4faf-bea0-37ddf467547b)
 
+---
 
 ## Design:
 
