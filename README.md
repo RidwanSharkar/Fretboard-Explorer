@@ -3,12 +3,13 @@
 
 **LINK: https://ridwansharkar.github.io/Fretboard-Explorer/**
 
+---
+
 ## 📜 Overview:
 
 **Fretboard Explorer** bridges the gap between music theory and practical guitar playing by algorithmically generating all physically playable chord fingerings for any chord in any key.
 
-![Fretboardx](https://github.com/user-attachments/assets/
-c3515850-8987-48e9-89f7-4e2d84e0c55b)
+![Fretboardx](https://github.com/user-attachments/assets/c3515850-8987-48e9-89f7-4e2d84e0c55b)
 
 ### Key Features:
 - **🧮 Intelligent Chord Discovery:** Select any chord from the Circle of Fifths and instantly visualize all notes across the 6-string, 16-fret board. Advanced algorithms compute hundreds of valid fingering positions based on real-world playability constraints (finger stretch, fret spacing, string accessibility).
