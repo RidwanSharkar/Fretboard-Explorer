@@ -1,6 +1,8 @@
 # Fretboard Explorer
 Interactive react app designed for guitarists who want to explore music theory and chords along with their corresponding finger-positions across the fretboard.
 
+**LINK: https://ridwansharkar.github.io/Fretboard-Explorer/**
+
 ## Overview:
 
 - The program takes user input for a chord, key, or chord progression and computes all possible fingerings across the fretboard.
