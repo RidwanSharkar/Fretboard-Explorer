@@ -3,8 +3,6 @@
 
 **LINK: https://ridwansharkar.github.io/Fretboard-Explorer/**
 
----
-
 ## 📜 Overview:
 
 **Fretboard Explorer** bridges the gap between music theory and practical guitar playing by algorithmically generating all physically playable chord fingerings for any chord in any key.
@@ -16,18 +14,18 @@
 
 - **🎹 Real-Time MIDI Synthesis:** Hear exactly what you see. Powered by Tone.js, each chord voicing plays through a realistic guitar synthesizer with pluck dynamics, reverb, compression, and delay effects that mimic authentic guitar tone.
 
-- **🎨 Music Theory Integration:** Built-in Circle of Fifths interface with 24 key signatures (12 major + 12 minor), dynamic color theming per key, intelligent 7th/9th chord logic, and scale degree relationships that help you understand harmonic progressions intuitively.
+- **🎼 Music Theory Integration:** Built-in Circle of Fifths interface with 24 key signatures (12 major + 12 minor), dynamic color theming per key, intelligent 7th/9th chord logic, and scale degree relationships that help you understand harmonic progressions intuitively.
 
 - **🪉 Advanced Chord Customization:** Toggle between standard triads, 7th chords, and 9th extensions. Navigate through multiple voicings with Next/Prev controls to find the perfect fingering for your playing style and song context.
 
-- **🎼 Educational Design:** Color-coded notes, interval labeling, and visual feedback make complex music theory concepts accessible for beginners while providing powerful tools for advanced musicians exploring jazz voicings and extended harmonies.
+- **🎨 Educational Design:** Color-coded notes, interval labeling, and visual feedback make complex music theory concepts accessible for beginners while providing powerful tools for advanced musicians exploring jazz voicings and extended harmonies.
 
 ### How It Works:
 The application uses a backtracking algorithm to recursively search through all possible note combinations on the fretboard, validating each potential chord shape against ergonomic constraints. When you select "C Major 7", the system calculates the notes (C-E-G-B), finds every instance across the fretboard, then generates all valid 4-note combinations that a human hand can actually play—typically yielding 200-400 unique voicings to explore.
 
 ---
 
-## Usage: 
+## Using Controls: 
 - Row 1 chord name buttons will display all the notes across the fretboard that the chord consists of. At this point, the user may specify chord qualities such as including 7th or 9th notes before pressing the 'Find' button in the right-hand column.   
 
 - Row 2 buttons under the chord names will play a random chord of the key's scale degree to explore quick relationships, while the 'Next', 'Prev', and 'Play' buttons on the right-hand column may be used to manually search a chord shape or voicing.
@@ -36,7 +34,7 @@ The application uses a backtracking algorithm to recursively search through all 
 
 ---
 
-## Design:
+## Basic Design:
 
 - An array of all of the notes in the western scale [A, A#, B, C, C#, D, D#, E, F, F#, G, G#] are iterated through to extract the correct notes from the appropriate chord formula. For instance, the C Major chord consists of 1-3-5, or C-E-G, and will be highlighted upon user selection.
 
