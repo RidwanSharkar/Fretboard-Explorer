@@ -246,7 +246,7 @@ interface Theme {
   const themes: Record<string, KeyThemes> = {
     A: {
         major: { backgroundColor: '#DB5A42', buttonColor: '#F48668', hoverColor: '#FFE0B2', fretboardColor: '#ffd7b5'  },
-        minor: { backgroundColor: '#e57a65', buttonColor: '#ffb7a9', hoverColor: '#f8cfb9', fretboardColor: '#ffdbd4'  }
+        minor: { backgroundColor: '#51282c', buttonColor: '#E7717D', hoverColor: '#fcab8e', fretboardColor: '#eacaca'  }
     },
     'A#': {
         major: { backgroundColor: '#51282c', buttonColor: '#E7717D', hoverColor: '#fcab8e', fretboardColor: '#eacaca'  },
@@ -264,7 +264,7 @@ interface Theme {
     
     D: {
         major: { backgroundColor: '#4D7EA8', buttonColor: '#77C3EC', hoverColor: '#8ec9fc', fretboardColor: '#b8ddf1'  },
-        minor: { backgroundColor: '#5899d1', buttonColor: '#66beff', hoverColor: '#b1e5f2', fretboardColor: '#b8ddf1'  }
+        minor: { backgroundColor: '#1B4F72', buttonColor: '#66beff', hoverColor: '#b1e5f2', fretboardColor: '#b8ddf1'  }
     },
     'D#': {
         major: { backgroundColor: '#282c34', buttonColor: '#4597ba', hoverColor: '#77C3EC', fretboardColor: '#b8ddf1'  },
@@ -318,6 +318,17 @@ interface Theme {
         resetToggles();
         setActiveNotes([]); 
         setActivePositions([]); 
+    };
+
+    const formatKeyForDisplay = (key: string): string => {
+        const sharpToFlatMap: { [key: string]: string } = {
+            'A#': 'B♭',
+            'C#': 'D♭',
+            'D#': 'E♭',
+            'F#': 'G♭',
+            'G#': 'A♭'
+        };
+        return sharpToFlatMap[key] || key;
     };
 
     const renderChordsForSelectedKey = () => {
@@ -821,7 +832,7 @@ interface Theme {
                     </button>
                 </div>
                 <div className="key-display">
-                    Chords in the Key of <span className="text-highlight">{selectedKey} {isMinorKey ? 'Minor' : 'Major'}</span>
+                    Chords in the Key of <span className="text-highlight">{formatKeyForDisplay(selectedKey)} {isMinorKey ? 'Minor' : 'Major'}</span>
                 </div>
 
 
