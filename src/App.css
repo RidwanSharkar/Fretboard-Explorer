@@ -435,13 +435,13 @@ button:disabled {
 
 /* Shift labels 13–17 right to align with fretboard after the octave separator (12th fret) */
 .fret-label-after-octave {
-  margin-left: 5px;
+  margin-left: 6px;
 }
 
 .fret-labels {
   display: flex; 
   justify-content: center; 
-  margin-left: -8px;
+  margin-left: -2px;
 }
 
 /*====================================================================================*/
