@@ -424,6 +424,11 @@ button:disabled {
   font-weight: bold;  
 }
 
+/* Shift labels 13–17 right to align with fretboard after the octave separator (12th fret) */
+.fret-label-after-octave {
+  margin-left: 5px;
+}
+
 .fret-labels {
   display: flex; 
   justify-content: center; 

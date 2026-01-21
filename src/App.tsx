@@ -17,7 +17,7 @@ const keys = ['C', 'G', 'D', 'A', 'E', 'B', 'F#', 'C#', 'G#', 'D#', 'A#', 'F'];
 
 const App: React.FC = () => 
 {
-    const [fretboard ] = useState<GuitarNote[][]>(() => constructFretboard(6, 16));
+    const [fretboard ] = useState<GuitarNote[][]>(() => constructFretboard(6, 18));
     const [activeNotes, setActiveNotes] = useState<{ note: string; interval: string }[]>([]);
     const [selectedKey, setSelectedKey] = useState('C');
     const [selectedChord, setSelectedChord] = useState<{ root: string; type: keyof typeof chordFormulas } | null>(null);
@@ -808,8 +808,8 @@ interface Theme {
 
 
                 <div className="fret-labels">
-                    {Array.from({ length: 16 }).map((_, index) => (  
-                        <div className="fret-label" key={index}>
+                    {Array.from({ length: 18 }).map((_, index) => (  
+                        <div className={`fret-label ${index === 13 ? 'fret-label-after-octave' : ''}`} key={index}>
                             {index === 0 ? '\u00A0' : index} 
                         </div>
                     ))}

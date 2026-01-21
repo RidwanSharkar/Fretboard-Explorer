@@ -38,11 +38,13 @@
   color: #fff; 
 }
 
-.fret.open-note {
+.fret.open-note,
+.fret.octave-separator {
   margin-right: 7px; 
 }
 
-.fret.open-note::after {
+.fret.open-note::after,
+.fret.octave-separator::after {
   content: '';
   position: absolute;
   top: 0;

@@ -52,7 +52,7 @@ const Fretboard: React.FC<FretboardProps> = ({
             return (
               <div
                 key={fretIndex}
-                className={`fret ${active ? 'active' : ''} ${fretIndex === 0 ? 'open-note' : ''}`}
+                className={`fret ${active ? 'active' : ''} ${fretIndex === 0 ? 'open-note' : ''} ${fretIndex === 12 ? 'octave-separator' : ''}`}
 
                 style={{ backgroundColor: active ? noteColors[note.name] : currentTheme.fretboardColor }} // FRET BACKGROUND
               >
