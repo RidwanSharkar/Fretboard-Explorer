@@ -30,7 +30,7 @@
 
 /* When the Circle of Fifths is visible, overlap the button on top of the image */
 .toggle-circle-button--overlap {
-  margin-top: -17px;
+  margin-top: -19px;
   position: relative;
   z-index: 20;
 }
