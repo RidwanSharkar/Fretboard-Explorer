@@ -33,11 +33,11 @@ const Fretboard: React.FC<FretboardProps> = ({
 
   const formatNoteName = (noteName: string): string => {
     const sharpToFlatMap: { [key: string]: string } = {
-      'C#': 'C#/D♭',
-      'D#': 'D#/E♭',
-      'F#': 'F#/G♭',
-      'G#': 'G#/A♭',
-      'A#': 'A#/B♭'
+      'C#': 'D♭',
+      'D#': 'E♭',
+      'F#': 'G♭',
+      'G#': 'A♭',
+      'A#': 'B♭'
     };
     return sharpToFlatMap[noteName] || noteName;
   };
@@ -74,7 +74,7 @@ const Fretboard: React.FC<FretboardProps> = ({
                   {formatNoteName(note.name)}
                 </span>
                 {active && (
-                  <span className="note-label" style={{ position: 'absolute', top: '2px', left: '2px', fontSize: '8px', color: '#fff', fontWeight: 'bold' }}>
+                  <span className="note-label" style={{ position: 'absolute', top: '2px', left: '2px', fontSize: '7px', color: '#fff', fontWeight: 'bold' }}>
                     {activeDetail ? activeDetail.interval : ''}
                   </span>
                 )}
