@@ -193,11 +193,22 @@ const App: React.FC = () =>
 
     const cycleChords = (direction: 'next' | 'prev') => {
         if (validChords.length > 0) {
-            const newIndex = direction === 'next' 
-                ? (currentChordIndex + 1) % validChords.length 
+            const newIndex = direction === 'next'
+                ? (currentChordIndex + 1) % validChords.length
                 : (currentChordIndex - 1 + validChords.length) % validChords.length;
             setCurrentChordIndex(newIndex);
             setActivePositions(validChords[newIndex]);
+        }
+    };
+
+    const changeChordType = (type: keyof typeof chordFormulas) => {
+        if (selectedChord) {
+            // Reset 7th and 9th toggles when switching to special chord types
+            if (type === 'dominant7' || type === 'sus2' || type === 'sus4') {
+                setIncludeSeventh(false);
+                setIncludeNinth(false);
+            }
+            setSelectedChord({ root: selectedChord.root, type });
         }
     }; 
 
@@ -328,10 +339,20 @@ interface Theme {
         setIncludeNinth(false);};
     const toggleSeventh = () => {
         setIncludeSeventh(prevSeventh => !prevSeventh);
-        setIncludeNinth(false);};
+        setIncludeNinth(false);
+        // Reset to basic chord type when using extensions
+        if (selectedChord && (selectedChord.type === 'dominant7' || selectedChord.type === 'sus2' || selectedChord.type === 'sus4')) {
+            setSelectedChord({ root: selectedChord.root, type: 'major' });
+        }
+    };
     const toggleNinth = () => {
         setIncludeNinth(prevNinth => !prevNinth);
-        setIncludeSeventh(false);};
+        setIncludeSeventh(false);
+        // Reset to basic chord type when using extensions
+        if (selectedChord && (selectedChord.type === 'dominant7' || selectedChord.type === 'sus2' || selectedChord.type === 'sus4')) {
+            setSelectedChord({ root: selectedChord.root, type: 'major' });
+        }
+    };
 
     useEffect(() => {
         if (selectedChord) {
@@ -798,10 +819,13 @@ interface Theme {
                     <div className="toggle-buttons">
                         <button onClick={toggleSeventh} className={`toggle-button ${includeSeventh ? 'active' : ''}`}>7th</button>
                         <button onClick={toggleNinth} className={`toggle-button ${includeNinth ? 'active' : ''}`}>9th</button>
+                        <button onClick={() => changeChordType('dominant7')} disabled={!selectedChord} className={`toggle-button ${selectedChord?.type === 'dominant7' ? 'active' : ''}`}>Dom7</button>
+                        <button onClick={() => changeChordType('sus2')} disabled={!selectedChord} className={`toggle-button ${selectedChord?.type === 'sus2' ? 'active' : ''}`}>Sus2</button>
+                        <button onClick={() => changeChordType('sus4')} disabled={!selectedChord} className={`toggle-button ${selectedChord?.type === 'sus4' ? 'active' : ''}`}>Sus4</button>
                         <button onClick={toggleHighlightAll} className={`toggle-button ${highlightAll ? 'active' : ''}`}>All</button>
                         <button onClick={findAndHighlightChord} disabled={!selectedChord} className="toggle-button">Find</button>
                         <button onClick={() => cycleChords('prev')} disabled={validChords.length <= 1} className="toggle-button">Prev</button>
-                        <button onClick={() => cycleChords('next')} disabled={validChords.length <= 1} className="toggle-button">Next</button> 
+                        <button onClick={() => cycleChords('next')} disabled={validChords.length <= 1} className="toggle-button">Next</button>
                         <button onClick={playChord} disabled={!isPlayable} className="toggle-button">Play</button>
                     </div>
                 </div>

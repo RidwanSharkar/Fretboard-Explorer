@@ -25,7 +25,7 @@
 .toggle-circle-button {
   display: flex;
   justify-content: center;
-  margin-bottom: 10px;
+  margin-bottom: 6px;
 }
 
 .toggle-circle-button .toggle-button {
@@ -371,7 +371,7 @@ font-family: 'Playfair Display', serif;
 .key-display {
   font-size: 20px;
   color: #FFF; /* Chords in Key Text */
-  margin: 10px 0;
+  margin: 6px 0;
   text-align: center;
 }
 
@@ -380,11 +380,13 @@ font-family: 'Playfair Display', serif;
 .toggle-buttons {
   display: flex;
   flex-direction: column;
-  padding-top: 32px;
+  padding-top: 10px;
+  margin-top: 0;
+  gap: 4px;
 }
 
 .toggle-buttons .toggle-button {
-  margin-bottom: 10px;
+  margin-bottom: 0;
 }
 
 button:disabled {
@@ -403,9 +405,7 @@ button:disabled {
   justify-content: center; 
   align-items: flex-start; 
   width: 100%; 
-  padding: 20px; 
-  padding-bottom: 0px;
-  padding-top: 10px;
+  padding: 12px 20px 0;
   overflow: auto;
 }
 
