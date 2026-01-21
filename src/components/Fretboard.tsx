@@ -31,6 +31,20 @@ const noteColors: { [key: string]: string } = {
 const Fretboard: React.FC<FretboardProps> = ({
   notes, activeNotes, highlightAll, activePositions, currentTheme }) => {
 
+  const formatNoteName = (noteName: string): string => {
+    const sharpToFlatMap: { [key: string]: string } = {
+      'C#': 'C#/D♭',
+      'D#': 'D#/E♭',
+      'F#': 'F#/G♭',
+      'G#': 'G#/A♭',
+      'A#': 'A#/B♭'
+    };
+    return sharpToFlatMap[noteName] || noteName;
+  };
+
+  const isSharpOrFlat = (noteName: string): boolean => {
+    return ['C#', 'D#', 'F#', 'G#', 'A#'].includes(noteName);
+  };
 
   const isActive = (string: number, fret: number) => {
     if (highlightAll) {
@@ -56,7 +70,9 @@ const Fretboard: React.FC<FretboardProps> = ({
 
                 style={{ backgroundColor: active ? noteColors[note.name] : currentTheme.fretboardColor }} // FRET BACKGROUND
               >
-                <span className="note">{note.name}</span>
+                <span className={`note ${isSharpOrFlat(note.name) ? 'note-sharp-flat' : ''}`}>
+                  {formatNoteName(note.name)}
+                </span>
                 {active && (
                   <span className="note-label" style={{ position: 'absolute', top: '2px', left: '2px', fontSize: '8px', color: '#fff', fontWeight: 'bold' }}>
                     {activeDetail ? activeDetail.interval : ''}

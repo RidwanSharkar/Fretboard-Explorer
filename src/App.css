@@ -397,7 +397,7 @@ font-family: 'Playfair Display', serif;
 }
 
 button:disabled {
-  background-color: #7c7c7c; /* disabled colored */
+  background-color: 7c7c7c; /* disabled colored */
   color: #cccccc;
   cursor: not-allowed; /* X hover cursor */
 }

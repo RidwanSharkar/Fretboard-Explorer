@@ -51,21 +51,39 @@ const App: React.FC = () =>
 
     /*=================================================================================================================*/
 
+    const getIntervalLabel = (interval: number): string => {
+        const intervalMap: { [key: number]: string } = {
+            0: 'R',
+            2: '2nd',
+            3: '♭3rd',
+            4: '3rd',
+            5: '4th',
+            6: '♭5th',
+            7: '5th',
+            8: '#5th',
+            9: '6th',
+            10: '♭7th',
+            11: '7th',
+            14: '9th'
+        };
+        return intervalMap[interval] || interval.toString();
+    };
+
     const updateChordNotes = useCallback((root: string, type: keyof typeof chordFormulas, includeSeventh: boolean, includeNinth: boolean) => {
         const rootIndex = notes.indexOf(root);
-        const baseIntervals = chordFormulas[type].map((interval, index) => ({
+        const baseIntervals = chordFormulas[type].map((interval) => ({
             note: notes[(rootIndex + interval) % 12],
-            interval: ['R', '3rd', '5th'][index % 3]}));
+            interval: getIntervalLabel(interval)}));
         const additionalIntervals = [];
         if (includeSeventh) {
             const flatSeventh = shouldUseFlatSeventh(root, type, includeSeventh, selectedKey, isMinorKey) ? 10 : 11;
             additionalIntervals.push({
                 note: notes[(rootIndex + flatSeventh) % 12],
-                interval: '7th'});}
+                interval: getIntervalLabel(flatSeventh)});}
         if (includeNinth) {
             additionalIntervals.push({
                 note: notes[(rootIndex + 14) % 12],
-                interval: '9th'});}
+                interval: getIntervalLabel(14)});}
         setActiveNotes([...baseIntervals, ...additionalIntervals]);
     }, [ selectedKey, isMinorKey ]);
     
@@ -826,7 +844,7 @@ interface Theme {
                         <button onClick={findAndHighlightChord} disabled={!selectedChord} className="toggle-button">Find</button>
                         <button onClick={() => cycleChords('prev')} disabled={validChords.length <= 1} className="toggle-button">Prev</button>
                         <button onClick={() => cycleChords('next')} disabled={validChords.length <= 1} className="toggle-button">Next</button>
-                        <button onClick={playChord} disabled={!isPlayable} className="toggle-button">Play</button>
+                        <button onClick={playChord} disabled={!isPlayable} className="toggle-button">▶︎</button>
                     </div>
                 </div>
 
