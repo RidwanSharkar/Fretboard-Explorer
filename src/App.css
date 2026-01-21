@@ -25,7 +25,7 @@
 .toggle-circle-button {
   display: flex;
   justify-content: center;
-  margin-bottom: 6px;
+  margin-bottom: 10px;
 }
 
 /* When the Circle of Fifths is visible, overlap the button on top of the image */
@@ -39,7 +39,7 @@
   background-color: var(--button-color);
   border: none;
   color: white;
-  padding: 2px 8px;
+  padding: 2px 6px;
   text-align: center;
   text-decoration: none;
   display: inline-block;
@@ -53,7 +53,6 @@
 .toggle-circle-button .toggle-button:hover {
   background-color: var(--hover-color);
 }
-
 
 .header-image {
   position: absolute;
@@ -388,13 +387,15 @@ font-family: 'Playfair Display', serif;
 .toggle-buttons {
   display: flex;
   flex-direction: column;
-  padding-top: 10px;
+  padding-top: 8px;
   margin-top: 0;
   gap: 4px;
 }
 
 .toggle-buttons .toggle-button {
   margin-bottom: 0;
+  padding: 3px 5px;
+  font-size: 12px;
 }
 
 button:disabled {

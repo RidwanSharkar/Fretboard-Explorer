@@ -23,6 +23,7 @@ const App: React.FC = () =>
     const [selectedChord, setSelectedChord] = useState<{ root: string; type: keyof typeof chordFormulas } | null>(null);
     const [includeSeventh, setIncludeSeventh] = useState(false);
     const [includeNinth, setIncludeNinth] = useState(false);
+    const [includeSixth, setIncludeSixth] = useState(false);
     const [isMinorKey, setIsMinorKey] = useState(false);
     const [currentChordIndex, setCurrentChordIndex] = useState(-1);
     const [validChords, setValidChords] = useState<ChordPosition[][]>([]);
@@ -69,7 +70,7 @@ const App: React.FC = () =>
         return intervalMap[interval] || interval.toString();
     };
 
-    const updateChordNotes = useCallback((root: string, type: keyof typeof chordFormulas, includeSeventh: boolean, includeNinth: boolean) => {
+    const updateChordNotes = useCallback((root: string, type: keyof typeof chordFormulas, includeSeventh: boolean, includeNinth: boolean, includeSixth: boolean) => {
         const rootIndex = notes.indexOf(root);
         const baseIntervals = chordFormulas[type].map((interval) => ({
             note: notes[(rootIndex + interval) % 12],
@@ -84,8 +85,12 @@ const App: React.FC = () =>
             additionalIntervals.push({
                 note: notes[(rootIndex + 14) % 12],
                 interval: getIntervalLabel(14)});}
+        if (includeSixth) {
+            additionalIntervals.push({
+                note: notes[(rootIndex + 9) % 12],
+                interval: getIntervalLabel(9)});}
         setActiveNotes([...baseIntervals, ...additionalIntervals]);
-    }, [ selectedKey, isMinorKey ]);
+    }, [ selectedKey, isMinorKey, includeSixth ]);
     
     /*=================================================================================================================*/
     
@@ -111,6 +116,8 @@ const App: React.FC = () =>
             noteNames.push(notes[(rootIndex + flatSeventh) % 12]);}
         if (includeNinth) {
             noteNames.push(notes[(rootIndex + 14) % 12]);}
+        if (includeSixth) {
+            noteNames.push(notes[(rootIndex + 9) % 12]);}
 
         if (validChords.length === 0 || currentChordIndex === -1) {
             const newValidChords = possibleChord(fretboard, noteNames);
@@ -137,7 +144,7 @@ const App: React.FC = () =>
 
     const playRandomChordFromKey = useCallback((root: string, type: keyof typeof chordFormulas) => {
         setSelectedChord({ root, type });
-        updateChordNotes(root, type, includeSeventh, includeNinth);
+        updateChordNotes(root, type, includeSeventh, includeNinth, includeSixth);
 
         const rootIndex = notes.indexOf(root);
         const noteNames = chordFormulas[type].map(interval => notes[(rootIndex + interval) % 12]);
@@ -146,6 +153,8 @@ const App: React.FC = () =>
             noteNames.push(notes[(rootIndex + flatSeventh) % 12]);}
         if (includeNinth) {
             noteNames.push(notes[(rootIndex + 14) % 12]);}
+        if (includeSixth) {
+            noteNames.push(notes[(rootIndex + 9) % 12]);}
 
         const newValidChords = possibleChord(fretboard, noteNames);
         if (newValidChords.length > 0) {
@@ -164,7 +173,7 @@ const App: React.FC = () =>
             console.log("No valid chords found.");
             setIsPlayable(false);}
             setActiveNotes([]);
-    }, [ fretboard, includeSeventh, includeNinth, selectedKey, isMinorKey, updateChordNotes ]);
+    }, [ fretboard, includeSeventh, includeNinth, includeSixth, selectedKey, isMinorKey, updateChordNotes ]);
 
 
     const handleChordSelection = useCallback((root: string, type: keyof typeof chordFormulas) => 
@@ -177,8 +186,8 @@ const App: React.FC = () =>
         setActiveNotes([]);
         setValidChords([]); // Clearing "Find"
         setCurrentChordIndex(-1); 
-        updateChordNotes(root, type, includeSeventh, includeNinth);
-    }, [updateChordNotes, includeSeventh, includeNinth]);  
+        updateChordNotes(root, type, includeSeventh, includeNinth, includeSixth);
+    }, [updateChordNotes, includeSeventh, includeNinth, includeSixth]);  
 
     /*=================================================================================================================*/
 
@@ -365,10 +374,12 @@ interface Theme {
 
     const resetToggles = () => {
         setIncludeSeventh(false);
-        setIncludeNinth(false);};
+        setIncludeNinth(false);
+        setIncludeSixth(false);};
     const toggleSeventh = () => {
         setIncludeSeventh(prevSeventh => !prevSeventh);
         setIncludeNinth(false);
+        setIncludeSixth(false);
         // Reset to basic chord type when using extensions
         if (selectedChord && (selectedChord.type === 'dominant7' || selectedChord.type === 'sus2' || selectedChord.type === 'sus4')) {
             setSelectedChord({ root: selectedChord.root, type: 'major' });
@@ -377,6 +388,16 @@ interface Theme {
     const toggleNinth = () => {
         setIncludeNinth(prevNinth => !prevNinth);
         setIncludeSeventh(false);
+        setIncludeSixth(false);
+        // Reset to basic chord type when using extensions
+        if (selectedChord && (selectedChord.type === 'dominant7' || selectedChord.type === 'sus2' || selectedChord.type === 'sus4')) {
+            setSelectedChord({ root: selectedChord.root, type: 'major' });
+        }
+    };
+    const toggleSixth = () => {
+        setIncludeSixth(prevSixth => !prevSixth);
+        setIncludeSeventh(false);
+        setIncludeNinth(false);
         // Reset to basic chord type when using extensions
         if (selectedChord && (selectedChord.type === 'dominant7' || selectedChord.type === 'sus2' || selectedChord.type === 'sus4')) {
             setSelectedChord({ root: selectedChord.root, type: 'major' });
@@ -385,8 +406,8 @@ interface Theme {
 
     useEffect(() => {
         if (selectedChord) {
-            updateChordNotes(selectedChord.root, selectedChord.type, includeSeventh, includeNinth);}
-    }, [selectedChord, includeSeventh, includeNinth, updateChordNotes]);
+            updateChordNotes(selectedChord.root, selectedChord.type, includeSeventh, includeNinth, includeSixth);}
+    }, [selectedChord, includeSeventh, includeNinth, includeSixth, updateChordNotes]);
     
     useEffect(() => {
         if (validChords.length > 0) {
@@ -828,7 +849,7 @@ interface Theme {
             <div className="fretboard-and-buttons-container">
                 <div className={`toggle-circle-button ${isCircleOfFifthsExpanded ? 'toggle-circle-button--overlap' : ''}`}>
                     <button onClick={toggleCircleOfFifths} className="toggle-button">
-                        {isCircleOfFifthsExpanded ? 'Hide' : 'Show'}
+                        {isCircleOfFifthsExpanded ? '▲' : '▼'}
                     </button>
                 </div>
                 <div className="key-display">
@@ -848,6 +869,7 @@ interface Theme {
                     <div className="toggle-buttons">
                         <button onClick={toggleSeventh} className={`toggle-button ${includeSeventh ? 'active' : ''}`}>7th</button>
                         <button onClick={toggleNinth} className={`toggle-button ${includeNinth ? 'active' : ''}`}>9th</button>
+                        <button onClick={toggleSixth} className={`toggle-button ${includeSixth ? 'active' : ''}`}>6th</button>
                         <button onClick={() => changeChordType('dominant7')} disabled={!selectedChord} className={`toggle-button ${selectedChord?.type === 'dominant7' ? 'active' : ''}`}>Dom7</button>
                         <button onClick={() => changeChordType('sus2')} disabled={!selectedChord} className={`toggle-button ${selectedChord?.type === 'sus2' ? 'active' : ''}`}>Sus2</button>
                         <button onClick={() => changeChordType('sus4')} disabled={!selectedChord} className={`toggle-button ${selectedChord?.type === 'sus4' ? 'active' : ''}`}>Sus4</button>
