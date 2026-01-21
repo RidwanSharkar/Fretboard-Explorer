@@ -797,7 +797,7 @@ interface Theme {
             )}
 
             <div className="fretboard-and-buttons-container">
-                <div className="toggle-circle-button">
+                <div className={`toggle-circle-button ${isCircleOfFifthsExpanded ? 'toggle-circle-button--overlap' : ''}`}>
                     <button onClick={toggleCircleOfFifths} className="toggle-button">
                         {isCircleOfFifthsExpanded ? 'Hide' : 'Show'}
                     </button>
