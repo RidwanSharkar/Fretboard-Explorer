@@ -2,13 +2,49 @@
 
 .header-container {
   position: relative;
-  width: 100%;  
-  height: 519px;  /*520?*/
+  width: 100%;
+  height: 467px;  /* 519 * 0.9: 10% scale-down */
   overflow: hidden;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+}
+
+/* Wrapper for 10% scale-down: image, highlights, and overlay stay aligned */
+.header-content-scaled {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 519px;
+  transform: scale(0.9);
+  transform-origin: top center;
+}
+
+.toggle-circle-button {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.toggle-circle-button .toggle-button {
+  background-color: var(--button-color);
+  border: none;
+  color: white;
+  padding: 2px 8px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 11px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  opacity: 0.5;
+}
+
+.toggle-circle-button .toggle-button:hover {
+  background-color: var(--hover-color);
 }
 
 

@@ -28,11 +28,13 @@ const App: React.FC = () =>
     const [validChords, setValidChords] = useState<ChordPosition[][]>([]);
     const [highlightAll, setHighlightAll] = useState(false);
     const toggleHighlightAll = () => {setHighlightAll(!highlightAll);};
+    const toggleCircleOfFifths = () => {setIsCircleOfFifthsExpanded(!isCircleOfFifthsExpanded);};
     const [activePositions, setActivePositions] = useState<ChordPosition[]>([]);
     const clearActivePositions = () => {setActivePositions([]);};
     const [isPlayable, setIsPlayable] = useState(false); // MIDI
 
     const [isProgressionPlaying, setIsProgressionPlaying] = useState(false); //depreciated
+    const [isCircleOfFifthsExpanded, setIsCircleOfFifthsExpanded] = useState(true);
 
 
 /*=====================================================================================================================*/
@@ -684,10 +686,12 @@ interface Theme {
         <div className="fixed-viewport">
         <div className="App">
           <header className="App-header">
-            <div className="header-container">
-              <img src={Header} alt="Header" className="header-image" />
-      
-              <div className="circle-container">
+            {isCircleOfFifthsExpanded && (
+              <div className="header-container">
+                <div className="header-content-scaled">
+                <img src={Header} alt="Header" className="header-image" />
+
+                <div className="circle-container">
                 {keys.map((key, index) => {
                 const angleMajor = index * (360 / keys.length) - 90;
                 const xMajor = radiusMajor * Math.cos(angleMajor * Math.PI / 180) * 0.695 - 0.25;
@@ -768,8 +772,15 @@ interface Theme {
                 <div className="circle-text"></div>
                 </div>
                 </div>
+              </div>
+            )}
 
             <div className="fretboard-and-buttons-container">
+                <div className="toggle-circle-button">
+                    <button onClick={toggleCircleOfFifths} className="toggle-button">
+                        {isCircleOfFifthsExpanded ? 'Hide' : 'Show'}
+                    </button>
+                </div>
                 <div className="key-display">
                     Chords in the Key of <span className="text-highlight">{selectedKey} {isMinorKey ? 'Minor' : 'Major'}</span>
                 </div>
