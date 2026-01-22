@@ -309,7 +309,7 @@ body {
   font-family: 'Times New Roman', serif;
   -webkit-text-stroke: 0px var(--hover-color);  
   text-shadow: 4px 4px 10px rgba(0, 0, 0, 1);
-  opacity: 0.8;
+  opacity: 1.0;
   
   border: none;
   background-image: radial-gradient(circle, rgba(0, 0, 0, 0.25) 30%, rgba(0, 0, 0, 0.001) 60%, transparent 100%);
@@ -328,6 +328,14 @@ body {
   font-size: 20px;
   width: 24px;
   height: 24px;
+}
+
+/* Hide degree-label when hovering over the key button */
+.circle-button1:hover .degree-label,
+.circle-button2:hover .degree-label {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
 }
 
 /*   
