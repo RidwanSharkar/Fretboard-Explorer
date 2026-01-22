@@ -267,10 +267,11 @@ const App: React.FC = () =>
 
     const changeChordType = (type: keyof typeof chordFormulas) => {
         if (selectedChord) {
-            // Reset 7th and 9th toggles when switching to special chord types
+            // Reset extension toggles when switching to special chord types
             if (type === 'dominant7' || type === 'sus2' || type === 'sus4') {
                 setIncludeSeventh(false);
                 setIncludeNinth(false);
+                setIncludeSixth(false);
             }
             setSelectedChord({ root: selectedChord.root, type });
         }
