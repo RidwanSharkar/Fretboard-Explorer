@@ -36,7 +36,7 @@
 }
 
 .toggle-circle-button .toggle-button {
-  background-color: var(--button-color);
+  background: linear-gradient(135deg, var(--button-color) 0%, color-mix(in srgb, var(--button-color) 85%, black) 100%);
   border: none;
   color: white;
   padding: 2px 6px;
@@ -44,14 +44,20 @@
   text-decoration: none;
   display: inline-block;
   font-size: 11px;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   opacity: 0.75;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
 }
 
 .toggle-circle-button .toggle-button:hover {
-  background-color: var(--hover-color);
+  background: linear-gradient(135deg, var(--hover-color) 0%, color-mix(in srgb, var(--hover-color) 85%, black) 100%);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25), 0 1px 4px rgba(0, 0, 0, 0.15);
+  transform: translateY(-1px);
+  opacity: 1;
 }
 
 .header-image {
@@ -231,11 +237,14 @@ button {
   margin: 0px 2px;
   font-size: 14px;
   cursor: pointer;
-  background-color: var(--button-color);              /*CHORD BUTTON COLOR*/
+  background: linear-gradient(135deg, var(--button-color) 0%, color-mix(in srgb, var(--button-color) 85%, black) 100%);
   color: white;
   border: none;
-  border-radius: 5px;
-  transition: background-color 0.3s ease;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
 }
 
 button img {
@@ -251,7 +260,7 @@ button img {
   transform: translateX(-50%);
   background-color: rgba(0, 0, 0, 0.8);
   color: white;
-  padding: 4px 8px;
+  padding: 3px 8px;
   border-radius: 4px;
   font-size: 12px;
   white-space: nowrap;
@@ -271,24 +280,37 @@ button img {
   z-index: 1000;
 }
 .play-buttons button {
-  background-color: var(--button-color);              /* PLAY BUTTON COLOR */
+  background: linear-gradient(135deg, var(--button-color) 0%, color-mix(in srgb, var(--button-color) 85%, black) 100%);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 button:hover {
-  background-color: var(--hover-color);             /* HOVER CHORD  background-color: var(--hover-color);*/
+  background: linear-gradient(135deg, var(--hover-color) 0%, color-mix(in srgb, var(--hover-color) 85%, black) 100%);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3), 0 2px 8px rgba(0, 0, 0, 0.2);
+  transform: translateY(-1px);
+}
+
+button:active {
+  transform: translateY(0px);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2), 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 .play-buttons button:hover {
-  background-color: var(--hover-color);              /* HOVER PLAY */
+  background: linear-gradient(135deg, var(--hover-color) 0%, color-mix(in srgb, var(--hover-color) 85%, black) 100%);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3), 0 2px 8px rgba(0, 0, 0, 0.2);
+  transform: translateY(-1px);
 }
-.selected {
-  background-color: var(--hover-color);      /* Selection Color */
+button.selected,
+.button.selected {
+  background: linear-gradient(135deg, var(--hover-color) 0%, color-mix(in srgb, var(--hover-color) 85%, black) 100%);
   color: white;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.3), 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 .text-highlight {
   color: var(--hover-color);                 /* Selected Key Mimic */
 }
 .toggle-button.active {
-  background-color: var(--hover-color);      /* TOGGLE */
-  color: white; 
+  background: linear-gradient(135deg, var(--hover-color) 0%, color-mix(in srgb, var(--hover-color) 85%, black) 100%);
+  color: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25), 0 1px 4px rgba(0, 0, 0, 0.15);
 }
 
 
@@ -320,11 +342,16 @@ button:hover {
   position: absolute;
   width: clamp(50px, 50px, 50px); 
   height: clamp(50px, 50px, 50px); 
-  background-color: rgba(0, 0, 0, 0); 
+  background-color: rgba(0, 0, 0, 0) !important; 
+  background: none !important;
   border: none;
-  border-radius: 50%;
+  border-radius: 50% !important;
   transform: translate(-50%, -50%);
   pointer-events: all;
+  padding: 0 !important;
+  margin: 0 !important;
+  box-shadow: none !important;
+  overflow: visible !important;
 }
 
 
@@ -376,18 +403,22 @@ body {
     inset var(--hover-color),  
     var(--hover-color),     
     var(--hover-color),    
-    var(--hover-color);   
-  
+    var(--hover-color) !important;   
+  background-color: rgba(0, 0, 0, 0) !important;
+  background: none !important;
   transition: all 0.3s ease;
   outline: 3.25px solid var(--hover-color);
   outline-offset: 1px;
+  transform: translate(-50%, -50%) !important;
 }
 
 
 .circle-button1:hover, .circle-button2:hover {
-  box-shadow: 0 0 20px 5px var(--hover-color);  
-  background-color: rgba(255, 215, 0, 0.25); 
+  box-shadow: 0 0 20px 5px var(--hover-color) !important;  
+  background-color: rgba(255, 215, 0, 0.25) !important;
+  background: rgba(255, 215, 0, 0.25) !important;
   transition: all 0.25s ease; 
+  transform: translate(-50%, -50%) !important;
 }
 
 
@@ -527,7 +558,7 @@ font-family: 'Playfair Display', serif;
 .toggle-buttons {
   display: flex;
   flex-direction: column;
-  padding-top: 36px;
+  padding-top: 38px;
   margin-top: 0;
   gap: 6px;
 }
@@ -554,7 +585,7 @@ button:disabled {
   justify-content: center; 
   align-items: flex-start; 
   width: 100%; 
-  padding: 16px 24px 0;
+  padding: 15px 24px 0;
   overflow: auto;
 }
 
@@ -630,7 +661,7 @@ button:disabled {
 .right-controls {
   display: flex;
   flex-direction: row;
-  gap: 2px;
+  gap: 3px;
   align-items: center;
   padding-top: 12px;
 }
@@ -644,26 +675,33 @@ button:disabled {
 }
 
 .arrow-button {
-  background-color: var(--button-color);
+  background: linear-gradient(135deg, var(--button-color) 0%, color-mix(in srgb, var(--button-color) 85%, black) 100%);
   border: 0px solid var(--button-color);
-  border-radius: 4px;
-  box-shadow: 0 0 10px var(--button-color), 0 0 20px var(--button-color);
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.1), 0 0 10px var(--button-color), 0 0 20px var(--button-color);
   padding: 0px 0px;
-  width: 18px;
+  width: 20px;
   height: 20px;
-  min-width: 14px;
-  max-width: 18px;
+  min-width: 20px;
+  max-width: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s ease;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
 }
 
 .arrow-button:hover:not(:disabled) {
-  background-color: var(--hover-color);
+  background: linear-gradient(135deg, var(--hover-color) 0%, color-mix(in srgb, var(--hover-color) 85%, black) 100%);
   border-color: var(--hover-color);
-  box-shadow: 0 0 15px var(--hover-color), 0 0 30px var(--hover-color);
-  transform: scale(1.05);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3), 0 2px 8px rgba(0, 0, 0, 0.2), 0 0 15px var(--hover-color), 0 0 30px var(--hover-color);
+  transform: translateY(-1px) scale(1.02);
+}
+
+.arrow-button:active:not(:disabled) {
+  transform: translateY(0px) scale(1.01);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2), 0 1px 2px rgba(0, 0, 0, 0.1), 0 0 10px var(--hover-color), 0 0 20px var(--hover-color);
 }
 
 @keyframes spin {

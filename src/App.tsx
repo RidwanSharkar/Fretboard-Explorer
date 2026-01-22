@@ -296,7 +296,7 @@ interface Theme {
   const themes: Record<string, KeyThemes> = {
     A: {
         major: { backgroundColor: '#DB5A42', buttonColor: '#F48668', hoverColor: '#FFE0B2', fretboardColor: '#ffd7b5'  },
-        minor: { backgroundColor: '#51282c', buttonColor: '#E7717D', hoverColor: '#fcab8e', fretboardColor: '#eacaca'  }
+        minor: { backgroundColor: '#451414', buttonColor: '#D85E5E', hoverColor: '#fcab8e', fretboardColor: '#E6B0AA'  }
     },
     'A#': {
         major: { backgroundColor: '#51282c', buttonColor: '#E7717D', hoverColor: '#fcab8e', fretboardColor: '#eacaca'  },
@@ -304,7 +304,7 @@ interface Theme {
     },
 
     C: {
-        major: { backgroundColor: '#2e6938', buttonColor: '#54bc6c', hoverColor: '#8efc9e', fretboardColor: '#bffbb7'  },
+        major: { backgroundColor: '#14451A', buttonColor: '#3A9F52', hoverColor: '#8efc9e', fretboardColor: '#B7E6AA'  },
         minor: { backgroundColor: '#51282c', buttonColor: '#E7717D', hoverColor: '#8efc9e', fretboardColor: '#eacaca'  }
     },
     'C#': {
@@ -336,7 +336,7 @@ interface Theme {
     },
 
     G: {
-        major: { backgroundColor: '#441414', buttonColor: '#e64949', hoverColor: '#fc8e8e', fretboardColor: '#E6B0AA'  },
+        major: { backgroundColor: '#441414', buttonColor: '#BF2B26', hoverColor: '#fc8e8e', fretboardColor: '#E6B0AA'  },
         minor: { backgroundColor: '#441414', buttonColor: '#e64949', hoverColor: '#fca7a7', fretboardColor: '#eacaca'  }
       },
     'G#': {
