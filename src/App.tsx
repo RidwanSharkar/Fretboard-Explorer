@@ -509,7 +509,7 @@ interface Theme {
             }
         } else {
             setRecognizedChord(null);
-            setActiveNotes([]);
+            // Don't clear activeNotes here - they might be set by chord selection
         }
     }, [selectedFrets, isFretSelectionMode, fretboard, getIntervalLabel]);
 
@@ -973,10 +973,25 @@ interface Theme {
                 </div>
 
 
-                {/* Chord Buttons */}
-                <div className = "row">
-                    {renderChordsForSelectedKey()}
-                    {renderRandomChordButtons()}
+                {/* Chord Buttons and Navigation Controls */}
+                <div className="chord-and-navigation-container">
+                    <div className="left-controls">
+                        <button onClick={toggleFretSelectionMode} className={`toggle-button ${isFretSelectionMode ? 'active' : ''}`}>Select</button>
+                        <button onClick={playChord} disabled={!isPlayable && !(isFretSelectionMode && selectedFrets.length > 0)} className="toggle-button">▶︎</button>
+                    </div>
+                    <div className="chord-section">
+                        <div className="row">
+                            {renderChordsForSelectedKey()}
+                            {renderRandomChordButtons()}
+                        </div>
+                    </div>
+                    <div className="right-controls">
+                        <button onClick={findAndHighlightChord} disabled={!selectedChord} className="toggle-button">Find</button>
+                        <div className="arrow-controls">
+                            <button onClick={() => cycleChords('prev')} disabled={validChords.length <= 1} className="toggle-button">←</button>
+                            <button onClick={() => cycleChords('next')} disabled={validChords.length <= 1} className="toggle-button">→</button>
+                        </div>
+                    </div>
                 </div>
 
                 {/* Fretboard and toggles container */}
@@ -990,11 +1005,6 @@ interface Theme {
                         <button onClick={() => changeChordType('sus2')} disabled={!selectedChord} className={`toggle-button ${selectedChord?.type === 'sus2' ? 'active' : ''}`}>Sus2</button>
                         <button onClick={() => changeChordType('sus4')} disabled={!selectedChord} className={`toggle-button ${selectedChord?.type === 'sus4' ? 'active' : ''}`}>Sus4</button>
                         <button onClick={toggleHighlightAll} className={`toggle-button ${highlightAll ? 'active' : ''}`}>All</button>
-                        <button onClick={toggleFretSelectionMode} className={`toggle-button ${isFretSelectionMode ? 'active' : ''}`}>Select</button>
-                        <button onClick={findAndHighlightChord} disabled={!selectedChord} className="toggle-button">Find</button>
-                        <button onClick={() => cycleChords('prev')} disabled={validChords.length <= 1} className="toggle-button">Prev</button>
-                        <button onClick={() => cycleChords('next')} disabled={validChords.length <= 1} className="toggle-button">Next</button>
-                        <button onClick={playChord} disabled={!isPlayable && !(isFretSelectionMode && selectedFrets.length > 0)} className="toggle-button">▶︎</button>
                     </div>
                 </div>
 

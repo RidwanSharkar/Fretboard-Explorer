@@ -395,14 +395,14 @@ font-family: 'Playfair Display', serif;
 .toggle-buttons {
   display: flex;
   flex-direction: column;
-  padding-top: 1px;
+  padding-top: 36px;
   margin-top: 0;
-  gap: 3px;
+  gap: 6px;
 }
 
 .toggle-buttons .toggle-button {
   margin-bottom: 0;
-  padding: 3px 5px;
+  padding: 5px 5px;
   font-size: 12px;
 }
 
@@ -473,8 +473,48 @@ button:disabled {
   width: 100%;
 }
 
+.chord-and-navigation-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
+  margin-bottom: 0px;
+  gap: 40px;
+}
+
+.left-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.chord-section {
+  flex: 0 1 auto;
+  text-align: center;
+}
+
+.right-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  align-items: center;
+}
+
+.arrow-controls {
+  display: flex;
+  gap: 3px;
+}
+
+.left-controls .toggle-button,
+.right-controls .toggle-button,
+.arrow-controls .toggle-button {
+  margin-bottom: 0;
+  padding: 3px 5px;
+  font-size: 12px;
+}
+
 .chord-buttons button, .play-buttons button {
-  width: 80px;
+  width: 70px;
   margin: 0 5px;
   text-align: center;
   font-weight: bold;
