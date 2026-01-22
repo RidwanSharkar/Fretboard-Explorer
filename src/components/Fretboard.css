@@ -23,8 +23,8 @@
 }
 
 .fret {
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -35,7 +35,12 @@
   position: relative;
   cursor: pointer;
   transition: background-color 0.3s;
-  color: #fff; 
+  color: #fff;
+  box-sizing: border-box;
+}
+
+.fret:hover {
+  opacity: 0.8;
 }
 
 .fret.open-note,
@@ -56,6 +61,11 @@
 
 .fret:last-child {
   margin-right: 0;
+}
+
+.fret.selected {
+  border: 2px solid #fff !important;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
 }
 
 .note {

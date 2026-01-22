@@ -387,9 +387,9 @@ font-family: 'Playfair Display', serif;
 .toggle-buttons {
   display: flex;
   flex-direction: column;
-  padding-top: 8px;
+  padding-top: 1px;
   margin-top: 0;
-  gap: 4px;
+  gap: 3px;
 }
 
 .toggle-buttons .toggle-button {

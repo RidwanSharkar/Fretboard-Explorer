@@ -4,7 +4,7 @@ import './App.css';
 import Fretboard from './components/Fretboard';
 import { constructFretboard, possibleChord } from './utils/fretboardUtils';
 import { GuitarNote, ChordPosition } from './models/Note';
-import { chordFormulas } from './utils/chordUtils';
+import { chordFormulas, recognizeChord } from './utils/chordUtils';
 import { playNote } from './utils/midiUtils';
 import Header from '/CircleOfFifths.jpg';
 
@@ -30,12 +30,31 @@ const App: React.FC = () =>
     const [highlightAll, setHighlightAll] = useState(false);
     const toggleHighlightAll = () => {setHighlightAll(!highlightAll);};
     const toggleCircleOfFifths = () => {setIsCircleOfFifthsExpanded(!isCircleOfFifthsExpanded);};
+    const toggleFretSelectionMode = () => {
+        const newMode = !isFretSelectionMode;
+        setIsFretSelectionMode(newMode);
+        if (newMode) {
+            // Entering fret selection mode - clear chord selections
+            setIsPlayable(false);
+            clearActivePositions();
+            setSelectedChord(null);
+            setActiveNotes([]);
+            setValidChords([]);
+            setCurrentChordIndex(-1);
+        } else {
+            // Exiting fret selection mode
+            setSelectedFrets([]);
+        }
+    };
     const [activePositions, setActivePositions] = useState<ChordPosition[]>([]);
     const clearActivePositions = () => {setActivePositions([]);};
     const [isPlayable, setIsPlayable] = useState(false); // MIDI
 
     const [isProgressionPlaying, setIsProgressionPlaying] = useState(false); //depreciated
     const [isCircleOfFifthsExpanded, setIsCircleOfFifthsExpanded] = useState(true);
+    const [isFretSelectionMode, setIsFretSelectionMode] = useState(false);
+    const [selectedFrets, setSelectedFrets] = useState<ChordPosition[]>([]);
+    const [recognizedChord, setRecognizedChord] = useState<{ root: string; type: keyof typeof chordFormulas } | null>(null);
 
 
 /*=====================================================================================================================*/
@@ -95,11 +114,12 @@ const App: React.FC = () =>
     /*=================================================================================================================*/
     
     const playChord = useCallback(() => {
-        const sortedPositions = activePositions.sort((a, b) => a.string === b.string ? a.fret - b.fret : b.string - a.string);
+        const positionsToPlay = isFretSelectionMode ? selectedFrets : activePositions;
+        const sortedPositions = positionsToPlay.sort((a, b) => a.string === b.string ? a.fret - b.fret : b.string - a.string);
         sortedPositions.forEach((pos, index) => {
             const staggerTime = index * 0.05; // stagger time for strumming
             playNote(pos.string, pos.fret, fretboard, '8n', staggerTime);});
-    }, [activePositions, fretboard]);
+    }, [activePositions, selectedFrets, isFretSelectionMode, fretboard]);
     
     /*=================================================================================================================*/
     
@@ -176,7 +196,7 @@ const App: React.FC = () =>
     }, [ fretboard, includeSeventh, includeNinth, includeSixth, selectedKey, isMinorKey, updateChordNotes ]);
 
 
-    const handleChordSelection = useCallback((root: string, type: keyof typeof chordFormulas) => 
+    const handleChordSelection = useCallback((root: string, type: keyof typeof chordFormulas) =>
     {
         //resetToggles();
         setIsPlayable(false);
@@ -185,9 +205,26 @@ const App: React.FC = () =>
         setSelectedChord({ root, type });
         setActiveNotes([]);
         setValidChords([]); // Clearing "Find"
-        setCurrentChordIndex(-1); 
+        setCurrentChordIndex(-1);
+        setIsFretSelectionMode(false); // Exit fret selection mode when selecting chords
+        setSelectedFrets([]); // Clear selected frets
         updateChordNotes(root, type, includeSeventh, includeNinth, includeSixth);
-    }, [updateChordNotes, includeSeventh, includeNinth, includeSixth]);  
+    }, [updateChordNotes, includeSeventh, includeNinth, includeSixth]);
+
+    const handleFretClick = useCallback((string: number, fret: number) => {
+        setSelectedFrets(prevSelected => {
+            const existingIndex = prevSelected.findIndex(pos => pos.string === string && pos.fret === fret);
+            if (existingIndex >= 0) {
+                // Remove the fret if already selected
+                return prevSelected.filter((_, index) => index !== existingIndex);
+            } else {
+                // Add the fret if not selected, but only if we haven't reached the limit and there's no fret on the same string
+                if (prevSelected.length >= 6) return prevSelected;
+                if (prevSelected.some(pos => pos.string === string)) return prevSelected;
+                return [...prevSelected, { string, fret }];
+            }
+        });
+    }, []);
 
     /*=================================================================================================================*/
 
@@ -340,6 +377,26 @@ interface Theme {
         return sharpToFlatMap[key] || key;
     };
 
+    const formatChordTypeForDisplay = (type: keyof typeof chordFormulas): string => {
+        const typeMap: { [key: string]: string } = {
+            'major': '',
+            'minor': 'm',
+            'dominant7': '7',
+            'diminished': 'dim',
+            'diminished7': 'dim7',
+            'major7': 'maj7',
+            'minor7': 'm7',
+            'minor9': 'm9',
+            'minoradd9': 'm(add9)',
+            'major9': 'maj9',
+            'majoradd9': '(add9)',
+            'augmented': 'aug',
+            'sus2': 'sus2',
+            'sus4': 'sus4'
+        };
+        return typeMap[type] || type;
+    };
+
     const renderChordsForSelectedKey = () => {
         const rootIndex = notes.indexOf(selectedKey);
         const pattern = isMinorKey ? [0, 2, 3, 5, 7, 8, 10] : [0, 2, 4, 5, 7, 9, 11];
@@ -426,6 +483,16 @@ interface Theme {
             playChord();
         }
     }, [activePositions, isPlayable, playChord ]);
+
+    // Update recognized chord when selected frets change
+    useEffect(() => {
+        if (isFretSelectionMode && selectedFrets.length > 0) {
+            const chord = recognizeChord(selectedFrets, fretboard);
+            setRecognizedChord(chord);
+        } else {
+            setRecognizedChord(null);
+        }
+    }, [selectedFrets, isFretSelectionMode, fretboard]);
     
 
     /*=================================================================================================================*/
@@ -853,7 +920,15 @@ interface Theme {
                     </button>
                 </div>
                 <div className="key-display">
-                    Chords in the Key of <span className="text-highlight">{formatKeyForDisplay(selectedKey)} {isMinorKey ? 'Minor' : 'Major'}</span>
+                    {isFretSelectionMode ? (
+                        recognizedChord ? (
+                            <>Selected Chord: <span className="text-highlight">{formatKeyForDisplay(recognizedChord.root)}{formatChordTypeForDisplay(recognizedChord.type)}</span></>
+                        ) : (
+                            <>Select frets to recognize a chord</>
+                        )
+                    ) : (
+                        <>Chords in the Key of <span className="text-highlight">{formatKeyForDisplay(selectedKey)} {isMinorKey ? 'Minor' : 'Major'}</span></>
+                    )}
                 </div>
 
 
@@ -865,7 +940,7 @@ interface Theme {
 
                 {/* Fretboard and toggles container */}
                 <div className="fretboard-container">
-                    <Fretboard notes={fretboard} activeNotes={activeNotes} highlightAll={highlightAll} activePositions={activePositions} clearActivePositions={clearActivePositions} isProgressionPlaying={isProgressionPlaying}  currentTheme={currentTheme}  />
+                    <Fretboard notes={fretboard} activeNotes={activeNotes} highlightAll={highlightAll} activePositions={activePositions} clearActivePositions={clearActivePositions} isProgressionPlaying={isProgressionPlaying}  currentTheme={currentTheme} isFretSelectionMode={isFretSelectionMode} selectedFrets={selectedFrets} onFretClick={handleFretClick} />
                     <div className="toggle-buttons">
                         <button onClick={toggleSeventh} className={`toggle-button ${includeSeventh ? 'active' : ''}`}>7th</button>
                         <button onClick={toggleNinth} className={`toggle-button ${includeNinth ? 'active' : ''}`}>9th</button>
@@ -874,10 +949,11 @@ interface Theme {
                         <button onClick={() => changeChordType('sus2')} disabled={!selectedChord} className={`toggle-button ${selectedChord?.type === 'sus2' ? 'active' : ''}`}>Sus2</button>
                         <button onClick={() => changeChordType('sus4')} disabled={!selectedChord} className={`toggle-button ${selectedChord?.type === 'sus4' ? 'active' : ''}`}>Sus4</button>
                         <button onClick={toggleHighlightAll} className={`toggle-button ${highlightAll ? 'active' : ''}`}>All</button>
+                        <button onClick={toggleFretSelectionMode} className={`toggle-button ${isFretSelectionMode ? 'active' : ''}`}>Select</button>
                         <button onClick={findAndHighlightChord} disabled={!selectedChord} className="toggle-button">Find</button>
                         <button onClick={() => cycleChords('prev')} disabled={validChords.length <= 1} className="toggle-button">Prev</button>
                         <button onClick={() => cycleChords('next')} disabled={validChords.length <= 1} className="toggle-button">Next</button>
-                        <button onClick={playChord} disabled={!isPlayable} className="toggle-button">▶︎</button>
+                        <button onClick={playChord} disabled={!isPlayable && !(isFretSelectionMode && selectedFrets.length > 0)} className="toggle-button">▶︎</button>
                     </div>
                 </div>
 
