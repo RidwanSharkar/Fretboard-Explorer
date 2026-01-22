@@ -490,10 +490,28 @@ interface Theme {
         if (isFretSelectionMode && selectedFrets.length > 0) {
             const chord = recognizeChord(selectedFrets, fretboard);
             setRecognizedChord(chord);
+
+            // Calculate intervals for recognized chord
+            if (chord) {
+                const rootIndex = notes.indexOf(chord.root);
+                const activeNotesWithIntervals = selectedFrets.map(pos => {
+                    const noteName = fretboard[pos.string][pos.fret].name;
+                    const noteIndex = notes.indexOf(noteName);
+                    const interval = (noteIndex - rootIndex + 12) % 12;
+                    return {
+                        note: noteName,
+                        interval: getIntervalLabel(interval)
+                    };
+                });
+                setActiveNotes(activeNotesWithIntervals);
+            } else {
+                setActiveNotes([]);
+            }
         } else {
             setRecognizedChord(null);
+            setActiveNotes([]);
         }
-    }, [selectedFrets, isFretSelectionMode, fretboard]);
+    }, [selectedFrets, isFretSelectionMode, fretboard, getIntervalLabel]);
 
     // Calculate and set scale factor for Circle of Fifths based on viewport height
     useEffect(() => {

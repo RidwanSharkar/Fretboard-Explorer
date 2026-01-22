@@ -386,7 +386,7 @@ font-family: 'Playfair Display', serif;
 .key-display {
   font-size: 20px;
   color: #FFF; /* Chords in Key Text */
-  margin: 6px 0;
+  margin: 8px 0;
   text-align: center;
 }
 
@@ -422,7 +422,7 @@ button:disabled {
   justify-content: center; 
   align-items: flex-start; 
   width: 100%; 
-  padding: 12px 20px 0;
+  padding: 16px 20px 0;
   overflow: auto;
 }
 
