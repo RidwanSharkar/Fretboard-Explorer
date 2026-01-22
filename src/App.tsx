@@ -494,6 +494,28 @@ interface Theme {
             setRecognizedChord(null);
         }
     }, [selectedFrets, isFretSelectionMode, fretboard]);
+
+    // Calculate and set scale factor for Circle of Fifths based on viewport height
+    useEffect(() => {
+        const calculateScale = () => {
+            const baseHeight = 519; // Original scaled height in pixels
+            const targetHeightVh = 47.5; // top half of screen
+            const viewportHeight = window.innerHeight;
+            const targetHeightPx = (targetHeightVh / 100) * viewportHeight;
+            const scale = targetHeightPx / baseHeight;
+            
+            // Set CSS variable on document root
+            document.documentElement.style.setProperty('--header-scale', scale.toString());
+        };
+
+        // Calculate on mount and resize
+        calculateScale();
+        window.addEventListener('resize', calculateScale);
+        
+        return () => {
+            window.removeEventListener('resize', calculateScale);
+        };
+    }, []);
     
 
     /*=================================================================================================================*/

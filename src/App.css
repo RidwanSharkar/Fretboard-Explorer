@@ -3,7 +3,7 @@
 .header-container {
   position: relative;
   width: 100%;
-  height: 467px;  /* 519 * 0.9: 10% scale-down */
+  height: 47.5vh;  /* top half of screen */
   overflow: hidden;
   margin: 0 auto;
   display: flex;
@@ -11,14 +11,14 @@
   justify-content: flex-start;
 }
 
-/* Wrapper for 10% scale-down: image, highlights, and overlay stay aligned */
+/* Wrapper that scales all content proportionally based on viewport height */
 .header-content-scaled {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
-  height: 519px;
-  transform: scale(0.9);
+  height: 519px; /* Base height - will be scaled by CSS variable */
+  transform: scale(var(--header-scale, 1));
   transform-origin: top center;
 }
 
