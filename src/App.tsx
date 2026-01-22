@@ -4,7 +4,7 @@ import './App.css';
 import Fretboard from './components/Fretboard';
 import { constructFretboard, possibleChord } from './utils/fretboardUtils';
 import { GuitarNote, ChordPosition } from './models/Note';
-import { chordFormulas, recognizeChord } from './utils/chordUtils';
+import { chordFormulas, recognizeChord, RecognitionResult } from './utils/chordUtils';
 import { playNote } from './utils/midiUtils';
 import Header from '/CircleOfFifths.jpg';
 import SelectIcon from '/select.svg';
@@ -57,7 +57,7 @@ const App: React.FC = () =>
     const [isCircleOfFifthsExpanded, setIsCircleOfFifthsExpanded] = useState(true);
     const [isFretSelectionMode, setIsFretSelectionMode] = useState(false);
     const [selectedFrets, setSelectedFrets] = useState<ChordPosition[]>([]);
-    const [recognizedChord, setRecognizedChord] = useState<{ root: string; type: keyof typeof chordFormulas } | null>(null);
+    const [recognizedChord, setRecognizedChord] = useState<RecognitionResult>(null);
 
 
 /*=====================================================================================================================*/
@@ -396,9 +396,39 @@ interface Theme {
             'majoradd9': '(add9)',
             'augmented': 'aug',
             'sus2': 'sus2',
-            'sus4': 'sus4'
+            'sus4': 'sus4',
+            'major6': '6',
+            'minor6': 'm6',
+            'maj7no5': 'maj7(no5)',
+            '7no5': '7(no5)',
+            '6no3': '6(no3)',
+            '7sus4': '7sus4',
+            '13': '13',
+            '13no5': '13(no5)',
+            '13no11': '13(no11)'
         };
         return typeMap[type] || type;
+    };
+
+    const formatIntervalForDisplay = (interval: string): string => {
+        const intervalMap: { [key: string]: string } = {
+            'perfect unison': 'Unison',
+            'minor 2nd': 'm2',
+            'major 2nd': 'M2',
+            'minor 3rd': 'm3',
+            'major 3rd': 'M3',
+            'perfect 4th': 'P4',
+            'tritone': 'Tritone',
+            'perfect 5th': 'P5',
+            'minor 6th': 'm6',
+            'major 6th': 'M6',
+            'minor 7th': 'm7',
+            'major 7th': 'M7',
+            'octave': 'Octave',
+            'minor 9th': 'm9',
+            'major 9th': 'M9'
+        };
+        return intervalMap[interval] || interval;
     };
 
     const renderChordsForSelectedKey = () => {
@@ -966,9 +996,13 @@ interface Theme {
                 <div className="key-display">
                     {isFretSelectionMode ? (
                         recognizedChord ? (
-                            <>Selected Chord: <span className="text-highlight">{formatKeyForDisplay(recognizedChord.root)}{formatChordTypeForDisplay(recognizedChord.type)}</span></>
+                            'type' in recognizedChord ? (
+                                <>Selected Chord: <span className="text-highlight">{formatKeyForDisplay(recognizedChord.root)}{formatChordTypeForDisplay(recognizedChord.type)}</span></>
+                            ) : (
+                                <>Selected Interval: <span className="text-highlight">{formatKeyForDisplay(recognizedChord.root)} - {formatIntervalForDisplay(recognizedChord.interval)}</span></>
+                            )
                         ) : (
-                            <>Select frets to recognize a chord</>
+                            <>Select frets to recognize a chord or interval</>
                         )
                     ) : (
                         <>Chords in the Key of <span className="text-highlight">{formatKeyForDisplay(selectedKey)} {isMinorKey ? 'Minor' : 'Major'}</span></>
