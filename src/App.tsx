@@ -7,6 +7,9 @@ import { GuitarNote, ChordPosition } from './models/Note';
 import { chordFormulas, recognizeChord } from './utils/chordUtils';
 import { playNote } from './utils/midiUtils';
 import Header from '/CircleOfFifths.jpg';
+import SelectIcon from '/select.svg';
+import FindIcon from '/find.svg';
+import ArrowLeftIcon from '/arrow-left.svg';
 
 
 /*=====================================================================================================================*/
@@ -976,8 +979,10 @@ interface Theme {
                 {/* Chord Buttons and Navigation Controls */}
                 <div className="chord-and-navigation-container">
                     <div className="left-controls">
-                        <button onClick={toggleFretSelectionMode} className={`toggle-button ${isFretSelectionMode ? 'active' : ''}`}>Select</button>
-                        <button onClick={playChord} disabled={!isPlayable && !(isFretSelectionMode && selectedFrets.length > 0)} className="toggle-button">▶︎</button>
+                        <button onClick={toggleFretSelectionMode} className={`toggle-button ${isFretSelectionMode ? 'active' : ''}`} title="Select">
+                            <img src={SelectIcon} alt="Select" className={isFretSelectionMode ? 'spinning-select-icon' : ''} style={{ width: '20px', height: '20px' }} />
+                        </button>
+                        <button onClick={playChord} disabled={!isPlayable && !(isFretSelectionMode && selectedFrets.length > 0)} className="toggle-button arrow-button" style={{ fontSize: '13px' }}>▶︎</button>
                     </div>
                     <div className="chord-section">
                         <div className="row">
@@ -986,11 +991,12 @@ interface Theme {
                         </div>
                     </div>
                     <div className="right-controls">
-                        <button onClick={findAndHighlightChord} disabled={!selectedChord} className="toggle-button">Find</button>
-                        <div className="arrow-controls">
-                            <button onClick={() => cycleChords('prev')} disabled={validChords.length <= 1} className="toggle-button">←</button>
-                            <button onClick={() => cycleChords('next')} disabled={validChords.length <= 1} className="toggle-button">→</button>
-                        </div>
+                        <button onClick={() => cycleChords('prev')} disabled={validChords.length <= 1} className="toggle-button arrow-button">
+                            <img src={ArrowLeftIcon} alt="Previous" style={{ width: '18px', height: '18px' }} />
+                        </button>
+                        <button onClick={findAndHighlightChord} disabled={!selectedChord} className="toggle-button" title="Find">
+                            <img src={FindIcon} alt="Find" className={selectedChord ? 'spinning-find-icon' : ''} style={{ width: '20px', height: '20px' }} />
+                        </button>
                     </div>
                 </div>
 
@@ -1001,9 +1007,9 @@ interface Theme {
                         <button onClick={toggleSeventh} className={`toggle-button ${includeSeventh ? 'active' : ''}`}>7th</button>
                         <button onClick={toggleNinth} className={`toggle-button ${includeNinth ? 'active' : ''}`}>9th</button>
                         <button onClick={toggleSixth} className={`toggle-button ${includeSixth ? 'active' : ''}`}>6th</button>
-                        <button onClick={() => changeChordType('dominant7')} disabled={!selectedChord} className={`toggle-button ${selectedChord?.type === 'dominant7' ? 'active' : ''}`}>Dom7</button>
-                        <button onClick={() => changeChordType('sus2')} disabled={!selectedChord} className={`toggle-button ${selectedChord?.type === 'sus2' ? 'active' : ''}`}>Sus2</button>
-                        <button onClick={() => changeChordType('sus4')} disabled={!selectedChord} className={`toggle-button ${selectedChord?.type === 'sus4' ? 'active' : ''}`}>Sus4</button>
+                        <button onClick={() => changeChordType('dominant7')} disabled={!selectedChord} className={`toggle-button ${selectedChord?.type === 'dominant7' ? 'active' : ''}`}>dom7</button>
+                        <button onClick={() => changeChordType('sus2')} disabled={!selectedChord} className={`toggle-button ${selectedChord?.type === 'sus2' ? 'active' : ''}`}>sus2</button>
+                        <button onClick={() => changeChordType('sus4')} disabled={!selectedChord} className={`toggle-button ${selectedChord?.type === 'sus4' ? 'active' : ''}`}>sus4</button>
                         <button onClick={toggleHighlightAll} className={`toggle-button ${highlightAll ? 'active' : ''}`}>All</button>
                     </div>
                 </div>

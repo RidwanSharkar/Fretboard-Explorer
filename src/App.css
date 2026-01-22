@@ -128,7 +128,7 @@ body {
 }
 
 button {
-  padding: 3px 6px;
+  padding: 4px 6px;
   margin: 0px 2px;
   font-size: 14px;
   cursor: pointer;
@@ -137,6 +137,39 @@ button {
   border: none;
   border-radius: 5px;
   transition: background-color 0.3s ease;
+}
+
+button img {
+  pointer-events: none;
+}
+
+/* Custom tooltip styles for icon buttons */
+.toggle-button[title]:hover::after {
+  content: attr(title);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  z-index: 1000;
+  margin-bottom: 5px;
+}
+
+.toggle-button[title]:hover::before {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: rgba(0, 0, 0, 0.8);
+  margin-bottom: 0px;
+  z-index: 1000;
 }
 .play-buttons button {
   background-color: var(--button-color);              /* PLAY BUTTON COLOR */
@@ -422,13 +455,13 @@ button:disabled {
   justify-content: center; 
   align-items: flex-start; 
   width: 100%; 
-  padding: 16px 20px 0;
+  padding: 16px 24px 0;
   overflow: auto;
 }
 
 .fretboard {
   position: relative; 
-  padding: 10px;
+  padding: 8px;
   padding-bottom: 0px;
   padding-top: 0px;
 }
@@ -449,7 +482,7 @@ button:disabled {
 .fret-labels {
   display: flex; 
   justify-content: center; 
-  margin-left: -2px;
+  margin-left: 8px;
 }
 
 /*====================================================================================*/
@@ -479,13 +512,15 @@ button:disabled {
   align-items: flex-start;
   width: 100%;
   margin-bottom: 0px;
-  gap: 40px;
+  gap: 18px;
 }
 
 .left-controls {
   display: flex;
-  flex-direction: column;
-  gap: 3px;
+  flex-direction: row;
+  gap: 0px;
+  align-items: center;
+  padding-top: 0px;
 }
 
 .chord-section {
@@ -495,27 +530,77 @@ button:disabled {
 
 .right-controls {
   display: flex;
-  flex-direction: column;
-  gap: 3px;
+  flex-direction: row;
+  gap: 0px;
   align-items: center;
-}
-
-.arrow-controls {
-  display: flex;
-  gap: 3px;
+  padding-top: 0px;
 }
 
 .left-controls .toggle-button,
-.right-controls .toggle-button,
-.arrow-controls .toggle-button {
+.right-controls .toggle-button {
   margin-bottom: 0;
-  padding: 3px 5px;
+  padding: 6px 8px;
   font-size: 12px;
+  position: relative;
 }
 
+.arrow-button {
+  background-color: var(--button-color);
+  border: 0px solid var(--button-color);
+  border-radius: 4px;
+  box-shadow: 0 0 10px var(--button-color), 0 0 20px var(--button-color);
+  padding: 0px 0px;
+  width: 18px;
+  height: 20px;
+  min-width: 14px;
+  max-width: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.arrow-button:hover:not(:disabled) {
+  background-color: var(--hover-color);
+  border-color: var(--hover-color);
+  box-shadow: 0 0 15px var(--hover-color), 0 0 30px var(--hover-color);
+  transform: scale(1.05);
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spinning-find-icon {
+  animation: spin 10s linear infinite;
+}
+
+.spinning-select-icon {
+  animation: spin 10s linear infinite;
+}
+
+.arrow-button:disabled {
+  background-color: #7c7c7c;
+  border-color: #999;
+  box-shadow: none;
+  opacity: 0.5;
+}
+
+.arrow-button img {
+  filter: brightness(0) invert(1);
+  display: block;
+  margin: 0 auto;
+}
+
+
 .chord-buttons button, .play-buttons button {
-  width: 70px;
-  margin: 0 5px;
+  width: 80px;
+  margin: 0 4px;
   text-align: center;
   font-weight: bold;
 }
