@@ -1002,7 +1002,7 @@ interface Theme {
                                 <>Selected Interval: <span className="text-highlight">{formatKeyForDisplay(recognizedChord.root)} - {formatIntervalForDisplay(recognizedChord.interval)}</span></>
                             )
                         ) : (
-                            <>Select frets to recognize a chord or interval</>
+                            <>Select frets to identify a chord</>
                         )
                     ) : (
                         <>Chords in the Key of <span className="text-highlight">{formatKeyForDisplay(selectedKey)} {isMinorKey ? 'Minor' : 'Major'}</span></>
