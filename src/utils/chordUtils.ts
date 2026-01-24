@@ -26,7 +26,7 @@ const normalizeNote = (note: string): string => {
   return flatToSharp[note] || note;
 };
 
-export type ChordType = 'major' | 'minor' | 'dominant7' | 'diminished' | 'diminished7' | 'major7' | 'minor7' | 'minor9' | 'minoradd9' | 'major9' | 'majoradd9' | 'augmented' | 'sus2' | 'sus4' | 'major6' | 'minor6' | 'maj7no5' | '7no5' | '6no3' | '7sus4' | '13' | '13no5' | '13no11';
+export type ChordType = 'major' | 'minor' | 'dominant7' | 'diminished' | 'diminished7' | 'major7' | 'minor7' | 'minor9' | 'minoradd9' | 'major9' | 'majoradd9' | 'augmented' | 'sus2' | 'sus4' | 'major6' | 'minor6' | 'maj7no5' | '7no5' | 'minor7no5' | '6no3' | '7sus4' | 'dominant13' | '13no5' | 'maj9no5' | 'minor9no5' | '6/9no5' | '9no5' | 'dominant9' | 'm7b5' | 'minor11' | 'minor11no3' | 'minor11no5' | 'dominant11' | 'dominant11no5' | '9sus4' | 'maj9#11' | 'maj9#11no5' | 'maj7#11' | 'maj7#11no5' | 'maj13' | 'maj13no5' | 'minor13' | 'minor13no5' | '7b9' | '7b9no5' | '7#9' | '7#9no5' | '7b5' | '7#5';
 
 export interface ChordPosition {
   string: number;
@@ -48,12 +48,22 @@ export const chordFormulas: { [key in ChordType]: number[] } = {
   major7: [0, 4, 7, 11],
   minor7: [0, 3, 7, 10],
   dominant7: [0, 4, 7, 10],
+  '7b9': [0, 4, 7, 10, 1], // dominant 7 flat 9 (1-3-5-♭7-♭9) ALTERED DOMINANT
+  '7b9no5': [0, 4, 10, 1], // dominant 7 flat 9 without perfect 5th (1-3-♭7-♭9) ALTERED DOMINANT
+  '7#9': [0, 4, 7, 10, 3], // dominant 7 sharp 9 (1-3-5-♭7-♯9) ALTERED DOMINANT
+  '7#9no5': [0, 4, 10, 3], // dominant 7 sharp 9 without perfect 5th (1-3-♭7-♯9) ALTERED DOMINANT
+  '7b5': [0, 4, 6, 10], // dominant 7 flat 5 (1-3-♭5-♭7) ALTERED DOMINANT
+  '7#5': [0, 4, 8, 10], // dominant 7 sharp 5 (1-3-♯5-♭7) ALTERED DOMINANT
   diminished7: [0, 3, 6, 9],
+  m7b5: [0, 3, 6, 10], // half-diminished (1-♭3-♭5-♭7)
 
   minor9: [0, 3, 7, 10, 2],
   minoradd9: [0, 3, 7, 2],
   major9: [0, 4, 7, 11, 2],
   majoradd9: [0, 4, 7, 2],
+  dominant9: [0, 4, 7, 10, 2], // dominant 9th (1-3-5-♭7-9)
+  dominant11: [0, 4, 7, 10, 2, 5], // dominant 11th (1-3-5-♭7-9-11)
+  dominant11no5: [0, 4, 10, 2, 5], // dominant 11th without perfect 5th (1-3-♭7-9-11)
 
   sus2: [0, 2, 7],
   sus4: [0, 5, 7],
@@ -65,13 +75,29 @@ export const chordFormulas: { [key in ChordType]: number[] } = {
   // Chords with omitted notes
   maj7no5: [0, 4, 11], // major7 without perfect 5th
   '7no5': [0, 4, 10],   // dominant7 without perfect 5th
+  minor7no5: [0, 3, 10], // minor7 without perfect 5th (1-♭3-♭7)
   '6no3': [0, 7, 9],    // 6th without major 3rd
+  maj9no5: [0, 4, 11, 2], // major9 without perfect 5th (1-3-7-9)
+  minor9no5: [0, 3, 10, 2], // minor9 without perfect 5th (1-♭3-♭7-9)
+  '9no5': [0, 4, 10, 2], // dominant9 without perfect 5th
+  '6/9no5': [0, 4, 9, 2], // 6/9 without perfect 5th
 
   // Extended chords
   '7sus4': [0, 5, 7, 10], // dominant suspended 4th
-  '13': [0, 4, 7, 10, 2, 5, 9],     // dominant 13th
-  '13no5': [0, 4, 10, 2, 5, 9],     // 13th without 5th
-  '13no11': [0, 4, 7, 10, 2, 9]     // 13th without 11th
+  '9sus4': [0, 5, 7, 10, 2], // dominant 9 suspended 4th (1-4-5-♭7-9)
+  dominant13: [0, 4, 7, 10, 2, 9],     // dominant 13th (1-3-5-♭7-9-13, 11th typically omitted)
+  '13no5': [0, 4, 10, 2, 9],     // 13th without 5th
+  minor11: [0, 3, 7, 10, 2, 5],     // minor 11th (1-♭3-5-♭7-9-11)
+  minor11no3: [0, 7, 10, 2, 5],     // minor 11th without 3rd (1-5-♭7-9-11)
+  minor11no5: [0, 3, 10, 2, 5],     // minor 11th without perfect 5th (1-♭3-♭7-9-11)
+  'maj9#11': [0, 4, 7, 11, 2, 6], // major 9 sharp 11 (1-3-5-7-9-♯11) ALTERED LYDIAN
+  'maj9#11no5': [0, 4, 11, 2, 6], // major 9 sharp 11 without perfect 5th (1-3-7-9-♯11) ALTERED LYDIAN
+  'maj7#11': [0, 4, 7, 11, 6], // major 7 sharp 11 (1-3-5-7-♯11) ALTERED LYDIAN
+  'maj7#11no5': [0, 4, 11, 6], // major 7 sharp 11 without perfect 5th (1-3-7-♯11) ALTERED LYDIAN
+  maj13: [0, 4, 7, 11, 2, 9], // major 13th (1-3-5-7-9-13)
+  maj13no5: [0, 4, 11, 2, 9], // major 13th without perfect 5th (1-3-7-9-13)
+  minor13: [0, 3, 7, 10, 2, 9], // minor 13th (1-♭3-5-♭7-9-13)
+  minor13no5: [0, 3, 10, 2, 9] // minor 13th without perfect 5th (1-♭3-♭7-9-13)
 };
 
 // Interval names by semitone distance
