@@ -26,7 +26,7 @@ const normalizeNote = (note: string): string => {
   return flatToSharp[note] || note;
 };
 
-export type ChordType = 'major' | 'minor' | 'dominant7' | 'diminished' | 'diminished7' | 'major7' | 'minor7' | 'minor9' | 'minoradd9' | 'major9' | 'majoradd9' | 'augmented' | 'sus2' | 'sus4' | 'major6' | 'minor6' | 'maj7no5' | '7no5' | 'minor7no5' | '6no3' | '7sus4' | 'dominant13' | '13no5' | 'maj9no5' | 'minor9no5' | '6/9no5' | '9no5' | 'dominant9' | 'm7b5' | 'minor11' | 'minor11no3' | 'minor11no5' | 'dominant11' | 'dominant11no5' | '9sus4' | 'maj9#11' | 'maj9#11no5' | 'maj7#11' | 'maj7#11no5' | 'maj13' | 'maj13no5' | 'minor13' | 'minor13no5' | '7b9' | '7b9no5' | '7#9' | '7#9no5' | '7b5' | '7#5';
+export type ChordType = 'major' | 'minor' | 'dominant7' | 'diminished' | 'diminished7' | 'major7' | 'minor7' | 'minor9' | 'minoradd9' | 'minoradd11' | 'major9' | 'majoradd9' | 'majoradd11' | 'augmented' | 'sus2' | 'sus4' | 'major6' | 'minor6' | 'maj7no5' | '7no5' | 'minor7no5' | '6no3' | '7sus4' | 'dominant13' | '13no5' | 'maj9no5' | 'minor9no5' | '6/9no5' | '9no5' | 'dominant9' | 'm7b5' | 'minor11' | 'minor11no3' | 'minor11no5' | 'dominant11' | 'dominant11no5' | '9sus4' | 'maj9#11' | 'maj9#11no5' | 'maj7#11' | 'maj7#11no5' | 'maj13' | 'maj13no5' | 'minor13' | 'minor13no5' | '7b9' | '7b9no5' | '7#9' | '7#9no5' | '7b5' | '7#5';
 
 export interface ChordPosition {
   string: number;
@@ -59,8 +59,10 @@ export const chordFormulas: { [key in ChordType]: number[] } = {
 
   minor9: [0, 3, 7, 10, 2],
   minoradd9: [0, 3, 7, 2],
+  minoradd11: [0, 3, 7, 5], // minor add 11 (1-♭3-5-11, no 7th)
   major9: [0, 4, 7, 11, 2],
   majoradd9: [0, 4, 7, 2],
+  majoradd11: [0, 4, 7, 5], // major add 11 (1-3-5-11, no 7th)
   dominant9: [0, 4, 7, 10, 2], // dominant 9th (1-3-5-♭7-9)
   dominant11: [0, 4, 7, 10, 2, 5], // dominant 11th (1-3-5-♭7-9-11)
   dominant11no5: [0, 4, 10, 2, 5], // dominant 11th without perfect 5th (1-3-♭7-9-11)
