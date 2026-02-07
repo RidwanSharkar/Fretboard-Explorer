@@ -128,17 +128,22 @@ const App: React.FC = () =>
                 note: notes[(rootIndex + 9) % 12],
                 interval: getIntervalLabel(9)});}
         setActiveNotes([...baseIntervals, ...additionalIntervals]);
-    }, [ selectedKey, isMinorKey, includeSixth ]);
+    }, [ selectedKey, isMinorKey, includeSeventh, includeNinth, includeSixth ]);
     
     /*=================================================================================================================*/
     
     const playChord = useCallback(() => {
+        // Prevent playback during progression generation/playback
+        if (isProgressionPlaying) return;
+        
         const positionsToPlay = isFretSelectionMode ? selectedFrets : activePositions;
+        if (positionsToPlay.length === 0) return; // Don't play empty chords
+        
         const sortedPositions = positionsToPlay.sort((a, b) => a.string === b.string ? a.fret - b.fret : b.string - a.string);
         sortedPositions.forEach((pos, index) => {
             const staggerTime = index * 0.05; // stagger time for strumming
             playNote(pos.string, pos.fret, fretboard, '8n', staggerTime);});
-    }, [activePositions, selectedFrets, isFretSelectionMode, fretboard]);
+    }, [activePositions, selectedFrets, isFretSelectionMode, fretboard, isProgressionPlaying]);
     
     /*=================================================================================================================*/
     
@@ -304,6 +309,14 @@ const App: React.FC = () =>
                 setIncludeNinth(false);
                 setIncludeSixth(false);
             }
+            setIsPlayable(false); // Prevent auto-playback on type change
+            setValidChords([]); // Clear valid chords to prevent conflicts
+            setCurrentChordIndex(-1);
+            // Clear progression when chord type changes
+            setGeneratedProgression(null);
+            setProgressionPositions([]);
+            setCurrentProgressionChordIndex(-1);
+            setIsProgressionPlaying(false);
             setSelectedChord({ root: selectedChord.root, type });
         }
     };
@@ -315,9 +328,12 @@ const App: React.FC = () =>
     const handleReplayProgression = useCallback(async () => {
         if (!generatedProgression || progressionPositions.length === 0 || isProgressionPlaying) return;
 
+        // Capture frets to save before clearing (use savedSelectedFrets if selectedFrets was already cleared)
+        const fretsToSave = selectedFrets.length > 0 ? [...selectedFrets] : [...savedSelectedFrets];
+        
         // Save and temporarily hide selected frets if in fret selection mode
-        if (isFretSelectionMode && selectedFrets.length > 0) {
-            setSavedSelectedFrets(selectedFrets);
+        if (isFretSelectionMode && fretsToSave.length > 0) {
+            setSavedSelectedFrets(fretsToSave);
             setSelectedFrets([]); // Hide selected frets during playback
         }
 
@@ -340,10 +356,9 @@ const App: React.FC = () =>
                 setIsProgressionPlaying(false);
                 setCurrentProgressionChordIndex(-1);
                 // Restore original positions based on mode
-                if (isFretSelectionMode && savedSelectedFrets.length > 0) {
-                    setSelectedFrets(savedSelectedFrets); // Restore selected frets
-                    setActivePositions(savedSelectedFrets);
-                    setSavedSelectedFrets([]);
+                if (isFretSelectionMode && fretsToSave.length > 0) {
+                    setSelectedFrets(fretsToSave); // Restore selected frets
+                    setActivePositions(fretsToSave);
                 } else if (validChords.length > 0 && currentChordIndex >= 0) {
                     setActivePositions(validChords[currentChordIndex]);
                 }
@@ -359,15 +374,20 @@ const App: React.FC = () =>
         let currentVoicing: ChordPosition[] | undefined;
         let preferredPosition: number | undefined;
 
+        // In fret selection mode, use savedSelectedFrets if selectedFrets was cleared by a previous progression
+        const effectiveFrets = (isFretSelectionMode && selectedFrets.length === 0 && savedSelectedFrets.length > 0) 
+            ? savedSelectedFrets 
+            : selectedFrets;
+
         if (isFretSelectionMode && recognizedChord && 'type' in recognizedChord) {
             // Use recognized chord from fret selection mode
             chordInfo = {
                 root: recognizedChord.root,
                 type: recognizedChord.type as any
             };
-            currentVoicing = selectedFrets;
-            if (selectedFrets.length > 0) {
-                preferredPosition = getChordCenterPosition(selectedFrets);
+            currentVoicing = effectiveFrets;
+            if (effectiveFrets.length > 0) {
+                preferredPosition = getChordCenterPosition(effectiveFrets);
             }
         } else if (selectedChord) {
             // Use chord from chord buttons
@@ -375,10 +395,12 @@ const App: React.FC = () =>
                 root: selectedChord.root,
                 type: selectedChord.type as any
             };
-            // Use current active position if available
-            if (activePositions.length > 0) {
-                currentVoicing = activePositions;
-                preferredPosition = getChordCenterPosition(activePositions);
+            // Only use a voicing anchor if the user explicitly found a chord via "Find"
+            // (validChords is populated). Don't use activePositions here because it may be
+            // a stale leftover from the last progression's final chord.
+            if (validChords.length > 0 && currentChordIndex >= 0) {
+                currentVoicing = validChords[currentChordIndex];
+                preferredPosition = getChordCenterPosition(currentVoicing);
             }
         }
 
@@ -388,6 +410,14 @@ const App: React.FC = () =>
         const progression = generateUniversalProgression(chordInfo);
         setGeneratedProgression(progression);
 
+        // Determine if we should use 4-note chords throughout the progression
+        // This happens when:
+        // 1. Any toggle buttons are active (7th, 9th, 6th)
+        // 2. The user manually selected 4 or more frets in fret selection mode
+        // 3. The chord type itself already includes extensions (major7, dominant7, etc.)
+        const shouldUseExtendedVoicings = includeSeventh || includeNinth || includeSixth || 
+            (isFretSelectionMode && effectiveFrets.length >= 4);
+
         // Find ALL possible voicings for each chord in the progression
         const allProgressionVoicings: ChordPosition[][][] = [];
         
@@ -396,6 +426,28 @@ const App: React.FC = () =>
             const noteNames = chordFormulas[chord.type as keyof typeof chordFormulas].map(
                 interval => notes[(rootIndex + interval) % 12]
             );
+            
+            // Add extensions if any toggles are active OR if user manually selected 4+ frets
+            if (shouldUseExtendedVoicings) {
+                // If includeSeventh is explicitly toggled, use that
+                // Otherwise, if we're inferring extensions from fret count, add a 7th
+                if (includeSeventh || (isFretSelectionMode && effectiveFrets.length >= 4 && !includeNinth && !includeSixth)) {
+                    const flatSeventh = shouldUseFlatSeventh(chord.root, chord.type as keyof typeof chordFormulas, true, selectedKey, isMinorKey) ? 10 : 11;
+                    if (!noteNames.includes(notes[(rootIndex + flatSeventh) % 12])) {
+                        noteNames.push(notes[(rootIndex + flatSeventh) % 12]);
+                    }
+                }
+                if (includeNinth) {
+                    if (!noteNames.includes(notes[(rootIndex + 14) % 12])) {
+                        noteNames.push(notes[(rootIndex + 14) % 12]);
+                    }
+                }
+                if (includeSixth) {
+                    if (!noteNames.includes(notes[(rootIndex + 9) % 12])) {
+                        noteNames.push(notes[(rootIndex + 9) % 12]);
+                    }
+                }
+            }
             
             const validChordPositions = possibleChord(fretboard, noteNames);
             
@@ -460,9 +512,12 @@ const App: React.FC = () =>
         const allProgressionPositions = optimizedVoicings.map(voicing => [voicing]);
         setProgressionPositions(allProgressionPositions);
 
+        // Save selected frets for later restoration (capture before clearing)
+        const fretsToSave = effectiveFrets.length > 0 ? [...effectiveFrets] : [];
+        
         // Save and temporarily hide selected frets if in fret selection mode
-        if (isFretSelectionMode && selectedFrets.length > 0) {
-            setSavedSelectedFrets(selectedFrets);
+        if (isFretSelectionMode && fretsToSave.length > 0) {
+            setSavedSelectedFrets(fretsToSave);
             setSelectedFrets([]); // Hide selected frets during playback
         }
 
@@ -485,16 +540,15 @@ const App: React.FC = () =>
                 setIsProgressionPlaying(false);
                 setCurrentProgressionChordIndex(-1);
                 // Restore original positions based on mode
-                if (isFretSelectionMode && savedSelectedFrets.length > 0) {
-                    setSelectedFrets(savedSelectedFrets); // Restore selected frets
-                    setActivePositions(savedSelectedFrets);
-                    setSavedSelectedFrets([]);
+                if (isFretSelectionMode && fretsToSave.length > 0) {
+                    setSelectedFrets(fretsToSave); // Restore selected frets
+                    setActivePositions(fretsToSave);
                 } else if (validChords.length > 0 && currentChordIndex >= 0) {
                     setActivePositions(validChords[currentChordIndex]);
                 }
             }
         );
-    }, [selectedChord, recognizedChord, isFretSelectionMode, selectedFrets, activePositions, fretboard, isProgressionPlaying, validChords, currentChordIndex, savedSelectedFrets]); 
+    }, [selectedChord, recognizedChord, isFretSelectionMode, selectedFrets, activePositions, fretboard, isProgressionPlaying, validChords, currentChordIndex, savedSelectedFrets, includeSeventh, includeNinth, includeSixth, selectedKey, isMinorKey]); 
 
 /* MOVE ---- #eac37e ----FRAME COLOR*/
 interface Theme {
@@ -721,6 +775,14 @@ interface Theme {
         setIncludeSeventh(prevSeventh => !prevSeventh);
         setIncludeNinth(false);
         setIncludeSixth(false);
+        setIsPlayable(false); // Prevent auto-playback on toggle
+        setValidChords([]); // Clear valid chords to prevent conflicts
+        setCurrentChordIndex(-1);
+        // Clear progression when toggle changes
+        setGeneratedProgression(null);
+        setProgressionPositions([]);
+        setCurrentProgressionChordIndex(-1);
+        setIsProgressionPlaying(false);
         // Reset to basic chord type when using extensions
         if (selectedChord && (selectedChord.type === 'dominant7' || selectedChord.type === 'sus2' || selectedChord.type === 'sus4')) {
             setSelectedChord({ root: selectedChord.root, type: 'major' });
@@ -730,6 +792,14 @@ interface Theme {
         setIncludeNinth(prevNinth => !prevNinth);
         setIncludeSeventh(false);
         setIncludeSixth(false);
+        setIsPlayable(false); // Prevent auto-playback on toggle
+        setValidChords([]); // Clear valid chords to prevent conflicts
+        setCurrentChordIndex(-1);
+        // Clear progression when toggle changes
+        setGeneratedProgression(null);
+        setProgressionPositions([]);
+        setCurrentProgressionChordIndex(-1);
+        setIsProgressionPlaying(false);
         // Reset to basic chord type when using extensions
         if (selectedChord && (selectedChord.type === 'dominant7' || selectedChord.type === 'sus2' || selectedChord.type === 'sus4')) {
             setSelectedChord({ root: selectedChord.root, type: 'major' });
@@ -739,6 +809,14 @@ interface Theme {
         setIncludeSixth(prevSixth => !prevSixth);
         setIncludeSeventh(false);
         setIncludeNinth(false);
+        setIsPlayable(false); // Prevent auto-playback on toggle
+        setValidChords([]); // Clear valid chords to prevent conflicts
+        setCurrentChordIndex(-1);
+        // Clear progression when toggle changes
+        setGeneratedProgression(null);
+        setProgressionPositions([]);
+        setCurrentProgressionChordIndex(-1);
+        setIsProgressionPlaying(false);
         // Reset to basic chord type when using extensions
         if (selectedChord && (selectedChord.type === 'dominant7' || selectedChord.type === 'sus2' || selectedChord.type === 'sus4')) {
             setSelectedChord({ root: selectedChord.root, type: 'major' });
@@ -763,10 +841,10 @@ interface Theme {
     }, [validChords, currentChordIndex, fretboard]);
     
     useEffect(() => {
-        if (isPlayable) {
+        if (isPlayable && !isProgressionPlaying) {
             playChord();
         }
-    }, [activePositions, isPlayable, playChord ]);
+    }, [activePositions, isPlayable, isProgressionPlaying, playChord ]);
 
     // Update recognized chord when selected frets change
     useEffect(() => {

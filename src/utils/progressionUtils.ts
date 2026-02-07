@@ -202,6 +202,52 @@ export function generateProgressionOptions(selectedChord: ChordInfo): Progressio
 }
 
 /**
+ * Determine if a chord type should use extended voicings (7ths, 9ths, etc.)
+ */
+function shouldUseExtensions(chordType: ChordType): boolean {
+  return chordType.includes('7') || 
+         chordType.includes('9') || 
+         chordType.includes('11') || 
+         chordType.includes('13') ||
+         chordType.includes('6');
+}
+
+/**
+ * Get appropriate chord type for a scale degree based on the selected chord's extensions
+ */
+function getChordTypeForDegree(
+  degree: number, 
+  isMinorKey: boolean, 
+  useExtensions: boolean
+): ChordType {
+  // Scale degree chord qualities
+  if (isMinorKey) {
+    // Natural minor: i, ii°, III, iv, v, VI, VII
+    const qualities = ['minor', 'diminished', 'major', 'minor', 'minor', 'major', 'major'];
+    const baseType = qualities[degree] as ChordType;
+    
+    if (useExtensions) {
+      if (baseType === 'minor') return 'minor7';
+      if (baseType === 'major') return 'major7';
+      if (baseType === 'diminished') return 'diminished7';
+    }
+    return baseType;
+  } else {
+    // Major: I, ii, iii, IV, V, vi, vii°
+    const qualities = ['major', 'minor', 'minor', 'major', 'major', 'minor', 'diminished'];
+    const baseType = qualities[degree] as ChordType;
+    
+    if (useExtensions) {
+      if (baseType === 'minor') return 'minor7';
+      if (baseType === 'major' && degree !== 4) return 'major7'; // I, IV get maj7
+      if (baseType === 'major' && degree === 4) return 'dominant7'; // V gets dom7
+      if (baseType === 'diminished') return 'm7b5'; // vii° gets half-diminished
+    }
+    return baseType;
+  }
+}
+
+/**
  * Generate progression patterns where the selected chord can appear at different positions
  */
 function generateProgressionVariants(selectedChord: ChordInfo): Progression[] {
@@ -214,19 +260,24 @@ function generateProgressionVariants(selectedChord: ChordInfo): Progression[] {
   const isExtended = selectedChord.type.includes('9') || selectedChord.type.includes('11') || selectedChord.type.includes('13');
   const isMajor = selectedChord.type === 'major' || selectedChord.type === 'major7';
   const isMinor = selectedChord.type === 'minor' || selectedChord.type === 'minor7';
+  
+  // Check if selected chord uses extensions (7ths, 9ths, etc.)
+  const useExtensions = shouldUseExtensions(selectedChord.type);
 
   if (isDominant) {
     // V7 can appear in different positions
     // For a dominant chord, find its tonic (up a P4/down a P5 = +5 semitones in chromatic)
     const tonicRoot = getNoteAtSemitones(normalizedRoot, 5);
     
+    // Dominant chords are already extended, so use true for extensions
+    const domUseExtensions = true;
+    
     // Classic ii-V7-I (V7 in middle)
-    // If V7 is the selected chord, we need ii and I relative to the tonic
     progressions.push({
       chords: [
-        { root: getNoteAtDegree(tonicRoot, 1, false), type: 'minor7' }, // ii of tonic
+        { root: getNoteAtDegree(tonicRoot, 1, false), type: getChordTypeForDegree(1, false, domUseExtensions) }, // ii7
         selectedChord,                                                   // V7
-        { root: tonicRoot, type: 'major7' }                             // I (tonic)
+        { root: tonicRoot, type: getChordTypeForDegree(0, false, domUseExtensions) }  // Imaj7
       ],
       name: 'ii-V7-I Turnaround',
       description: 'Classic jazz cadence',
@@ -236,9 +287,9 @@ function generateProgressionVariants(selectedChord: ChordInfo): Progression[] {
     // I-vi-ii-V7 (V7 at end)
     progressions.push({
       chords: [
-        { root: tonicRoot, type: 'major7' },                             // I (tonic)
-        { root: getNoteAtDegree(tonicRoot, 5, false), type: 'minor7' },  // vi of tonic
-        { root: getNoteAtDegree(tonicRoot, 1, false), type: 'minor7' },  // ii of tonic
+        { root: tonicRoot, type: getChordTypeForDegree(0, false, domUseExtensions) },                             // Imaj7
+        { root: getNoteAtDegree(tonicRoot, 5, false), type: getChordTypeForDegree(5, false, domUseExtensions) },  // vi7
+        { root: getNoteAtDegree(tonicRoot, 1, false), type: getChordTypeForDegree(1, false, domUseExtensions) },  // ii7
         selectedChord                                                     // V7
       ],
       name: 'I-vi-ii-V7',
@@ -254,9 +305,9 @@ function generateProgressionVariants(selectedChord: ChordInfo): Progression[] {
 
     progressions.push({
       chords: [
-        { root: prevRoot, type: 'major' },
+        { root: prevRoot, type: useExtensions ? 'major7' : 'major' },
         selectedChord,
-        { root: nextRoot, type: 'minor' }
+        { root: nextRoot, type: useExtensions ? 'minor7' : 'minor' }
       ],
       name: 'Chromatic Passing',
       description: 'Diminished connects chromatically',
@@ -266,56 +317,94 @@ function generateProgressionVariants(selectedChord: ChordInfo): Progression[] {
   } else if (isMajor) {
     // Major chord - various positions in progressions
     
-    // As tonic (I) - first position
+    // 1. I-V-vi-IV (Pop progression)
     progressions.push({
       chords: [
         selectedChord,                                                  // I
-        { root: getNoteAtDegree(normalizedRoot, 5, false), type: 'minor' },      // vi (scale degree 5)
-        { root: getNoteAtDegree(normalizedRoot, 4, false), type: 'dominant7' },  // V (scale degree 4)
-        selectedChord                                                   // I
-      ],
-      name: 'I-vi-V-I',
-      description: 'Returning home',
-      selectedChordIndex: 0
-    });
-
-    // As IV - second position
-    // If selected chord is IV, find I (down a P4 = -5 semitones / up a P5 = +7 semitones)
-    const tonicRoot = getNoteAtSemitones(normalizedRoot, 7);
-    progressions.push({
-      chords: [
-        { root: tonicRoot, type: 'major' },                             // I
-        selectedChord,                                                  // IV
-        { root: getNoteAtDegree(tonicRoot, 4, false), type: 'dominant7' },  // V (scale degree 4 of tonic)
-        { root: tonicRoot, type: 'major' }                              // I
-      ],
-      name: 'I-IV-V-I',
-      description: 'Classic subdominant movement',
-      selectedChordIndex: 1
-    });
-
-    // Pop progression with major as I (THIS WAS THE BUG!)
-    progressions.push({
-      chords: [
-        selectedChord,                                                  // I (scale degree 0)
-        { root: getNoteAtDegree(normalizedRoot, 4, false), type: 'major' },      // V (scale degree 4)
-        { root: getNoteAtDegree(normalizedRoot, 5, false), type: 'minor' },      // vi (scale degree 5)
-        { root: getNoteAtDegree(normalizedRoot, 3, false), type: 'major' }       // IV (scale degree 3)
+        { root: getNoteAtDegree(normalizedRoot, 4, false), type: getChordTypeForDegree(4, false, useExtensions) },  // V
+        { root: getNoteAtDegree(normalizedRoot, 5, false), type: getChordTypeForDegree(5, false, useExtensions) },  // vi
+        { root: getNoteAtDegree(normalizedRoot, 3, false), type: getChordTypeForDegree(3, false, useExtensions) }   // IV
       ],
       name: 'I-V-vi-IV',
       description: 'Popular progression',
       selectedChordIndex: 0
     });
 
+    // 2. I-vi-IV-V (50s progression)
+    progressions.push({
+      chords: [
+        selectedChord,                                                  // I
+        { root: getNoteAtDegree(normalizedRoot, 5, false), type: getChordTypeForDegree(5, false, useExtensions) },  // vi
+        { root: getNoteAtDegree(normalizedRoot, 3, false), type: getChordTypeForDegree(3, false, useExtensions) },  // IV
+        { root: getNoteAtDegree(normalizedRoot, 4, false), type: getChordTypeForDegree(4, false, useExtensions) }   // V
+      ],
+      name: 'I-vi-IV-V',
+      description: 'Classic 1950s progression',
+      selectedChordIndex: 0
+    });
+
+    // 3. I-IV-I-V (Rock progression)
+    progressions.push({
+      chords: [
+        selectedChord,                                                  // I
+        { root: getNoteAtDegree(normalizedRoot, 3, false), type: getChordTypeForDegree(3, false, useExtensions) },  // IV
+        selectedChord,                                                  // I
+        { root: getNoteAtDegree(normalizedRoot, 4, false), type: getChordTypeForDegree(4, false, useExtensions) }   // V
+      ],
+      name: 'I-IV-I-V',
+      description: 'Rock/blues progression',
+      selectedChordIndex: 0
+    });
+
+    // 4. I-vi-ii-V (Jazz turnaround)
+    progressions.push({
+      chords: [
+        selectedChord,                                                  // I
+        { root: getNoteAtDegree(normalizedRoot, 5, false), type: getChordTypeForDegree(5, false, useExtensions) },  // vi
+        { root: getNoteAtDegree(normalizedRoot, 1, false), type: getChordTypeForDegree(1, false, useExtensions) },  // ii
+        { root: getNoteAtDegree(normalizedRoot, 4, false), type: getChordTypeForDegree(4, false, useExtensions) }   // V
+      ],
+      name: 'I-vi-ii-V',
+      description: 'Jazz turnaround',
+      selectedChordIndex: 0
+    });
+
+    // 5. I-IV-V-I (Classic rock)
+    const tonicRoot = getNoteAtSemitones(normalizedRoot, 7);
+    progressions.push({
+      chords: [
+        { root: tonicRoot, type: getChordTypeForDegree(0, false, useExtensions) },                         // I
+        selectedChord,                                                                                      // IV
+        { root: getNoteAtDegree(tonicRoot, 4, false), type: getChordTypeForDegree(4, false, useExtensions) },  // V
+        { root: tonicRoot, type: getChordTypeForDegree(0, false, useExtensions) }                          // I
+      ],
+      name: 'I-IV-V-I',
+      description: 'Classic subdominant movement',
+      selectedChordIndex: 1
+    });
+
+    // 6. I-iii-IV-V (Ascending progression)
+    progressions.push({
+      chords: [
+        selectedChord,                                                  // I
+        { root: getNoteAtDegree(normalizedRoot, 2, false), type: getChordTypeForDegree(2, false, useExtensions) },  // iii
+        { root: getNoteAtDegree(normalizedRoot, 3, false), type: getChordTypeForDegree(3, false, useExtensions) },  // IV
+        { root: getNoteAtDegree(normalizedRoot, 4, false), type: getChordTypeForDegree(4, false, useExtensions) }   // V
+      ],
+      name: 'I-iii-IV-V',
+      description: 'Ascending progression',
+      selectedChordIndex: 0
+    });
+
   } else if (isMinor) {
     // Minor chord progressions
 
-    // As i (tonic) in natural minor
+    // 1. i-VI-VII-i (Natural minor)
     progressions.push({
       chords: [
-        selectedChord,                                                  // i (minor tonic)
-        { root: getNoteAtDegree(normalizedRoot, 5, true), type: 'major' },  // VI (scale degree 5 in minor)
-        { root: getNoteAtDegree(normalizedRoot, 6, true), type: 'major' },  // VII (scale degree 6 in minor)
+        selectedChord,                                                  // i
+        { root: getNoteAtDegree(normalizedRoot, 5, true), type: getChordTypeForDegree(5, true, useExtensions) },  // VI
+        { root: getNoteAtDegree(normalizedRoot, 6, true), type: getChordTypeForDegree(6, true, useExtensions) },  // VII
         selectedChord                                                   // i
       ],
       name: 'i-VI-VII-i',
@@ -323,14 +412,66 @@ function generateProgressionVariants(selectedChord: ChordInfo): Progression[] {
       selectedChordIndex: 0
     });
 
-    // As vi in major key (relative major is up a minor 3rd = 3 semitones)
+    // 2. Andalusian cadence - i-VII-VI-V
+    progressions.push({
+      chords: [
+        selectedChord,                                                  // i
+        { root: getNoteAtDegree(normalizedRoot, 6, true), type: getChordTypeForDegree(6, true, useExtensions) },  // VII
+        { root: getNoteAtDegree(normalizedRoot, 5, true), type: getChordTypeForDegree(5, true, useExtensions) },  // VI
+        { root: getNoteAtDegree(normalizedRoot, 4, true), type: getChordTypeForDegree(4, true, useExtensions) }   // V
+      ],
+      name: 'Andalusian (i-VII-VI-V)',
+      description: 'Flamenco-style descending progression',
+      selectedChordIndex: 0
+    });
+
+    // 3. Minor pop - i-VI-III-VII
+    progressions.push({
+      chords: [
+        selectedChord,                                                  // i
+        { root: getNoteAtDegree(normalizedRoot, 5, true), type: getChordTypeForDegree(5, true, useExtensions) },  // VI
+        { root: getNoteAtDegree(normalizedRoot, 2, true), type: getChordTypeForDegree(2, true, useExtensions) },  // III
+        { root: getNoteAtDegree(normalizedRoot, 6, true), type: getChordTypeForDegree(6, true, useExtensions) }   // VII
+      ],
+      name: 'Minor Pop (i-VI-III-VII)',
+      description: 'Modern minor key progression',
+      selectedChordIndex: 0
+    });
+
+    // 4. Minor jazz - i-iv-V7-i (V7 always uses dominant7 for resolution)
+    progressions.push({
+      chords: [
+        selectedChord,                                                  // i
+        { root: getNoteAtDegree(normalizedRoot, 3, true), type: getChordTypeForDegree(3, true, useExtensions) },  // iv
+        { root: getNoteAtDegree(normalizedRoot, 4, true), type: 'dominant7' },  // V7 (always dom7)
+        selectedChord                                                   // i
+      ],
+      name: 'Minor Jazz (i-iv-V7-i)',
+      description: 'Minor key jazz cadence',
+      selectedChordIndex: 0
+    });
+
+    // 5. i-iv-VII-III (Dorian progression)
+    progressions.push({
+      chords: [
+        selectedChord,                                                  // i
+        { root: getNoteAtDegree(normalizedRoot, 3, true), type: getChordTypeForDegree(3, true, useExtensions) },  // iv
+        { root: getNoteAtDegree(normalizedRoot, 6, true), type: getChordTypeForDegree(6, true, useExtensions) },  // VII
+        { root: getNoteAtDegree(normalizedRoot, 2, true), type: getChordTypeForDegree(2, true, useExtensions) }   // III
+      ],
+      name: 'i-iv-VII-III',
+      description: 'Dorian minor progression',
+      selectedChordIndex: 0
+    });
+
+    // 6. As vi in major key (relative major is up a minor 3rd = 3 semitones)
     const majorKeyRoot = getNoteAtSemitones(normalizedRoot, 3);
     progressions.push({
       chords: [
-        { root: majorKeyRoot, type: 'major' },                          // I (relative major)
-        { root: getNoteAtDegree(majorKeyRoot, 4, false), type: 'major' },  // V (scale degree 4 in major)
-        selectedChord,                                                  // vi (selected minor chord)
-        { root: getNoteAtDegree(majorKeyRoot, 3, false), type: 'major' }   // IV (scale degree 3 in major)
+        { root: majorKeyRoot, type: getChordTypeForDegree(0, false, useExtensions) },                          // I
+        { root: getNoteAtDegree(majorKeyRoot, 4, false), type: getChordTypeForDegree(4, false, useExtensions) },  // V
+        selectedChord,                                                                                          // vi
+        { root: getNoteAtDegree(majorKeyRoot, 3, false), type: getChordTypeForDegree(3, false, useExtensions) }   // IV
       ],
       name: 'I-V-vi-IV',
       description: 'Minor as relative vi',
@@ -338,12 +479,13 @@ function generateProgressionVariants(selectedChord: ChordInfo): Progression[] {
     });
 
   } else if (isExtended || selectedChord.type.includes('7')) {
-    // Extended/7th chords
+    // Extended/7th chords - always use extensions
+    const extUseExtensions = true;
     progressions.push({
       chords: [
         selectedChord,                                                  // I (or whatever the selected chord is)
-        { root: getNoteAtDegree(normalizedRoot, 5, false), type: 'minor7' },      // vi (scale degree 5)
-        { root: getNoteAtDegree(normalizedRoot, 4, false), type: 'dominant7' },   // V (scale degree 4)
+        { root: getNoteAtDegree(normalizedRoot, 5, false), type: getChordTypeForDegree(5, false, extUseExtensions) },  // vi7
+        { root: getNoteAtDegree(normalizedRoot, 4, false), type: getChordTypeForDegree(4, false, extUseExtensions) },  // V7
         selectedChord                                                   // Back to selected chord
       ],
       name: 'Extended Harmony',
