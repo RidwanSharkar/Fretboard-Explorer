@@ -5,7 +5,9 @@ import Fretboard from './components/Fretboard';
 import { constructFretboard, possibleChord } from './utils/fretboardUtils';
 import { GuitarNote, ChordPosition } from './models/Note';
 import { chordFormulas, recognizeChord, RecognitionResult } from './utils/chordUtils';
-import { playNote } from './utils/midiUtils';
+import { playNote, playProgression } from './utils/midiUtils';
+import { generateUniversalProgression, ChordInfo, Progression } from './utils/progressionUtils';
+import { optimizeProgressionVoicings, getChordCenterPosition } from './utils/voiceLeadingUtils';
 import Header from '/CircleOfFifths.jpg';
 import SelectIcon from '/select.svg';
 import FindIcon from '/find.svg';
@@ -44,6 +46,11 @@ const App: React.FC = () =>
             setActiveNotes([]);
             setValidChords([]);
             setCurrentChordIndex(-1);
+            // Clear progression
+            setGeneratedProgression(null);
+            setProgressionPositions([]);
+            setCurrentProgressionChordIndex(-1);
+            setIsProgressionPlaying(false);
         } else {
             // Exiting fret selection mode
             setSelectedFrets([]);
@@ -53,11 +60,16 @@ const App: React.FC = () =>
     const clearActivePositions = () => {setActivePositions([]);};
     const [isPlayable, setIsPlayable] = useState(false); // MIDI
 
-    const [isProgressionPlaying, setIsProgressionPlaying] = useState(false); //depreciated
+    const [isProgressionPlaying, setIsProgressionPlaying] = useState(false);
     const [isCircleOfFifthsExpanded, setIsCircleOfFifthsExpanded] = useState(true);
     const [isFretSelectionMode, setIsFretSelectionMode] = useState(false);
     const [selectedFrets, setSelectedFrets] = useState<ChordPosition[]>([]);
     const [recognizedChord, setRecognizedChord] = useState<RecognitionResult>(null);
+    
+    // Chord Progression Generation State
+    const [generatedProgression, setGeneratedProgression] = useState<Progression | null>(null);
+    const [progressionPositions, setProgressionPositions] = useState<ChordPosition[][][]>([]);
+    const [currentProgressionChordIndex, setCurrentProgressionChordIndex] = useState(-1);
 
 
 /*=====================================================================================================================*/
@@ -212,10 +224,20 @@ const App: React.FC = () =>
         setCurrentChordIndex(-1);
         setIsFretSelectionMode(false); // Exit fret selection mode when selecting chords
         setSelectedFrets([]); // Clear selected frets
+        // Clear progression when new chord is selected
+        setGeneratedProgression(null);
+        setProgressionPositions([]);
+        setCurrentProgressionChordIndex(-1);
         updateChordNotes(root, type, includeSeventh, includeNinth, includeSixth);
     }, [updateChordNotes, includeSeventh, includeNinth, includeSixth]);
 
     const handleFretClick = useCallback((string: number, fret: number) => {
+        // Clear progression when frets change
+        setGeneratedProgression(null);
+        setProgressionPositions([]);
+        setCurrentProgressionChordIndex(-1);
+        setIsProgressionPlaying(false);
+        
         setSelectedFrets(prevSelected => {
             const existingIndex = prevSelected.findIndex(pos => pos.string === string && pos.fret === fret);
             if (existingIndex >= 0) {
@@ -279,7 +301,179 @@ const App: React.FC = () =>
             }
             setSelectedChord({ root: selectedChord.root, type });
         }
-    }; 
+    };
+
+    /*=================================================================================================================*/
+    // CHORD PROGRESSION GENERATION
+    /*=================================================================================================================*/
+
+    const handleReplayProgression = useCallback(async () => {
+        if (!generatedProgression || progressionPositions.length === 0 || isProgressionPlaying) return;
+
+        setIsProgressionPlaying(true);
+        setCurrentProgressionChordIndex(0);
+
+        const flattenedPositions = progressionPositions.map(pos => pos[0]);
+        
+        await playProgression(
+            flattenedPositions,
+            fretboard,
+            1.5,
+            (chordIndex) => {
+                setCurrentProgressionChordIndex(chordIndex);
+                if (progressionPositions[chordIndex]) {
+                    setActivePositions(progressionPositions[chordIndex][0]);
+                }
+            },
+            () => {
+                setIsProgressionPlaying(false);
+                setCurrentProgressionChordIndex(-1);
+                // Restore original positions based on mode
+                if (isFretSelectionMode && selectedFrets.length > 0) {
+                    setActivePositions(selectedFrets);
+                } else if (validChords.length > 0 && currentChordIndex >= 0) {
+                    setActivePositions(validChords[currentChordIndex]);
+                }
+            }
+        );
+    }, [generatedProgression, progressionPositions, isProgressionPlaying, fretboard, validChords, currentChordIndex, isFretSelectionMode, selectedFrets]);
+
+    const handleGenerateProgression = useCallback(async () => {
+        if (isProgressionPlaying) return;
+
+        // Determine chord source and current voicing
+        let chordInfo: ChordInfo | null = null;
+        let currentVoicing: ChordPosition[] | undefined;
+        let preferredPosition: number | undefined;
+
+        if (isFretSelectionMode && recognizedChord && 'type' in recognizedChord) {
+            // Use recognized chord from fret selection mode
+            chordInfo = {
+                root: recognizedChord.root,
+                type: recognizedChord.type as any
+            };
+            currentVoicing = selectedFrets;
+            if (selectedFrets.length > 0) {
+                preferredPosition = getChordCenterPosition(selectedFrets);
+            }
+        } else if (selectedChord) {
+            // Use chord from chord buttons
+            chordInfo = {
+                root: selectedChord.root,
+                type: selectedChord.type as any
+            };
+            // Use current active position if available
+            if (activePositions.length > 0) {
+                currentVoicing = activePositions;
+                preferredPosition = getChordCenterPosition(activePositions);
+            }
+        }
+
+        if (!chordInfo) return;
+
+        // Generate progression (selected chord can be at any position)
+        const progression = generateUniversalProgression(chordInfo);
+        setGeneratedProgression(progression);
+
+        // Find ALL possible voicings for each chord in the progression
+        const allProgressionVoicings: ChordPosition[][][] = [];
+        
+        for (const chord of progression.chords) {
+            const rootIndex = notes.indexOf(chord.root);
+            const noteNames = chordFormulas[chord.type as keyof typeof chordFormulas].map(
+                interval => notes[(rootIndex + interval) % 12]
+            );
+            
+            const validChordPositions = possibleChord(fretboard, noteNames);
+            
+            if (validChordPositions.length > 0) {
+                // Keep all voicings for voice leading optimization
+                allProgressionVoicings.push(validChordPositions);
+            } else {
+                console.warn(`No valid positions found for ${chord.root} ${chord.type}`);
+                // Use fallback - just play the root note
+                allProgressionVoicings.push([[{ string: 5, fret: rootIndex }]]);
+            }
+        }
+
+        // Use voice leading optimization to find smooth chord transitions
+        let optimizedVoicings: ChordPosition[][];
+        
+        if (progression.selectedChordIndex !== undefined && currentVoicing) {
+            // If we know which chord is the selected one, use its current voicing
+            // Build the progression around it
+            const beforeChords = allProgressionVoicings.slice(0, progression.selectedChordIndex);
+            const afterChords = allProgressionVoicings.slice(progression.selectedChordIndex + 1);
+            
+            // Optimize chords before the selected chord (working backwards)
+            const beforeOptimized: ChordPosition[][] = [];
+            if (beforeChords.length > 0) {
+                let workingVoicing = currentVoicing;
+                for (let i = beforeChords.length - 1; i >= 0; i--) {
+                    const voicings = beforeChords[i];
+                    let bestVoicing = voicings[0];
+                    let bestDistance = Infinity;
+                    
+                    for (const voicing of voicings) {
+                        const centerDist = Math.abs(
+                            getChordCenterPosition(voicing) - getChordCenterPosition(workingVoicing)
+                        );
+                        if (centerDist < bestDistance) {
+                            bestDistance = centerDist;
+                            bestVoicing = voicing;
+                        }
+                    }
+                    beforeOptimized.unshift(bestVoicing);
+                    workingVoicing = bestVoicing;
+                }
+            }
+            
+            // Optimize chords after the selected chord (working forwards)
+            const afterOptimized = afterChords.length > 0
+                ? optimizeProgressionVoicings(afterChords, currentVoicing)
+                : [];
+            
+            optimizedVoicings = [...beforeOptimized, currentVoicing, ...afterOptimized];
+        } else {
+            // No specific selected chord position, optimize the whole progression
+            optimizedVoicings = optimizeProgressionVoicings(
+                allProgressionVoicings,
+                currentVoicing,
+                preferredPosition
+            );
+        }
+
+        // Store as the required format
+        const allProgressionPositions = optimizedVoicings.map(voicing => [voicing]);
+        setProgressionPositions(allProgressionPositions);
+
+        // Play the progression
+        setIsProgressionPlaying(true);
+        setCurrentProgressionChordIndex(0);
+        
+        await playProgression(
+            optimizedVoicings,
+            fretboard,
+            1.5, // 1.5 seconds per chord
+            (chordIndex) => {
+                setCurrentProgressionChordIndex(chordIndex);
+                // Update active positions to show current chord
+                if (optimizedVoicings[chordIndex]) {
+                    setActivePositions(optimizedVoicings[chordIndex]);
+                }
+            },
+            () => {
+                setIsProgressionPlaying(false);
+                setCurrentProgressionChordIndex(-1);
+                // Restore original positions based on mode
+                if (isFretSelectionMode && selectedFrets.length > 0) {
+                    setActivePositions(selectedFrets);
+                } else if (validChords.length > 0 && currentChordIndex >= 0) {
+                    setActivePositions(validChords[currentChordIndex]);
+                }
+            }
+        );
+    }, [selectedChord, recognizedChord, isFretSelectionMode, selectedFrets, activePositions, fretboard, isProgressionPlaying, validChords, currentChordIndex]); 
 
 /* MOVE ---- #eac37e ----FRAME COLOR*/
 interface Theme {
@@ -368,7 +562,12 @@ interface Theme {
         setCurrentTheme(themes[key][isMinor ? 'minor' : 'major']);
         resetToggles();
         setActiveNotes([]); 
-        setActivePositions([]); 
+        setActivePositions([]);
+        // Clear progression when key changes
+        setGeneratedProgression(null);
+        setProgressionPositions([]);
+        setCurrentProgressionChordIndex(-1);
+        setIsProgressionPlaying(false);
     };
 
     const formatKeyForDisplay = (key: string): string => {
@@ -1038,6 +1237,53 @@ interface Theme {
                     )}
                 </div>
 
+                {/* Progression Display */}
+                {generatedProgression && (
+                    <div 
+                        className="progression-display" 
+                        onClick={handleReplayProgression}
+                        style={{
+                            padding: '10px',
+                            marginTop: '10px',
+                            backgroundColor: 'rgba(0, 0, 0, 0.3)',
+                            borderRadius: '8px',
+                            textAlign: 'center',
+                            cursor: isProgressionPlaying ? 'default' : 'pointer',
+                            opacity: isProgressionPlaying ? 0.8 : 1,
+                            transition: 'all 0.2s ease'
+                        }}
+                        title={isProgressionPlaying ? 'Playing...' : 'Click to replay progression'}
+                    >
+                        <div style={{ fontSize: '12px', marginBottom: '8px', opacity: 0.8 }}>
+                            {generatedProgression.name} {!isProgressionPlaying && '▶︎'}
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', flexWrap: 'wrap' }}>
+                            {generatedProgression.chords.map((chord, index) => (
+                                <div
+                                    key={index}
+                                    style={{
+                                        padding: '8px 12px',
+                                        backgroundColor: currentProgressionChordIndex === index 
+                                            ? 'var(--hover-color)' 
+                                            : 'var(--button-color)',
+                                        borderRadius: '4px',
+                                        fontSize: '14px',
+                                        fontWeight: 'bold',
+                                        transition: 'all 0.3s ease',
+                                        transform: currentProgressionChordIndex === index ? 'scale(1.1)' : 'scale(1)',
+                                        color: currentProgressionChordIndex === index ? '#000' : 'inherit'
+                                    }}
+                                >
+                                    {formatKeyForDisplay(chord.root)}{formatChordTypeForDisplay(chord.type as keyof typeof chordFormulas)}
+                                </div>
+                            ))}
+                        </div>
+                        <div style={{ fontSize: '11px', marginTop: '8px', opacity: 0.7, fontStyle: 'italic' }}>
+                            {generatedProgression.description}
+                        </div>
+                    </div>
+                )}
+
 
                 {/* Chord Buttons and Navigation Controls */}
                 <div className="chord-and-navigation-container">
@@ -1059,6 +1305,22 @@ interface Theme {
                         </button>
                         <button onClick={findAndHighlightChord} disabled={!selectedChord} className="toggle-button" title="Find">
                             <img src={FindIcon} alt="Find" className={selectedChord ? 'spinning-find-icon' : ''} style={{ width: '20px', height: '20px' }} />
+                        </button>
+                        <button 
+                            onClick={handleGenerateProgression} 
+                            disabled={
+                                isProgressionPlaying || 
+                                (!selectedChord && !(isFretSelectionMode && recognizedChord && 'type' in recognizedChord))
+                            }
+                            className={`toggle-button ${isProgressionPlaying ? 'active' : ''}`}
+                            title={
+                                isFretSelectionMode 
+                                    ? "Generate progression from selected chord" 
+                                    : "Generate Progression"
+                            }
+                            style={{ fontSize: '11px', fontWeight: 'bold' }}
+                        >
+                            {isProgressionPlaying ? '♪' : 'GEN'}
                         </button>
                     </div>
                 </div>
