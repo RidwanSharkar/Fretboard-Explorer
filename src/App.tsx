@@ -51,9 +51,11 @@ const App: React.FC = () =>
             setProgressionPositions([]);
             setCurrentProgressionChordIndex(-1);
             setIsProgressionPlaying(false);
+            setSavedSelectedFrets([]); // Clear saved frets
         } else {
             // Exiting fret selection mode
             setSelectedFrets([]);
+            setSavedSelectedFrets([]); // Clear saved frets
         }
     };
     const [activePositions, setActivePositions] = useState<ChordPosition[]>([]);
@@ -70,6 +72,7 @@ const App: React.FC = () =>
     const [generatedProgression, setGeneratedProgression] = useState<Progression | null>(null);
     const [progressionPositions, setProgressionPositions] = useState<ChordPosition[][][]>([]);
     const [currentProgressionChordIndex, setCurrentProgressionChordIndex] = useState(-1);
+    const [savedSelectedFrets, setSavedSelectedFrets] = useState<ChordPosition[]>([]); // Store selected frets during progression playback
 
 
 /*=====================================================================================================================*/
@@ -228,6 +231,7 @@ const App: React.FC = () =>
         setGeneratedProgression(null);
         setProgressionPositions([]);
         setCurrentProgressionChordIndex(-1);
+        setSavedSelectedFrets([]); // Clear saved frets
         updateChordNotes(root, type, includeSeventh, includeNinth, includeSixth);
     }, [updateChordNotes, includeSeventh, includeNinth, includeSixth]);
 
@@ -237,6 +241,7 @@ const App: React.FC = () =>
         setProgressionPositions([]);
         setCurrentProgressionChordIndex(-1);
         setIsProgressionPlaying(false);
+        setSavedSelectedFrets([]); // Clear saved frets when manually changing selection
         
         setSelectedFrets(prevSelected => {
             const existingIndex = prevSelected.findIndex(pos => pos.string === string && pos.fret === fret);
@@ -310,6 +315,12 @@ const App: React.FC = () =>
     const handleReplayProgression = useCallback(async () => {
         if (!generatedProgression || progressionPositions.length === 0 || isProgressionPlaying) return;
 
+        // Save and temporarily hide selected frets if in fret selection mode
+        if (isFretSelectionMode && selectedFrets.length > 0) {
+            setSavedSelectedFrets(selectedFrets);
+            setSelectedFrets([]); // Hide selected frets during playback
+        }
+
         setIsProgressionPlaying(true);
         setCurrentProgressionChordIndex(0);
 
@@ -329,14 +340,16 @@ const App: React.FC = () =>
                 setIsProgressionPlaying(false);
                 setCurrentProgressionChordIndex(-1);
                 // Restore original positions based on mode
-                if (isFretSelectionMode && selectedFrets.length > 0) {
-                    setActivePositions(selectedFrets);
+                if (isFretSelectionMode && savedSelectedFrets.length > 0) {
+                    setSelectedFrets(savedSelectedFrets); // Restore selected frets
+                    setActivePositions(savedSelectedFrets);
+                    setSavedSelectedFrets([]);
                 } else if (validChords.length > 0 && currentChordIndex >= 0) {
                     setActivePositions(validChords[currentChordIndex]);
                 }
             }
         );
-    }, [generatedProgression, progressionPositions, isProgressionPlaying, fretboard, validChords, currentChordIndex, isFretSelectionMode, selectedFrets]);
+    }, [generatedProgression, progressionPositions, isProgressionPlaying, fretboard, validChords, currentChordIndex, isFretSelectionMode, selectedFrets, savedSelectedFrets]);
 
     const handleGenerateProgression = useCallback(async () => {
         if (isProgressionPlaying) return;
@@ -447,6 +460,12 @@ const App: React.FC = () =>
         const allProgressionPositions = optimizedVoicings.map(voicing => [voicing]);
         setProgressionPositions(allProgressionPositions);
 
+        // Save and temporarily hide selected frets if in fret selection mode
+        if (isFretSelectionMode && selectedFrets.length > 0) {
+            setSavedSelectedFrets(selectedFrets);
+            setSelectedFrets([]); // Hide selected frets during playback
+        }
+
         // Play the progression
         setIsProgressionPlaying(true);
         setCurrentProgressionChordIndex(0);
@@ -466,14 +485,16 @@ const App: React.FC = () =>
                 setIsProgressionPlaying(false);
                 setCurrentProgressionChordIndex(-1);
                 // Restore original positions based on mode
-                if (isFretSelectionMode && selectedFrets.length > 0) {
-                    setActivePositions(selectedFrets);
+                if (isFretSelectionMode && savedSelectedFrets.length > 0) {
+                    setSelectedFrets(savedSelectedFrets); // Restore selected frets
+                    setActivePositions(savedSelectedFrets);
+                    setSavedSelectedFrets([]);
                 } else if (validChords.length > 0 && currentChordIndex >= 0) {
                     setActivePositions(validChords[currentChordIndex]);
                 }
             }
         );
-    }, [selectedChord, recognizedChord, isFretSelectionMode, selectedFrets, activePositions, fretboard, isProgressionPlaying, validChords, currentChordIndex]); 
+    }, [selectedChord, recognizedChord, isFretSelectionMode, selectedFrets, activePositions, fretboard, isProgressionPlaying, validChords, currentChordIndex, savedSelectedFrets]); 
 
 /* MOVE ---- #eac37e ----FRAME COLOR*/
 interface Theme {
@@ -568,6 +589,7 @@ interface Theme {
         setProgressionPositions([]);
         setCurrentProgressionChordIndex(-1);
         setIsProgressionPlaying(false);
+        setSavedSelectedFrets([]); // Clear saved frets
     };
 
     const formatKeyForDisplay = (key: string): string => {
@@ -778,7 +800,7 @@ interface Theme {
     useEffect(() => {
         const calculateScale = () => {
             const baseHeight = 519; // Original scaled height in pixels
-            const targetHeightVh = 47.5; // top half of screen
+            const targetHeightVh = 45; // top half of screen
             const viewportHeight = window.innerHeight;
             const targetHeightPx = (targetHeightVh / 100) * viewportHeight;
             const scale = targetHeightPx / baseHeight;
@@ -1221,21 +1243,24 @@ interface Theme {
                         {isCircleOfFifthsExpanded ? '▲' : '▼'}
                     </button>
                 </div>
-                <div className="key-display">
-                    {isFretSelectionMode ? (
-                        recognizedChord ? (
-                            'type' in recognizedChord ? (
-                                <>Selected Chord: <span className="text-highlight">{formatKeyForDisplay(recognizedChord.root)}{formatChordTypeForDisplay(recognizedChord.type)}</span></>
+                {/* Hide key display when progression is active */}
+                {!generatedProgression && (
+                    <div className="key-display">
+                        {isFretSelectionMode ? (
+                            recognizedChord ? (
+                                'type' in recognizedChord ? (
+                                    <>Selected Chord: <span className="text-highlight">{formatKeyForDisplay(recognizedChord.root)}{formatChordTypeForDisplay(recognizedChord.type)}</span></>
+                                ) : (
+                                    <>Selected Interval: <span className="text-highlight">{formatKeyForDisplay(recognizedChord.root)} - {formatIntervalForDisplay(recognizedChord.interval)}</span></>
+                                )
                             ) : (
-                                <>Selected Interval: <span className="text-highlight">{formatKeyForDisplay(recognizedChord.root)} - {formatIntervalForDisplay(recognizedChord.interval)}</span></>
+                                <>Select frets to identify a chord</>
                             )
                         ) : (
-                            <>Select frets to identify a chord</>
-                        )
-                    ) : (
-                        <>Chords in the Key of <span className="text-highlight">{formatKeyForDisplay(selectedKey)} {isMinorKey ? 'Minor' : 'Major'}</span></>
-                    )}
-                </div>
+                            <>Chords in the Key of <span className="text-highlight">{formatKeyForDisplay(selectedKey)} {isMinorKey ? 'Minor' : 'Major'}</span></>
+                        )}
+                    </div>
+                )}
 
                 {/* Progression Display */}
                 {generatedProgression && (
@@ -1243,8 +1268,9 @@ interface Theme {
                         className="progression-display" 
                         onClick={handleReplayProgression}
                         style={{
-                            padding: '10px',
-                            marginTop: '10px',
+                            padding: '8px',
+                            marginTop: '8px',
+                            marginBottom: '10px',
                             backgroundColor: 'rgba(0, 0, 0, 0.3)',
                             borderRadius: '8px',
                             textAlign: 'center',

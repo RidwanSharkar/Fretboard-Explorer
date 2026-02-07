@@ -90,6 +90,9 @@ export function findClosestVoicing(
 /**
  * Find the smoothest path through a progression by selecting optimal voicings
  * This creates a musically coherent progression with minimal finger movement
+ * 
+ * @param startingVoicing - Optional reference voicing to optimize FROM (not included in result)
+ * @param preferredPosition - Optional preferred fret position for first chord
  */
 export function optimizeProgressionVoicings(
     allChordVoicings: ChordPosition[][][],
@@ -103,13 +106,14 @@ export function optimizeProgressionVoicings(
 
     const selectedVoicings: ChordPosition[][] = [];
     
-    // Determine starting point
+    // Determine starting point for voice leading reference
     let currentVoicing: ChordPosition[];
+    let startFromFirstChord = false;
     
     if (startingVoicing) {
-        // Use provided starting voicing
+        // Use provided starting voicing as reference (not included in result)
         currentVoicing = startingVoicing;
-        selectedVoicings.push(currentVoicing);
+        startFromFirstChord = true;
     } else if (preferredPosition !== undefined) {
         // Start with voicing closest to preferred position
         currentVoicing = findClosestVoicing(allChordVoicings[0], preferredPosition);
@@ -120,10 +124,9 @@ export function optimizeProgressionVoicings(
         selectedVoicings.push(currentVoicing);
     }
 
-    // For each subsequent chord, find the voicing with best voice leading
-    for (let i = startingVoicing ? 0 : 1; i < allChordVoicings.length; i++) {
-        if (startingVoicing && i === 0) continue; // Skip first if we already have starting voicing
-        
+    // For each chord, find the voicing with best voice leading
+    const startIndex = startFromFirstChord ? 0 : 1;
+    for (let i = startIndex; i < allChordVoicings.length; i++) {
         const possibleVoicings = allChordVoicings[i];
         
         if (possibleVoicings.length === 0) {

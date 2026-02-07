@@ -12,6 +12,10 @@
 ### Key Features:
 - **🧮 Intelligent Chord Discovery:** Select any chord from the Circle of Fifths and instantly visualize all notes across the 6-string, 16-fret board. Advanced algorithms compute hundreds of valid fingering positions based on real-world playability constraints (finger stretch, fret spacing, string accessibility).
 
+- **🔍 Manual Fret Selection & Chord Recognition:** Click individual frets to build your own chords. The app automatically identifies the chord you've created and highlights all instances of those notes across the entire fretboard.
+
+- **🔄 Intelligent Chord Progression Generator:** Generate musically coherent 3-4 chord progressions based on any selected or identified chord. Features advanced voice leading algorithms that choose the smoothest transitions between chord voicings.
+
 - **🎹 Real-Time MIDI Synthesis:** Hear exactly what you see. Powered by Tone.js, each chord voicing plays through a realistic guitar synthesizer with pluck dynamics, reverb, compression, and delay effects that mimic authentic guitar tone.
 
 - **🎼 Music Theory Integration:** Built-in Circle of Fifths interface with 24 key signatures (12 major + 12 minor), dynamic color theming per key, intelligent 7th/9th chord logic, and scale degree relationships that help you understand harmonic progressions intuitively.
@@ -26,9 +30,16 @@ The application uses a backtracking algorithm to recursively search through all 
 ---
 
 ## Using Controls: 
-- Row 1 chord name buttons will display all the notes across the fretboard that the chord consists of. At this point, the user may specify chord qualities such as including 7th or 9th notes before pressing the 'Find' button in the right-hand column.   
+- **Chord Discovery (Row 1):** Click any chord name button to display all its notes across the fretboard. You can specify chord qualities (7th/9th) before pressing **'Find'** to generate all playable voicings. Row 2 buttons under the chord names will play a random chord of the key's scale degree to explore quick 
+relationships.
 
-- Row 2 buttons under the chord names will play a random chord of the key's scale degree to explore quick relationships, while the 'Next', 'Prev', and 'Play' buttons on the right-hand column may be used to manually search a chord shape or voicing.
+- **Manual Selection:** Click the **'Select'** button (crosshair icon) to enter manual mode. Click individual frets to build a chord; the app will automatically identify it and find its notes everywhere on the board.
+
+- **Progression Generator:** Click the **'GEN'** button after selecting any chord to create a musical progression. The system builds a 3-4 chord sequence around your selection, optimizing for smooth voice leading.
+
+- **Navigation & Playback:** Use **'Next'**, **'Prev'**, and **'Play'** to explore different voicings of a chord. Click the progression display panel to replay a generated sequence.
+
+- **Key Exploration (Row 2):** Buttons under the chord names play random chords from the current key's scale degrees to help you explore harmonic relationships. 
 
 ![image](https://github.com/user-attachments/assets/44774bcd-434e-4faf-bea0-37ddf467547b)
 
@@ -157,6 +168,28 @@ types = isMinor ? ['minor', 'diminished', 'major', 'minor', 'minor', 'major', 'm
                 : ['major', 'minor', 'minor', 'major', 'major', 'minor', 'diminished']
 ```
 
+### 5. Manual Chord Identification
+When a user selects frets manually, the system identifies the chord by:
+1. Collecting all unique note names from the selected frets.
+2. Testing these notes against every possible root (A-G#) and chord formula (Major, Minor, 7th, etc.).
+3. Calculating a "match score" based on how many notes from the formula are present.
+4. If multiple matches occur, the most musically logical one is selected (preferring simpler triads or standard extensions).
+
+### 6. Chord Progression & Voice Leading
+The progression generator uses functional harmony and optimization algorithms:
+
+**Progression Logic:**
+- **Dynamic Templates:** Based on the selected chord's type (Dominant, Major, Minor, etc.), the system selects from a library of professional templates (e.g., ii-V-I, I-vi-IV-V).
+- **Universal Placement:** Your selected chord can appear at any position (1st, 2nd, 3rd, or 4th) in the generated sequence, making the progression feel integrated.
+
+**Voice Leading Optimization:**
+To make transitions sound professional, the system optimizes the "distance" between chord voicings:
+```typescript
+// Score based on fret distance, common tones, and finger movement
+score = calculateDistance(chord1, chord2) - (commonToneBonus * count)
+```
+The algorithm finds a path through the fretboard that minimizes hand movement while keeping the chords in a consistent register.
+
 ---
 
 ## Music Theory Implementation:
@@ -220,6 +253,8 @@ src/
 ├── utils/
 │   ├── chordUtils.ts       # Chord formulas and music theory constants
 │   ├── fretboardUtils.ts   # Fretboard generation + chord finding algorithms
+│   ├── progressionUtils.ts # Chord progression generation and scale degree logic
+│   ├── voiceLeadingUtils.ts # Voice leading optimization and distance scoring
 │   └── midiUtils.ts        # Tone.js audio synthesis and playback
 └── App.tsx                 # Main application logic and state management
 ```
@@ -245,9 +280,9 @@ isMinorKey: boolean                    // Major vs Minor mode
 
 ## ⚙️ Potential Future Enhancements
 
-- **Chord Progressions:** Save and play common progressions (I-IV-V, ii-V-I, etc.) or reintroduce a Chord Progression Generator from Fretboard-2.0. 
 - **Alternative Tunings:** Support for Drop D, DADGAD, Open G, etc.
-- **Export Features:** Save chord diagrams as images or PDF
-- **Mobile Optimization:** Touch-friendly interface for tablets/phones
-- **Advanced Filters:** Filter chord voicings by position, difficulty, open strings
-- **Recording:** Record and export chord progressions as MIDI or audio files
+- **Export Features:** Save chord diagrams as images or PDF.
+- **Mobile Optimization:** Touch-friendly interface for tablets/phones.
+- **Advanced Filters:** Filter chord voicings by position, difficulty, or open strings.
+- **Recording:** Record and export chord progressions as MIDI or audio files.
+- **Rhythm Patterns:** Customizable strumming rhythms for progressions (quarter notes, syncopation).
