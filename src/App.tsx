@@ -5,7 +5,7 @@ import Fretboard from './components/Fretboard';
 import { constructFretboard, possibleChord } from './utils/fretboardUtils';
 import { GuitarNote, ChordPosition } from './models/Note';
 import { chordFormulas, recognizeChord, RecognitionResult } from './utils/chordUtils';
-import { playNote, playProgression } from './utils/midiUtils';
+import { playNote, playProgression, stopAllNotes } from './utils/midiUtils';
 import { generateUniversalProgression, ChordInfo, Progression } from './utils/progressionUtils';
 import { optimizeProgressionVoicings, getChordCenterPosition } from './utils/voiceLeadingUtils';
 import Header from '/CircleOfFifths.jpg';
@@ -61,6 +61,8 @@ const App: React.FC = () =>
     const [activePositions, setActivePositions] = useState<ChordPosition[]>([]);
     const clearActivePositions = () => {setActivePositions([]);};
     const [isPlayable, setIsPlayable] = useState(false); // MIDI
+    const [useMidiMode, setUseMidiMode] = useState(false); // MIDI toggle state
+    const toggleMidiMode = () => {setUseMidiMode(!useMidiMode);};
 
     const [isProgressionPlaying, setIsProgressionPlaying] = useState(false);
     const [isCircleOfFifthsExpanded, setIsCircleOfFifthsExpanded] = useState(true);
@@ -89,7 +91,7 @@ const App: React.FC = () =>
 
     /*=================================================================================================================*/
 
-    const getIntervalLabel = (interval: number): string => {
+    const getIntervalLabel = useCallback((interval: number): string => {
         const intervalMap: { [key: number]: string } = {
             0: 'R',
             1: '♭9',
@@ -106,7 +108,7 @@ const App: React.FC = () =>
             14: '9th'
         };
         return intervalMap[interval] || interval.toString();
-    };
+    }, []);
 
     const updateChordNotes = useCallback((root: string, type: keyof typeof chordFormulas, includeSeventh: boolean, includeNinth: boolean, includeSixth: boolean) => {
         const rootIndex = notes.indexOf(root);
@@ -139,11 +141,14 @@ const App: React.FC = () =>
         const positionsToPlay = isFretSelectionMode ? selectedFrets : activePositions;
         if (positionsToPlay.length === 0) return; // Don't play empty chords
         
+        // Stop all previous notes before playing new chord
+        stopAllNotes();
+        
         const sortedPositions = positionsToPlay.sort((a, b) => a.string === b.string ? a.fret - b.fret : b.string - a.string);
         sortedPositions.forEach((pos, index) => {
             const staggerTime = index * 0.05; // stagger time for strumming
-            playNote(pos.string, pos.fret, fretboard, '8n', staggerTime);});
-    }, [activePositions, selectedFrets, isFretSelectionMode, fretboard, isProgressionPlaying]);
+            playNote(pos.string, pos.fret, fretboard, '8n', staggerTime, false, useMidiMode);});
+    }, [activePositions, selectedFrets, isFretSelectionMode, fretboard, isProgressionPlaying, useMidiMode]);
     
     /*=================================================================================================================*/
     
@@ -187,6 +192,14 @@ const App: React.FC = () =>
 /*=====================================================================================================================*/
 
     const playRandomChordFromKey = useCallback((root: string, type: keyof typeof chordFormulas) => {
+        setIsFretSelectionMode(false); // Exit fret selection mode
+        setSelectedFrets([]); // Clear selected frets
+        setIsProgressionPlaying(false);
+        setGeneratedProgression(null);
+        setProgressionPositions([]);
+        setCurrentProgressionChordIndex(-1);
+        setSavedSelectedFrets([]);
+        
         setSelectedChord({ root, type });
         updateChordNotes(root, type, includeSeventh, includeNinth, includeSixth);
 
@@ -362,9 +375,10 @@ const App: React.FC = () =>
                 } else if (validChords.length > 0 && currentChordIndex >= 0) {
                     setActivePositions(validChords[currentChordIndex]);
                 }
-            }
+            },
+            useMidiMode
         );
-    }, [generatedProgression, progressionPositions, isProgressionPlaying, fretboard, validChords, currentChordIndex, isFretSelectionMode, selectedFrets, savedSelectedFrets]);
+    }, [generatedProgression, progressionPositions, isProgressionPlaying, fretboard, validChords, currentChordIndex, isFretSelectionMode, selectedFrets, savedSelectedFrets, useMidiMode]);
 
     const handleGenerateProgression = useCallback(async () => {
         if (isProgressionPlaying) return;
@@ -449,15 +463,27 @@ const App: React.FC = () =>
                 }
             }
             
-            const validChordPositions = possibleChord(fretboard, noteNames);
+            let validChordPositions = possibleChord(fretboard, noteNames);
             
             if (validChordPositions.length > 0) {
                 // Keep all voicings for voice leading optimization
                 allProgressionVoicings.push(validChordPositions);
             } else {
-                console.warn(`No valid positions found for ${chord.root} ${chord.type}`);
-                // Use fallback - just play the root note
-                allProgressionVoicings.push([[{ string: 5, fret: rootIndex }]]);
+                // If no voicings found with extensions, try the base triad (without extensions)
+                console.warn(`No valid positions found for ${chord.root} ${chord.type} with extensions`);
+                const baseNoteNames = chordFormulas[chord.type as keyof typeof chordFormulas].map(
+                    interval => notes[(rootIndex + interval) % 12]
+                );
+                validChordPositions = possibleChord(fretboard, baseNoteNames);
+                
+                if (validChordPositions.length > 0) {
+                    console.log(`Using base triad for ${chord.root} ${chord.type}`);
+                    allProgressionVoicings.push(validChordPositions);
+                } else {
+                    // Last resort: just play the root note
+                    console.warn(`No valid positions found even for base triad of ${chord.root} ${chord.type}`);
+                    allProgressionVoicings.push([[{ string: 5, fret: rootIndex }]]);
+                }
             }
         }
 
@@ -546,9 +572,10 @@ const App: React.FC = () =>
                 } else if (validChords.length > 0 && currentChordIndex >= 0) {
                     setActivePositions(validChords[currentChordIndex]);
                 }
-            }
+            },
+            useMidiMode
         );
-    }, [selectedChord, recognizedChord, isFretSelectionMode, selectedFrets, activePositions, fretboard, isProgressionPlaying, validChords, currentChordIndex, savedSelectedFrets, includeSeventh, includeNinth, includeSixth, selectedKey, isMinorKey]); 
+    }, [selectedChord, recognizedChord, isFretSelectionMode, selectedFrets, activePositions, fretboard, isProgressionPlaying, validChords, currentChordIndex, savedSelectedFrets, includeSeventh, includeNinth, includeSixth, selectedKey, isMinorKey, useMidiMode]); 
 
 /* MOVE ---- #eac37e ----FRAME COLOR*/
 interface Theme {
@@ -844,7 +871,8 @@ interface Theme {
         if (isPlayable && !isProgressionPlaying) {
             playChord();
         }
-    }, [activePositions, isPlayable, isProgressionPlaying, playChord ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [activePositions, isPlayable, isProgressionPlaying]);
 
     // Update recognized chord when selected frets change
     useEffect(() => {
@@ -1347,8 +1375,8 @@ interface Theme {
                         onClick={handleReplayProgression}
                         style={{
                             padding: '8px',
-                            marginTop: '8px',
-                            marginBottom: '10px',
+                            width: '77%',
+                            margin: '8px auto 10px auto',
                             backgroundColor: 'rgba(0, 0, 0, 0.3)',
                             borderRadius: '8px',
                             textAlign: 'center',
@@ -1370,7 +1398,7 @@ interface Theme {
                                         backgroundColor: currentProgressionChordIndex === index 
                                             ? 'var(--hover-color)' 
                                             : 'var(--button-color)',
-                                        borderRadius: '4px',
+                                        borderRadius: '8px',
                                         fontSize: '14px',
                                         fontWeight: 'bold',
                                         transition: 'all 0.3s ease',
@@ -1392,6 +1420,9 @@ interface Theme {
                 {/* Chord Buttons and Navigation Controls */}
                 <div className="chord-and-navigation-container">
                     <div className="left-controls">
+                    <button onClick={toggleMidiMode} className={`toggle-button ${useMidiMode ? 'active' : ''}`} title="Toggle MIDI mode" style={{ fontSize: '11px', fontWeight: 'bold', marginRight: '2.5px' }}>
+                    MIDI
+                        </button>
                         <button onClick={toggleFretSelectionMode} className={`toggle-button ${isFretSelectionMode ? 'active' : ''}`} title="Select">
                             <img src={SelectIcon} alt="Select" className={isFretSelectionMode ? 'spinning-select-icon' : ''} style={{ width: '20px', height: '20px' }} />
                         </button>

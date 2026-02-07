@@ -501,20 +501,6 @@ body {
   transition: opacity 0.2s ease;
 }
 
-/*   
-letter-spacing: 0.1em;
-animation: fadeIn 3s ease-in-out forwards;
-
-  -webkit-text-stroke: 1px black; 
-
-
-font-family: 'Playfair Display', serif;
-  color: rgba(var(--hover-color-rgb), 0.5);
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-
-
-*/
-
 
 /*====================================================================================*/ 
 
