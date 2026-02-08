@@ -179,14 +179,19 @@ body::after {
   background: linear-gradient(135deg, var(--background-color) 0%, color-mix(in srgb, var(--background-color) 85%, black) 40%, color-mix(in srgb, var(--background-color) 95%, white) 82%, var(--background-color) 100%);
   background-attachment: fixed;
   min-height: 100vh;
-  display: block; /* Flex column */
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   font-size: calc(10px + 2vmin);
   color: white;
   position: relative;
   overflow: hidden;
   transition: background 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.App-header.minimized-layout {
+  justify-content: center;
 }
 
 .App-header::before {

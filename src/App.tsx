@@ -1253,7 +1253,7 @@ interface Theme {
       return (
         <div className="fixed-viewport">
         <div className="App">
-          <header className="App-header">
+          <header className={`App-header ${!isCircleOfFifthsExpanded ? 'minimized-layout' : ''}`}>
             {isCircleOfFifthsExpanded && (
               <div className="header-container">
                 <div className="header-content-scaled">
@@ -1346,7 +1346,7 @@ interface Theme {
             <div className="fretboard-and-buttons-container">
                 <div className={`toggle-circle-button ${isCircleOfFifthsExpanded ? 'toggle-circle-button--overlap' : ''}`}>
                     <button onClick={toggleCircleOfFifths} className="toggle-button">
-                        {isCircleOfFifthsExpanded ? '▲' : '▼'}
+                        {isCircleOfFifthsExpanded ? '▲' : 'Change Key'}
                     </button>
                 </div>
                 {/* Hide key display when progression is active */}
@@ -1394,7 +1394,7 @@ interface Theme {
                                 <div
                                     key={index}
                                     style={{
-                                        padding: '8px 12px',
+                                        padding: '5px 12px',
                                         backgroundColor: currentProgressionChordIndex === index 
                                             ? 'var(--hover-color)' 
                                             : 'var(--button-color)',
