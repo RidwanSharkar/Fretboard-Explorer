@@ -20,16 +20,26 @@ const keys = ['C', 'G', 'D', 'A', 'E', 'B', 'F#', 'C#', 'G#', 'D#', 'A#', 'F'];
 /*const intervals = ['R', 'm2', 'M2', 'm3', 'M3', 'P4', 'T', 'P5', 'm6', 'M6', 'm7', 'M7'];*/
 /*=====================================================================================================================*/
 
+/*=====================================================================================================================*/
+const INITIAL_OPTIONS = [
+    { key: 'C', isMinor: false },
+    { key: 'A', isMinor: true },
+    { key: 'E', isMinor: true },
+    { key: 'F', isMinor: false }
+];
+
+const RANDOM_INITIAL_STATE = INITIAL_OPTIONS[Math.floor(Math.random() * INITIAL_OPTIONS.length)];
+
 const App: React.FC = () => 
 {
     const [fretboard ] = useState<GuitarNote[][]>(() => constructFretboard(6, 18));
     const [activeNotes, setActiveNotes] = useState<{ note: string; interval: string }[]>([]);
-    const [selectedKey, setSelectedKey] = useState('C');
+    const [selectedKey, setSelectedKey] = useState(RANDOM_INITIAL_STATE.key);
     const [selectedChord, setSelectedChord] = useState<{ root: string; type: keyof typeof chordFormulas } | null>(null);
     const [includeSeventh, setIncludeSeventh] = useState(false);
     const [includeNinth, setIncludeNinth] = useState(false);
     const [includeSixth, setIncludeSixth] = useState(false);
-    const [isMinorKey, setIsMinorKey] = useState(false);
+    const [isMinorKey, setIsMinorKey] = useState(RANDOM_INITIAL_STATE.isMinor);
     const [currentChordIndex, setCurrentChordIndex] = useState(-1);
     const [validChords, setValidChords] = useState<ChordPosition[][]>([]);
     const [highlightAll, setHighlightAll] = useState(false);
@@ -647,7 +657,7 @@ interface Theme {
     },
   };
   
-  const [currentTheme, setCurrentTheme] = useState<Theme>(themes.C.major);
+  const [currentTheme, setCurrentTheme] = useState<Theme>(() => themes[RANDOM_INITIAL_STATE.key][RANDOM_INITIAL_STATE.isMinor ? 'minor' : 'major']);
 
     useEffect(() => {
         document.documentElement.style.setProperty('--background-color', currentTheme.backgroundColor);
