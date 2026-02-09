@@ -12,6 +12,8 @@ import Header from '/CircleOfFifths.jpg';
 import SelectIcon from '/select.svg';
 import FindIcon from '/find.svg';
 import ArrowLeftIcon from '/arrow-left.svg';
+import ArrowRightIcon from '/arrow-right.svg';
+
 
 
 /*=====================================================================================================================*/
@@ -912,27 +914,49 @@ interface Theme {
         }
     }, [selectedFrets, isFretSelectionMode, fretboard, getIntervalLabel]);
 
-    // Calculate and set scale factor for Circle of Fifths based on viewport height
+    // Calculate and set scale factor for Circle of Fifths and Fretboard based on viewport height
     useEffect(() => {
         const calculateScale = () => {
-            const baseHeight = 519; // Original scaled height in pixels
-            const targetHeightVh = 45; // top half of screen
             const viewportHeight = window.innerHeight;
+            const hasProgression = !!generatedProgression;
+
+            // Circle of Fifths scale (fixed height)
+            const baseHeight = 519;
+            const targetHeightVh = viewportHeight < 750 ? (viewportHeight < 600 ? 32 : 38) : 45.5;
             const targetHeightPx = (targetHeightVh / 100) * viewportHeight;
             const scale = targetHeightPx / baseHeight;
-            
-            // Set CSS variable on document root
             document.documentElement.style.setProperty('--header-scale', scale.toString());
+            document.documentElement.style.setProperty('--header-vh', `${targetHeightVh}vh`);
+
+            // Controls (Middle section) scale - Dynamic based on progression
+            const baseControlsHeight = hasProgression ? 160 : 100; 
+            const targetControlsHeightVh = hasProgression 
+                ? (viewportHeight < 600 ? 20 : 17) 
+                : (viewportHeight < 750 ? 11 : 9); 
+            const targetControlsHeightPx = (targetControlsHeightVh / 100) * viewportHeight;
+            const controlsScale = targetControlsHeightPx / baseControlsHeight;
+            
+            document.documentElement.style.setProperty('--controls-scale', controlsScale.toString());
+            document.documentElement.style.setProperty('--controls-vh', `${targetControlsHeightVh}vh`);
+
+            // Fretboard scale - Fixed height to allow space at the bottom
+            const baseFretboardHeight = 315;
+            const targetFretboardHeightVh = viewportHeight < 750 ? 38 : 32; 
+            const targetFretboardHeightPx = (targetFretboardHeightVh / 100) * viewportHeight;
+            const fretboardScale = targetFretboardHeightPx / baseFretboardHeight;
+            
+            document.documentElement.style.setProperty('--fretboard-scale', fretboardScale.toString());
+            document.documentElement.style.setProperty('--fretboard-vh', `${targetFretboardHeightVh}vh`);
         };
 
-        // Calculate on mount and resize
+        // Calculate on mount, resize, and when progression state changes
         calculateScale();
         window.addEventListener('resize', calculateScale);
         
         return () => {
             window.removeEventListener('resize', calculateScale);
         };
-    }, []);
+    }, [generatedProgression]);
     
 
     /*=================================================================================================================*/
@@ -1359,138 +1383,155 @@ interface Theme {
                         {isCircleOfFifthsExpanded ? '▲' : 'Change Key'}
                     </button>
                 </div>
-                {/* Hide key display when progression is active */}
-                {!generatedProgression && (
-                    <div className="key-display">
-                        {isFretSelectionMode ? (
-                            recognizedChord ? (
-                                'type' in recognizedChord ? (
-                                    <>Selected Chord: <span className="text-highlight">{formatKeyForDisplay(recognizedChord.root)}{formatChordTypeForDisplay(recognizedChord.type)}</span></>
+                <div className="controls-area-container">
+                    <div className="controls-content-scaled">
+                        {/* Hide key display when progression is active */}
+                        {!generatedProgression && (
+                            <div className="key-display">
+                                {isFretSelectionMode ? (
+                                    recognizedChord ? (
+                                        'type' in recognizedChord ? (
+                                            <>Selected Chord: <span className="text-highlight">{formatKeyForDisplay(recognizedChord.root)}{formatChordTypeForDisplay(recognizedChord.type)}</span></>
+                                        ) : (
+                                            <>Selected Interval: <span className="text-highlight">{formatKeyForDisplay(recognizedChord.root)} - {formatIntervalForDisplay(recognizedChord.interval)}</span></>
+                                        )
+                                    ) : (
+                                        <>Select frets to identify a chord</>
+                                    )
                                 ) : (
-                                    <>Selected Interval: <span className="text-highlight">{formatKeyForDisplay(recognizedChord.root)} - {formatIntervalForDisplay(recognizedChord.interval)}</span></>
-                                )
-                            ) : (
-                                <>Select frets to identify a chord</>
-                            )
-                        ) : (
-                            <>Chords in the Key of <span className="text-highlight">{formatKeyForDisplay(selectedKey)} {isMinorKey ? 'Minor' : 'Major'}</span></>
+                                    <>Chords in the Key of <span className="text-highlight">{formatKeyForDisplay(selectedKey)} {isMinorKey ? 'Minor' : 'Major'}</span></>
+                                )}
+                            </div>
                         )}
-                    </div>
-                )}
 
-                {/* Progression Display */}
-                {generatedProgression && (
-                    <div 
-                        className="progression-display" 
-                        onClick={handleReplayProgression}
-                        style={{
-                            padding: '8px',
-                            width: '77%',
-                            margin: '8px auto 10px auto',
-                            backgroundColor: 'rgba(0, 0, 0, 0.3)',
-                            borderRadius: '8px',
-                            textAlign: 'center',
-                            cursor: isProgressionPlaying ? 'default' : 'pointer',
-                            opacity: isProgressionPlaying ? 0.8 : 1,
-                            transition: 'all 0.2s ease'
-                        }}
-                        title={isProgressionPlaying ? 'Playing...' : 'Click to replay progression'}
-                    >
-                        <div style={{ fontSize: '12px', marginBottom: '8px', opacity: 0.8 }}>
-                            {generatedProgression.name} {!isProgressionPlaying && '▶︎'}
-                        </div>
-                        <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', flexWrap: 'wrap' }}>
-                            {generatedProgression.chords.map((chord, index) => (
-                                <div
-                                    key={index}
-                                    style={{
-                                        padding: '5px 12px',
-                                        backgroundColor: currentProgressionChordIndex === index 
-                                            ? 'var(--hover-color)' 
-                                            : 'var(--button-color)',
-                                        borderRadius: '8px',
-                                        fontSize: '14px',
-                                        fontWeight: 'bold',
-                                        transition: 'all 0.3s ease',
-                                        transform: currentProgressionChordIndex === index ? 'scale(1.1)' : 'scale(1)',
-                                        color: currentProgressionChordIndex === index ? '#000' : 'inherit'
-                                    }}
+                        {/* Progression Display */}
+                        {generatedProgression && (
+                            <div 
+                                className="progression-display" 
+                                onClick={handleReplayProgression}
+                                style={{
+                                    padding: '8px',
+                                    width: '64%',
+                                    margin: 'clamp(2px, 0.5vh, 8px) auto clamp(4px, 1vh, 10px) auto',
+                                    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+                                    borderRadius: '8px',
+                                    textAlign: 'center',
+                                    cursor: isProgressionPlaying ? 'default' : 'pointer',
+                                    opacity: isProgressionPlaying ? 0.8 : 1,
+                                    transition: 'all 0.2s ease'
+                                }}
+                                title={isProgressionPlaying ? 'Playing...' : 'Click to replay progression'}
+                            >
+                                <div style={{ fontSize: '12px', marginBottom: '8px', opacity: 0.8 }}>
+                                    {generatedProgression.name} {!isProgressionPlaying && '▶︎'}
+                                </div>
+                                <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', flexWrap: 'wrap' }}>
+                                    {generatedProgression.chords.map((chord, index) => (
+                                        <div
+                                            key={index}
+                                            style={{
+                                                padding: '5px 12px',
+                                                backgroundColor: currentProgressionChordIndex === index 
+                                                    ? 'var(--hover-color)' 
+                                                    : 'var(--button-color)',
+                                                borderRadius: '8px',
+                                                fontSize: '14px',
+                                                fontWeight: 'bold',
+                                                transition: 'all 0.3s ease',
+                                                transform: currentProgressionChordIndex === index ? 'scale(1.1)' : 'scale(1)',
+                                                color: currentProgressionChordIndex === index ? '#000' : 'inherit'
+                                            }}
+                                        >
+                                            {formatKeyForDisplay(chord.root)}{formatChordTypeForDisplay(chord.type as keyof typeof chordFormulas)}
+                                        </div>
+                                    ))}
+                                </div>
+                                <div style={{ fontSize: '11px', marginTop: '8px', opacity: 0.7, fontStyle: 'italic' }}>
+                                    {generatedProgression.description}
+                                </div>
+                            </div>
+                        )}
+
+
+                        {/* Chord Buttons and Navigation Controls */}
+                        <div className="chord-and-navigation-container">
+                            <div className="left-controls">
+                                <button onClick={toggleFretSelectionMode} className={`toggle-button ${isFretSelectionMode ? 'active' : ''}`} title="Select Frets">
+                                    <img src={SelectIcon} alt="Select" className={isFretSelectionMode ? 'spinning-select-icon' : ''} style={{ width: '20px', height: '20px' }} />
+                                </button>
+                                <button onClick={playChord} disabled={!isPlayable && !(isFretSelectionMode && selectedFrets.length > 0)} className="toggle-button arrow-button" style={{ fontSize: '13px' }}>▶︎</button>
+                            </div>
+                            <div className="chord-section">
+                                <div className="row">
+                                    {renderChordsForSelectedKey()}
+                                    {renderRandomChordButtons()}
+                                </div>
+                            </div>
+                            <div className="right-controls">
+                                <button 
+                                    onClick={toggleMidiMode} 
+                                    className={`toggle-button arrow-button ${useMidiMode ? 'active' : ''}`} 
+                                    title="Synth Tone"
                                 >
-                                    {formatKeyForDisplay(chord.root)}{formatChordTypeForDisplay(chord.type as keyof typeof chordFormulas)}
+                                    ♫
+                                </button>
+                                <button 
+                                    onClick={handleGenerateProgression} 
+                                    disabled={
+                                        isProgressionPlaying || 
+                                        (!selectedChord && !(isFretSelectionMode && recognizedChord && 'type' in recognizedChord))
+                                    }
+                                    className={`toggle-button ${isProgressionPlaying ? 'active' : ''}`}
+                                    title={
+                                        isFretSelectionMode 
+                                            ? "Generate progression from selected chord" 
+                                            : "Generate Progression"
+                                    }
+                                >
+                                    <img 
+                                        src={FindIcon} 
+                                        alt="Generate" 
+                                        className={(selectedChord || (isFretSelectionMode && recognizedChord && 'type' in recognizedChord)) ? 'spinning-find-icon' : ''} 
+                                        style={{ width: '20px', height: '20px' }} 
+                                    />
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Fretboard area with responsive scaling */}
+                <div className="fretboard-area-container">
+                    <div className="fretboard-content-scaled">
+                        <div className="fretboard-container">
+                            <Fretboard notes={fretboard} activeNotes={activeNotes} highlightAll={highlightAll} activePositions={activePositions} clearActivePositions={clearActivePositions} isProgressionPlaying={isProgressionPlaying}  currentTheme={currentTheme} isFretSelectionMode={isFretSelectionMode} selectedFrets={selectedFrets} onFretClick={handleFretClick} />
+                            <div className="toggle-buttons">
+                                <div className="toggle-button-row">
+                                    <button onClick={() => cycleChords('prev')} disabled={validChords.length <= 1} className="toggle-button" title="Previous Variation">
+                                        <img src={ArrowLeftIcon} alt="Prev" style={{ width: '14px', height: '22px', filter: 'brightness(0) invert(1)' }} />
+                                    </button>
+                                    <button onClick={findAndHighlightChord} disabled={!selectedChord} className="toggle-button" title="Find">
+                                        <img src={ArrowRightIcon} alt="Find" style={{ width: '14px', height: '22px', filter: 'brightness(0) invert(1)' }} />
+                                    </button>
+                                </div>
+                                <button onClick={toggleSeventh} className={`toggle-button ${includeSeventh ? 'active' : ''}`}>7th</button>
+                                <button onClick={toggleNinth} className={`toggle-button ${includeNinth ? 'active' : ''}`}>9th</button>
+                                <button onClick={toggleSixth} className={`toggle-button ${includeSixth ? 'active' : ''}`}>6th</button>
+                                <button onClick={() => changeChordType('dominant7')} disabled={!selectedChord} className={`toggle-button ${selectedChord?.type === 'dominant7' ? 'active' : ''}`}>dom7</button>
+                                <button onClick={() => changeChordType('sus2')} disabled={!selectedChord} className={`toggle-button ${selectedChord?.type === 'sus2' ? 'active' : ''}`}>sus2</button>
+                                <button onClick={() => changeChordType('sus4')} disabled={!selectedChord} className={`toggle-button ${selectedChord?.type === 'sus4' ? 'active' : ''}`}>sus4</button>
+                                <button onClick={toggleHighlightAll} className={`toggle-button ${highlightAll ? 'active' : ''}`}>All</button>
+                            </div>
+                        </div>
+
+                        <div className="fret-labels">
+                            {Array.from({ length: 18 }).map((_, index) => (  
+                                <div className={`fret-label ${index === 13 ? 'fret-label-after-octave' : ''}`} key={index}>
+                                    {index === 0 ? '\u00A0' : index} 
                                 </div>
                             ))}
                         </div>
-                        <div style={{ fontSize: '11px', marginTop: '8px', opacity: 0.7, fontStyle: 'italic' }}>
-                            {generatedProgression.description}
-                        </div>
                     </div>
-                )}
-
-
-                {/* Chord Buttons and Navigation Controls */}
-                <div className="chord-and-navigation-container">
-                    <div className="left-controls">
-                    <button onClick={toggleMidiMode} className={`toggle-button ${useMidiMode ? 'active' : ''}`} title="Toggle MIDI mode" style={{ fontSize: '11px', fontWeight: 'bold', marginRight: '2.5px' }}>
-                    MIDI
-                        </button>
-                        <button onClick={toggleFretSelectionMode} className={`toggle-button ${isFretSelectionMode ? 'active' : ''}`} title="Select">
-                            <img src={SelectIcon} alt="Select" className={isFretSelectionMode ? 'spinning-select-icon' : ''} style={{ width: '20px', height: '20px' }} />
-                        </button>
-                        <button onClick={playChord} disabled={!isPlayable && !(isFretSelectionMode && selectedFrets.length > 0)} className="toggle-button arrow-button" style={{ fontSize: '13px' }}>▶︎</button>
-                    </div>
-                    <div className="chord-section">
-                        <div className="row">
-                            {renderChordsForSelectedKey()}
-                            {renderRandomChordButtons()}
-                        </div>
-                    </div>
-                    <div className="right-controls">
-                        <button onClick={() => cycleChords('prev')} disabled={validChords.length <= 1} className="toggle-button arrow-button">
-                            <img src={ArrowLeftIcon} alt="Previous" style={{ width: '18px', height: '18px' }} />
-                        </button>
-                        <button onClick={findAndHighlightChord} disabled={!selectedChord} className="toggle-button" title="Find">
-                            <img src={FindIcon} alt="Find" className={selectedChord ? 'spinning-find-icon' : ''} style={{ width: '20px', height: '20px' }} />
-                        </button>
-                        <button 
-                            onClick={handleGenerateProgression} 
-                            disabled={
-                                isProgressionPlaying || 
-                                (!selectedChord && !(isFretSelectionMode && recognizedChord && 'type' in recognizedChord))
-                            }
-                            className={`toggle-button ${isProgressionPlaying ? 'active' : ''}`}
-                            title={
-                                isFretSelectionMode 
-                                    ? "Generate progression from selected chord" 
-                                    : "Generate Progression"
-                            }
-                            style={{ fontSize: '11px', fontWeight: 'bold' }}
-                        >
-                            {isProgressionPlaying ? '♪' : 'GEN'}
-                        </button>
-                    </div>
-                </div>
-
-                {/* Fretboard and toggles container */}
-                <div className="fretboard-container">
-                    <Fretboard notes={fretboard} activeNotes={activeNotes} highlightAll={highlightAll} activePositions={activePositions} clearActivePositions={clearActivePositions} isProgressionPlaying={isProgressionPlaying}  currentTheme={currentTheme} isFretSelectionMode={isFretSelectionMode} selectedFrets={selectedFrets} onFretClick={handleFretClick} />
-                    <div className="toggle-buttons">
-                        <button onClick={toggleSeventh} className={`toggle-button ${includeSeventh ? 'active' : ''}`}>7th</button>
-                        <button onClick={toggleNinth} className={`toggle-button ${includeNinth ? 'active' : ''}`}>9th</button>
-                        <button onClick={toggleSixth} className={`toggle-button ${includeSixth ? 'active' : ''}`}>6th</button>
-                        <button onClick={() => changeChordType('dominant7')} disabled={!selectedChord} className={`toggle-button ${selectedChord?.type === 'dominant7' ? 'active' : ''}`}>dom7</button>
-                        <button onClick={() => changeChordType('sus2')} disabled={!selectedChord} className={`toggle-button ${selectedChord?.type === 'sus2' ? 'active' : ''}`}>sus2</button>
-                        <button onClick={() => changeChordType('sus4')} disabled={!selectedChord} className={`toggle-button ${selectedChord?.type === 'sus4' ? 'active' : ''}`}>sus4</button>
-                        <button onClick={toggleHighlightAll} className={`toggle-button ${highlightAll ? 'active' : ''}`}>All</button>
-                    </div>
-                </div>
-
-
-                <div className="fret-labels">
-                    {Array.from({ length: 18 }).map((_, index) => (  
-                        <div className={`fret-label ${index === 13 ? 'fret-label-after-octave' : ''}`} key={index}>
-                            {index === 0 ? '\u00A0' : index} 
-                        </div>
-                    ))}
                 </div>
 
             </div>

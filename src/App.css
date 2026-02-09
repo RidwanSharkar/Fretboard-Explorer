@@ -3,7 +3,7 @@
 .header-container {
   position: relative;
   width: 100%;
-  height: 45vh;  /* top half of screen */
+  height: var(--header-vh, 45.5vh);  /* dynamic height based on viewport */
   overflow: hidden;
   margin: 0 auto;
   display: flex;
@@ -25,12 +25,13 @@
 .toggle-circle-button {
   display: flex;
   justify-content: center;
-  margin-bottom: 14px;
+  height: calc(28px * max(0.6, var(--header-scale, 1)));
+  margin-bottom: clamp(1px, 0.2vh, 4px);
 }
 
 /* When the Circle of Fifths is visible, overlap the button on top of the image */
 .toggle-circle-button--overlap {
-  margin-top: -19px;
+  margin-top: calc(-28px * max(0.6, var(--header-scale, 1)));
   position: relative;
   z-index: 20;
 }
@@ -51,6 +52,9 @@
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.1);
   position: relative;
   overflow: hidden;
+  /* Maintain a minimum size for the button even at small scales */
+  transform: scale(max(0.7, var(--header-scale, 1)));
+  transform-origin: top center;
 }
 
 .toggle-circle-button .toggle-button:hover {
@@ -540,7 +544,7 @@ body {
 .key-display {
   font-size: 20px;
   color: #FFF; /* Chords in Key Text */
-  margin: 8px 0;
+  margin: clamp(4px, 1vh, 8px) 0;
   text-align: center;
 }
 
@@ -549,15 +553,33 @@ body {
 .toggle-buttons {
   display: flex;
   flex-direction: column;
-  padding-top: 38px;
+  padding-top: 14px;
   margin-top: 0;
   gap: 6px;
 }
 
 .toggle-buttons .toggle-button {
   margin-bottom: 0;
-  padding: 5px 4px;
+  padding: 0 3px;
   font-size: 12px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toggle-button-row {
+  display: flex;
+  gap: 0px;
+  width: 100%;
+}
+
+.toggle-button-row .toggle-button {
+  flex: 1;
+}
+
+.toggle-buttons .toggle-button img {
+  display: block;
 }
 
 button:disabled {
@@ -570,14 +592,54 @@ button:disabled {
 
 /*====================================================================================*/
 
+.controls-area-container {
+  position: relative;
+  width: 100%;
+  height: var(--controls-vh, 17vh);
+  overflow: hidden;
+  margin: clamp(2px, 0.5vh, 5px) auto;
+  padding-bottom: clamp(4px, 1.5vh, 0px);
+  transition: height 0.3s ease;
+}
+
+.controls-content-scaled {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: auto;
+  min-height: 85px;
+  transform: scale(var(--controls-scale, 1));
+  transform-origin: top center;
+  transition: transform 0.3s ease;
+}
+
+.fretboard-area-container {
+  position: relative;
+  width: 100%;
+  height: var(--fretboard-vh, 34vh);
+  overflow: hidden;
+  margin: 0 auto;
+  transition: height 0.3s ease;
+}
+
+.fretboard-content-scaled {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 315px; /* Base height - matches baseFretboardHeight in App.tsx */
+  transform: scale(var(--fretboard-scale, 1));
+  transform-origin: top center;
+  transition: transform 0.3s ease;
+}
+
 .fretboard-container {
-  flex: 1; /*NEW scaling for cutoff*/
   display: flex;
   justify-content: center; 
   align-items: flex-start; 
   width: 100%; 
-  padding: 15px 24px 0;
-  overflow: auto;
+  padding: clamp(2px, 0.5vh, 4px) 24px 0;
 }
 
 .fretboard {
