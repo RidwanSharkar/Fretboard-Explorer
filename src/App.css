@@ -695,7 +695,7 @@ button:disabled {
   align-items: flex-start;
   width: 100%;
   margin-bottom: 0px;
-  gap: 10px;
+  gap: 9px;
 }
 
 .left-controls {

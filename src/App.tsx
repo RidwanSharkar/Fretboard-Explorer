@@ -64,6 +64,8 @@ const App: React.FC = () =>
             setCurrentProgressionChordIndex(-1);
             setIsProgressionPlaying(false);
             setSavedSelectedFrets([]); // Clear saved frets
+            resetToggles();
+            setHighlightAll(false);
         } else {
             // Exiting fret selection mode
             setSelectedFrets([]);
@@ -1411,7 +1413,7 @@ interface Theme {
                                 onClick={handleReplayProgression}
                                 style={{
                                     padding: '8px',
-                                    width: '64%',
+                                    width: '81%',
                                     margin: 'clamp(2px, 0.5vh, 8px) auto clamp(4px, 1vh, 10px) auto',
                                     backgroundColor: 'rgba(0, 0, 0, 0.3)',
                                     borderRadius: '8px',
@@ -1507,20 +1509,20 @@ interface Theme {
                             <Fretboard notes={fretboard} activeNotes={activeNotes} highlightAll={highlightAll} activePositions={activePositions} clearActivePositions={clearActivePositions} isProgressionPlaying={isProgressionPlaying}  currentTheme={currentTheme} isFretSelectionMode={isFretSelectionMode} selectedFrets={selectedFrets} onFretClick={handleFretClick} />
                             <div className="toggle-buttons">
                                 <div className="toggle-button-row">
-                                    <button onClick={() => cycleChords('prev')} disabled={validChords.length <= 1} className="toggle-button" title="Previous Variation">
+                                    <button onClick={() => cycleChords('prev')} disabled={validChords.length <= 1 || isFretSelectionMode} className="toggle-button" title="Previous Variation">
                                         <img src={ArrowLeftIcon} alt="Prev" style={{ width: '14px', height: '22px', filter: 'brightness(0) invert(1)' }} />
                                     </button>
-                                    <button onClick={findAndHighlightChord} disabled={!selectedChord} className="toggle-button" title="Find">
+                                    <button onClick={findAndHighlightChord} disabled={!selectedChord || isFretSelectionMode} className="toggle-button" title="Find">
                                         <img src={ArrowRightIcon} alt="Find" style={{ width: '14px', height: '22px', filter: 'brightness(0) invert(1)' }} />
                                     </button>
                                 </div>
-                                <button onClick={toggleSeventh} className={`toggle-button ${includeSeventh ? 'active' : ''}`}>7th</button>
-                                <button onClick={toggleNinth} className={`toggle-button ${includeNinth ? 'active' : ''}`}>9th</button>
-                                <button onClick={toggleSixth} className={`toggle-button ${includeSixth ? 'active' : ''}`}>6th</button>
-                                <button onClick={() => changeChordType('dominant7')} disabled={!selectedChord} className={`toggle-button ${selectedChord?.type === 'dominant7' ? 'active' : ''}`}>dom7</button>
-                                <button onClick={() => changeChordType('sus2')} disabled={!selectedChord} className={`toggle-button ${selectedChord?.type === 'sus2' ? 'active' : ''}`}>sus2</button>
-                                <button onClick={() => changeChordType('sus4')} disabled={!selectedChord} className={`toggle-button ${selectedChord?.type === 'sus4' ? 'active' : ''}`}>sus4</button>
-                                <button onClick={toggleHighlightAll} className={`toggle-button ${highlightAll ? 'active' : ''}`}>All</button>
+                                <button onClick={toggleSeventh} disabled={isFretSelectionMode} className={`toggle-button ${includeSeventh ? 'active' : ''}`}>7th</button>
+                                <button onClick={toggleNinth} disabled={isFretSelectionMode} className={`toggle-button ${includeNinth ? 'active' : ''}`}>9th</button>
+                                <button onClick={toggleSixth} disabled={isFretSelectionMode} className={`toggle-button ${includeSixth ? 'active' : ''}`}>6th</button>
+                                <button onClick={() => changeChordType('dominant7')} disabled={!selectedChord || isFretSelectionMode} className={`toggle-button ${selectedChord?.type === 'dominant7' ? 'active' : ''}`}>dom7</button>
+                                <button onClick={() => changeChordType('sus2')} disabled={!selectedChord || isFretSelectionMode} className={`toggle-button ${selectedChord?.type === 'sus2' ? 'active' : ''}`}>sus2</button>
+                                <button onClick={() => changeChordType('sus4')} disabled={!selectedChord || isFretSelectionMode} className={`toggle-button ${selectedChord?.type === 'sus4' ? 'active' : ''}`}>sus4</button>
+                                <button onClick={toggleHighlightAll} disabled={isFretSelectionMode} className={`toggle-button ${highlightAll ? 'active' : ''}`}>All</button>
                             </div>
                         </div>
 
