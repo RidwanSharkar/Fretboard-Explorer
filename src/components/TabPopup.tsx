@@ -97,7 +97,6 @@ const TabPopup: React.FC<TabPopupProps> = ({ chordPositions, chordNames, onClose
           <button className="tab-copy-button" onClick={handleCopy}>
             Copy to Clipboard
           </button>
-          <p className="tab-instruction">Screenshot this tab for your records!</p>
         </div>
       </div>
     </div>
