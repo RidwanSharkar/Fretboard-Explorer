@@ -1,4 +1,4 @@
-# 🎸 Fretboard Explorer
+# 🎸 Fretboard Explorer v3.0
 *An interactive React application for guitarists to learn and explore music theory. Combining visual fretboard mapping, intelligent chord generation algorithms, and real-time MIDI playback, this tool helps musicians discover chord voicings, understand harmonic relationships, and master the guitar fretboard through an intuitive, color-coded interface based on the Circle of Fifths.*
 
 **LINK: https://ridwansharkar.github.io/Fretboard-Explorer/**
@@ -14,7 +14,15 @@
 
 - **🔍 Manual Fret Selection & Chord Recognition:** Click individual frets to build your own chords. The app automatically identifies the chord you've created and highlights all instances of those notes across the entire fretboard.
 
-- **🔄 Intelligent Chord Progression Generator:** Generate musically coherent 3-4 chord progressions based on any selected or identified chord. Features advanced voice leading algorithms that choose the smoothest transitions between chord voicings.
+- **🔄 Chord Progression Generator:** Generate musically sophisticated progressions ranging from simple 3-4 chord loops to complex 5-8 chord phrases. Includes 70+ progression types spanning multiple genres and styles:
+  - **Modal Progressions:** Dorian, Phrygian, Lydian, Mixolydian
+  - **Borrowed Chords:** Modal interchange from parallel major/minor keys
+  - **Secondary Dominants:** V7/ii, V7/V, and other tonicizations
+  - **Tritone Substitutions:** Jazz harmony with ♭II7 dominant substitutes
+  - **Blues Forms:** 12-bar blues, minor blues, blues turnarounds
+  - **Gospel/Neo-Soul:** Rich extended voicings with 9ths and 13ths
+  - **Cinematic Progressions:** Epic 6-8 chord arcs for film/trailer music
+  - Features advanced voice leading algorithms that optimize smooth transitions across all chord changes
 
 - **🎹 Real-Time MIDI Synthesis:** Hear exactly what you see. Powered by Tone.js, each chord voicing plays through a realistic guitar synthesizer with pluck dynamics, reverb, compression, and delay effects that mimic authentic guitar tone.
 
@@ -23,6 +31,8 @@
 - **🪉 Advanced Chord Customization:** Toggle between standard triads, 7th chords, and 9th extensions. Navigate through multiple voicings with Next/Prev controls to find the perfect fingering for your playing style and song context.
 
 - **🎨 Educational Design:** Color-coded notes, interval labeling, and visual feedback make complex music theory concepts accessible for beginners while providing powerful tools for advanced musicians exploring jazz voicings and extended harmonies.
+
+- **💾 Tab Saving & Export:** Save your generated progressions as guitar tablature. The "Save Tab" button captures your entire progression with proper fret numbers, making it easy to reference and practice later.
 
 ### How It Works:
 The application uses a backtracking algorithm to recursively search through all possible note combinations on the fretboard, validating each potential chord shape against ergonomic constraints. When you select "C Major 7", the system calculates the notes (C-E-G-B), finds every instance across the fretboard, then generates all valid 4-note combinations that a human hand can actually play—typically yielding 200-400 unique voicings to explore.
@@ -35,9 +45,16 @@ relationships.
 
 - **Manual Selection:** Click the **'Select'** button (crosshair icon) to enter manual mode. Click individual frets to build a chord; the app will automatically identify it and find its notes everywhere on the board.
 
-- **Progression Generator:** Click the **'GEN'** button after selecting any chord to create a musical progression. The system builds a 3-4 chord sequence around your selection, optimizing for smooth voice leading.
+- **Progression Generator:** Click the **'GEN'** button after selecting any chord to create a musical progression. The system generates progressions ranging from simple 3-4 chord loops to sophisticated 5-8 chord phrases, including:
+  - Modal progressions (Dorian, Mixolydian, Lydian, Phrygian)
+  - Borrowed chords and modal interchange
+  - Secondary dominants and tritone substitutions
+  - Blues, gospel, and cinematic progressions
+  - All optimized for smooth voice leading with minimal finger movement
 
-- **Navigation & Playback:** Use **'Next'**, **'Prev'**, and **'Play'** to explore different voicings of a chord. Click the progression display panel to replay a generated sequence.
+- **Save Progressions:** Click the **'Save Tab'** button after generating a progression to capture the tablature. The system exports the entire chord sequence with fret numbers for easy reference.
+
+- **Navigation & Playback:** Use **'Next'** and **'Prev'** arrows to explore different voicings of a chord. Click the progression display panel to replay a generated sequence.
 
 - **Key Exploration (Row 2):** Buttons under the chord names play random chords from the current key's scale degrees to help you explore harmonic relationships. 
 
@@ -175,32 +192,163 @@ When a user selects frets manually, the system identifies the chord by:
 3. Calculating a "match score" based on how many notes from the formula are present.
 4. If multiple matches occur, the most musically logical one is selected (preferring simpler triads or standard extensions).
 
-### 6. Chord Progression & Voice Leading
-The progression generator uses functional harmony and optimization algorithms:
+### 6. Advanced Chord Progression System
+The progression generator implements professional music theory with 70+ progression templates across multiple categories:
 
-**Progression Logic:**
-- **Dynamic Templates:** Based on the selected chord's type (Dominant, Major, Minor, etc.), the system selects from a library of professional templates (e.g., ii-V-I, I-vi-IV-V).
-- **Universal Placement:** Your selected chord can appear at any position (1st, 2nd, 3rd, or 4th) in the generated sequence, making the progression feel integrated.
+**Progression Types & Musical Intent:**
+```typescript
+type ProgressionIntent = 'loop' | 'phrase' | 'turnaround' | 'cinematic' | 'vamp';
+
+// Loops (3-4 chords): Designed for repetition
+// Phrases (5-8 chords): Create narrative arcs with delayed resolution
+// Turnarounds: Focus on returning to tonic
+// Cinematic: Epic emotional journeys
+// Vamps: Stateful 2-chord patterns
+```
+
+**Advanced Harmonic Techniques:**
+
+1. **Modal Progressions:**
+   - Dorian: `i-IV-i-v` (funk, jazz)
+   - Mixolydian: `I-♭VII-IV` (rock, jam bands)
+   - Lydian: `I-II-V` (bright, film scores)
+   - Phrygian: `i-♭II-i` (Spanish, metal)
+
+2. **Borrowed Chords (Modal Interchange):**
+   ```typescript
+   // Major borrowing from minor:
+   'I-♭VII-IV-I'  // Epic rock progression
+   'I-iv-I'       // Emotional minor subdominant
+   'I-♭VI-♭VII-I' // Cinematic progression
+   
+   // Minor borrowing from major:
+   'i-IV-V'       // Bright resolution
+   'i-I-♭VII'     // Picardy third variation
+   ```
+
+3. **Secondary Dominants:**
+   ```typescript
+   'I-V7/vi-vi'     // Tonicization of relative minor
+   'ii-V7/V-V-I'    // Double dominant (V of V)
+   'I-V7/ii-ii-V-I' // Enhanced jazz turnaround
+   ```
+
+4. **Tritone Substitutions:**
+   ```typescript
+   'ii-♭II7-I'      // Jazz tritone sub (replaces V7)
+   'I-♭II7-I'       // Chromatic approach
+   // Tritone = +6 semitones, maintains dominant7 quality
+   ```
+
+5. **Blues Progressions:**
+   ```typescript
+   'I7-IV7-I7-V7'          // 12-bar blues
+   'i7-iv7-V7'             // Minor blues
+   'I7-VI7-ii7-V7'         // Blues turnaround
+   ```
+
+6. **Gospel & Neo-Soul:**
+   ```typescript
+   'I-iii-vi-ii-V-I'       // Classic gospel run with 9ths
+   'I-♭III-IV-iv'          // Neo-soul color
+   'IV-iv-I-iii-vi-ii-V'   // Extended gospel phrase
+   ```
+
+7. **Cinematic Progressions (6-8 chords):**
+   ```typescript
+   'i-VI-III-VII-iv-V-i'   // Epic minor arc
+   'I-V-vi-IV-I-♭VII-I'    // Heroic journey
+   'i-♭VII-♭VI-V-iv-i'     // Trailer music
+   ```
+
+**Intelligent Pattern Selection:**
+```typescript
+// Weighted selection based on complexity level
+if (complexity === 'jazz') {
+  // Jazz mode: Advanced + phrase progressions (2x weight)
+  pool = [...basic, ...advanced, ...advanced, ...phrases, ...phrases];
+} else {
+  // Simple mode: Basic patterns + half of phrase progressions
+  pool = [...basic, ...basic, ...intermediate, ...halfPhrases];
+}
+
+// Random selection with 70% chord-positioned, 30% pattern-based
+const progression = Math.random() < 0.7 
+  ? selectWithChordPosition(selectedChord)
+  : generateFromPattern(selectedChord, complexity);
+```
 
 **Voice Leading Optimization:**
-To make transitions sound professional, the system optimizes the "distance" between chord voicings:
+The system implements sophisticated voice leading algorithms that work across 3-8 chord progressions:
+
 ```typescript
-// Score based on fret distance, common tones, and finger movement
-score = calculateDistance(chord1, chord2) - (commonToneBonus * count)
+// Multi-factor scoring for optimal chord transitions
+function optimizeVoicings(chords[][]): ChordPosition[][] {
+  for each chord:
+    score = voiceLeadingDistance    // Finger movement (primary)
+          + spanPenalty * 0.2       // Playability (prefer 3-4 fret span)
+          + centerDistance * 0.3    // Position consistency
+          + fullnessBonus           // Prefer 3-4 note voicings
+          - commonTones * 2;        // Reward held notes
+  
+  return pathWithMinimalTotalDistance;
+}
 ```
-The algorithm finds a path through the fretboard that minimizes hand movement while keeping the chords in a consistent register.
+
+**Fallback Strategies:**
+When complex chords (9ths, 11ths, 13ths) can't be fully voiced:
+```typescript
+1. Try full chord with extensions (5-6 notes)
+2. Try base triad (root-3rd-5th)
+3. Generate intelligent fallback:
+   - Simple triad on middle strings
+   - Power chord (root + 5th)
+   - Single root note (rare)
+4. Prefer fuller voicings (3-4 notes) over sparse ones
+```
+
+This creates smooth, professional-sounding progressions that stay in playable positions while maintaining harmonic complexity.
 
 ---
 
 ## Music Theory Implementation:
 
-### Dynamic 7th/9th Logic
-The app intelligently determines whether to use major or minor 7ths based on music theory rules:
+### Comprehensive Harmonic System
+The app implements professional-level music theory across multiple dimensions:
+
+**Scale Systems:**
+```typescript
+// 6 complete modal scales
+MAJOR_SCALE      = [0, 2, 4, 5, 7, 9, 11];    // Ionian
+MINOR_SCALE      = [0, 2, 3, 5, 7, 8, 10];    // Aeolian
+DORIAN_SCALE     = [0, 2, 3, 5, 7, 9, 10];    // Dorian
+PHRYGIAN_SCALE   = [0, 1, 3, 5, 7, 8, 10];    // Phrygian
+LYDIAN_SCALE     = [0, 2, 4, 6, 7, 9, 11];    // Lydian
+MIXOLYDIAN_SCALE = [0, 2, 4, 5, 7, 9, 10];    // Mixolydian
+```
+
+**Chord Quality Logic:**
+- **Diatonic Chords:** Automatically applies correct quality per scale degree
+  - Major: I, ii, iii, IV, V, vi, vii°
+  - Minor: i, ii°, III, iv, v, VI, VII
+- **Modal Chords:** Adjusts qualities based on modal scale intervals
+  - Dorian: i, ii, III, IV, v, vi°, VII
+  - Mixolydian: I, ii, iii°, IV, v, vi, VII
+- **Borrowed Chords:** Applies alterations from parallel modes
+  - `♭VII, ♭VI, ♭III` from minor to major
+  - `IV, V, I` from major to minor
+
+### Dynamic 7th/9th/13th Extension Logic
+The app intelligently determines chord extensions based on context:
 
 - **Dominant 7ths:** Automatically applied to V chords (always flatted 7th)
 - **Major 7ths:** Applied to I and IV chords in major keys
 - **Minor 7ths:** Applied to ii, iii, vi chords and all minor key chords
-- **Context-aware:** The same root note uses different 7ths depending on key context
+- **Extended Voicings:** 9ths, 11ths, 13ths applied to gospel/jazz progressions
+- **Context-aware:** The same root note uses different extensions depending on:
+  - Key context (major vs minor)
+  - Modal context (Dorian vs Aeolian)
+  - Progression type (blues, gospel, jazz)
 
 ### Key-Based Color Theming
 Each of the 12 major and 12 minor keys has a unique color palette that dynamically updates:
@@ -218,10 +366,13 @@ CSS variables are updated in real-time when keys change, creating a cohesive vis
 
 ---
 
-## MIDI Audio System:
+## Audio System:
 
-### Realistic Guitar Synthesis
-Using Tone.js, the app creates authentic guitar sounds through layered audio processing:
+### Multi-Instrument Synthesis Engine
+The app offers three distinct audio options for different sonic experiences:
+
+#### 1. **Pluck Synth (Tone.js)**
+Real-time synthesized guitar tone with layered audio processing:
 
 **Signal Chain:**
 ```
@@ -231,11 +382,29 @@ PluckSynth → Reverb → Compressor → Delay → Output
   Noise     Space       Range      Effect
 ```
 
-**Audio Features:**
-- **Pluck Synthesis:** Simulates string plucking with attack noise and dampening
-- **Octave Mapping:** Each string/fret has the correct octave (E2 to E5 range)
-- **Chord Strumming:** Notes are staggered by 50ms to mimic realistic strumming
-- **Effects Chain:** Reverb, compression, and delay create depth and sustain
+**Features:**
+- **String Simulation:** Karplus-Strong synthesis with attack noise and natural dampening
+- **Dynamic Effects:** Reverb (room space), compression (dynamic range), delay (echo)
+- **Chord Strumming:** Notes staggered by 50ms for realistic strumming
+- **Real-time Synthesis:** Instant playback with no loading time
+
+### Audio Architecture
+**Octave Mapping:**
+```typescript
+// Each string/fret position maps to correct MIDI octave
+string 0 (E high): E4-E5 range
+string 1 (B):      B3-B4 range
+string 2 (G):      G3-G4 range
+string 3 (D):      D3-D4 range
+string 4 (A):      A2-A3 range
+string 5 (E low):  E2-E3 range
+```
+
+**Playback System:**
+- **Sample Loading:** Tone.js Sampler loads audio files on demand
+- **Fallback Logic:** If samples fail to load, falls back to PluckSynth
+- **Chord Strumming:** 50ms stagger between notes for realistic arpeggiation
+- **Progression Playback:** 600ms per chord with smooth transitions
 
 ---
 
@@ -245,16 +414,21 @@ PluckSynth → Reverb → Compressor → Delay → Output
 src/
 ├── components/
 │   ├── Fretboard.tsx       # Visual fretboard renderer with note highlighting
+│   ├── TabPopup.tsx        # Tab export popup for saving progressions
 │   └── Chord.tsx           # Chord display component (legacy)
 ├── models/
 │   ├── Note.ts             # TypeScript interfaces for GuitarNote, ChordPosition
 │   ├── Chord.ts            # Chord data model
 │   └── Fretboard.ts        # Fretboard data model
 ├── utils/
-│   ├── chordUtils.ts       # Chord formulas and music theory constants
-│   ├── fretboardUtils.ts   # Fretboard generation + chord finding algorithms
-│   ├── progressionUtils.ts # Chord progression generation and scale degree logic
-│   ├── voiceLeadingUtils.ts # Voice leading optimization and distance scoring
+│   ├── chordUtils.ts       # Chord formulas, intervals, and chord recognition
+│   ├── fretboardUtils.ts   # Fretboard generation + intelligent chord finding
+│   │                       # Now supports partial voicings for extended chords
+│   ├── progressionUtils.ts # Advanced progression generation (70+ templates)
+│   │                       # Modes, borrowed chords, secondary dominants,
+│   │                       # tritone subs, blues, gospel, cinematic progressions
+│   ├── voiceLeadingUtils.ts # Sophisticated voice leading optimization
+│   │                        # Handles 3-8 chord progressions with fallback strategies
 │   └── midiUtils.ts        # Tone.js audio synthesis and playback
 └── App.tsx                 # Main application logic and state management
 ```
@@ -275,14 +449,3 @@ currentChordIndex: number              // Which voicing is displayed
 selectedKey: string                    // Current key (C, G, D, etc.)
 isMinorKey: boolean                    // Major vs Minor mode
 ```
-
----
-
-## ⚙️ Potential Future Enhancements
-
-- **Alternative Tunings:** Support for Drop D, DADGAD, Open G, etc.
-- **Export Features:** Save chord diagrams as images or PDF.
-- **Mobile Optimization:** Touch-friendly interface for tablets/phones.
-- **Advanced Filters:** Filter chord voicings by position, difficulty, or open strings.
-- **Recording:** Record and export chord progressions as MIDI or audio files.
-- **Rhythm Patterns:** Customizable strumming rhythms for progressions (quarter notes, syncopation).

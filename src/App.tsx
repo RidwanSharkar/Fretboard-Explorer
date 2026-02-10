@@ -5,9 +5,10 @@ import Fretboard from './components/Fretboard';
 import { constructFretboard, possibleChord } from './utils/fretboardUtils';
 import { GuitarNote, ChordPosition } from './models/Note';
 import { chordFormulas, recognizeChord, RecognitionResult } from './utils/chordUtils';
-import { playNote, playProgression, stopAllNotes } from './utils/midiUtils';
+import { playNote, playProgression, stopAllNotes, ToneMode } from './utils/midiUtils';
 import { generateUniversalProgression, ChordInfo, Progression } from './utils/progressionUtils';
-import { optimizeProgressionVoicings, getChordCenterPosition } from './utils/voiceLeadingUtils';
+import { optimizeProgressionVoicings, getChordCenterPosition, createFallbackVoicing } from './utils/voiceLeadingUtils';
+import TabPopup from './components/TabPopup';
 import Header from '/CircleOfFifths.jpg';
 import SelectIcon from '/select.svg';
 import FindIcon from '/find.svg';
@@ -75,8 +76,14 @@ const App: React.FC = () =>
     const [activePositions, setActivePositions] = useState<ChordPosition[]>([]);
     const clearActivePositions = () => {setActivePositions([]);};
     const [isPlayable, setIsPlayable] = useState(false); // MIDI
-    const [useMidiMode, setUseMidiMode] = useState(false); // MIDI toggle state
-    const toggleMidiMode = () => {setUseMidiMode(!useMidiMode);};
+    const [toneMode, setToneMode] = useState<ToneMode>('acoustic'); // Tone mode: acoustic, harp, or midi
+    const toggleToneMode = () => {
+        setToneMode(prevMode => {
+            if (prevMode === 'acoustic') return 'harp';
+            if (prevMode === 'harp') return 'synth';
+            return 'acoustic';
+        });
+    };
 
     const [isProgressionPlaying, setIsProgressionPlaying] = useState(false);
     const [isCircleOfFifthsExpanded, setIsCircleOfFifthsExpanded] = useState(true);
@@ -89,6 +96,7 @@ const App: React.FC = () =>
     const [progressionPositions, setProgressionPositions] = useState<ChordPosition[][][]>([]);
     const [currentProgressionChordIndex, setCurrentProgressionChordIndex] = useState(-1);
     const [savedSelectedFrets, setSavedSelectedFrets] = useState<ChordPosition[]>([]); // Store selected frets during progression playback
+    const [showTabPopup, setShowTabPopup] = useState(false);
 
 
 /*=====================================================================================================================*/
@@ -161,8 +169,8 @@ const App: React.FC = () =>
         const sortedPositions = positionsToPlay.sort((a, b) => a.string === b.string ? a.fret - b.fret : b.string - a.string);
         sortedPositions.forEach((pos, index) => {
             const staggerTime = index * 0.05; // stagger time for strumming
-            playNote(pos.string, pos.fret, fretboard, '8n', staggerTime, false, useMidiMode);});
-    }, [activePositions, selectedFrets, isFretSelectionMode, fretboard, isProgressionPlaying, useMidiMode]);
+            playNote(pos.string, pos.fret, fretboard, '8n', staggerTime, false, toneMode);});
+    }, [activePositions, selectedFrets, isFretSelectionMode, fretboard, isProgressionPlaying, toneMode]);
     
     /*=================================================================================================================*/
     
@@ -390,9 +398,9 @@ const App: React.FC = () =>
                     setActivePositions(validChords[currentChordIndex]);
                 }
             },
-            useMidiMode
+            toneMode
         );
-    }, [generatedProgression, progressionPositions, isProgressionPlaying, fretboard, validChords, currentChordIndex, isFretSelectionMode, selectedFrets, savedSelectedFrets, useMidiMode]);
+    }, [generatedProgression, progressionPositions, isProgressionPlaying, fretboard, validChords, currentChordIndex, isFretSelectionMode, selectedFrets, savedSelectedFrets, toneMode]);
 
     const handleGenerateProgression = useCallback(async () => {
         if (isProgressionPlaying) return;
@@ -477,26 +485,38 @@ const App: React.FC = () =>
                 }
             }
             
-            let validChordPositions = possibleChord(fretboard, noteNames);
+            // Allow partial voicings for extended chords (5+ notes)
+            let validChordPositions = possibleChord(fretboard, noteNames, noteNames.length >= 5);
             
             if (validChordPositions.length > 0) {
                 // Keep all voicings for voice leading optimization
                 allProgressionVoicings.push(validChordPositions);
             } else {
                 // If no voicings found with extensions, try the base triad (without extensions)
-                console.warn(`No valid positions found for ${chord.root} ${chord.type} with extensions`);
-                const baseNoteNames = chordFormulas[chord.type as keyof typeof chordFormulas].map(
-                    interval => notes[(rootIndex + interval) % 12]
-                );
+                console.warn(`No valid positions found for ${chord.root} ${chord.type} with extensions, trying base triad...`);
+                const baseNoteNames = chordFormulas[chord.type as keyof typeof chordFormulas]
+                    .slice(0, 3) // Just root, 3rd, 5th
+                    .map(interval => notes[(rootIndex + interval) % 12]);
                 validChordPositions = possibleChord(fretboard, baseNoteNames);
                 
                 if (validChordPositions.length > 0) {
-                    console.log(`Using base triad for ${chord.root} ${chord.type}`);
+                    console.log(`✓ Using base triad for ${chord.root} ${chord.type}`);
                     allProgressionVoicings.push(validChordPositions);
                 } else {
-                    // Last resort: just play the root note
-                    console.warn(`No valid positions found even for base triad of ${chord.root} ${chord.type}`);
-                    allProgressionVoicings.push([[{ string: 5, fret: rootIndex }]]);
+                    // Use smart fallback to create playable voicing
+                    console.warn(`No valid positions found even for base triad, using fallback voicing...`);
+                    const targetPosition = preferredPosition || 
+                        (currentVoicing ? getChordCenterPosition(currentVoicing) : 3);
+                    const fallbackVoicings = createFallbackVoicing(baseNoteNames, fretboard, targetPosition);
+                    
+                    if (fallbackVoicings.length > 0) {
+                        console.log(`✓ Created fallback voicing for ${chord.root} ${chord.type} with ${fallbackVoicings[0].length} notes`);
+                        allProgressionVoicings.push(fallbackVoicings);
+                    } else {
+                        // Absolute last resort: single root note (should rarely happen now)
+                        console.error(`Failed to create any voicing for ${chord.root} ${chord.type}, using single note`);
+                        allProgressionVoicings.push([[{ string: 5, fret: rootIndex % 12 }]]);
+                    }
                 }
             }
         }
@@ -587,9 +607,9 @@ const App: React.FC = () =>
                     setActivePositions(validChords[currentChordIndex]);
                 }
             },
-            useMidiMode
+            toneMode
         );
-    }, [selectedChord, recognizedChord, isFretSelectionMode, selectedFrets, activePositions, fretboard, isProgressionPlaying, validChords, currentChordIndex, savedSelectedFrets, includeSeventh, includeNinth, includeSixth, selectedKey, isMinorKey, useMidiMode]); 
+    }, [selectedChord, recognizedChord, isFretSelectionMode, selectedFrets, activePositions, fretboard, isProgressionPlaying, validChords, currentChordIndex, savedSelectedFrets, includeSeventh, includeNinth, includeSixth, selectedKey, isMinorKey, toneMode]); 
 
 /* MOVE ---- #eac37e ----FRAME COLOR*/
 interface Theme {
@@ -934,7 +954,7 @@ interface Theme {
             const baseControlsHeight = hasProgression ? 160 : 100; 
             const targetControlsHeightVh = hasProgression 
                 ? (viewportHeight < 600 ? 20 : 17) 
-                : (viewportHeight < 750 ? 11 : 9); 
+                : (viewportHeight < 750 ? 11 : 10.65); 
             const targetControlsHeightPx = (targetControlsHeightVh / 100) * viewportHeight;
             const controlsScale = targetControlsHeightPx / baseControlsHeight;
             
@@ -1410,46 +1430,85 @@ interface Theme {
                         {generatedProgression && (
                             <div 
                                 className="progression-display" 
-                                onClick={handleReplayProgression}
                                 style={{
+                                    position: 'relative',
                                     padding: '8px',
                                     width: '81%',
                                     margin: 'clamp(2px, 0.5vh, 8px) auto clamp(4px, 1vh, 10px) auto',
                                     backgroundColor: 'rgba(0, 0, 0, 0.3)',
                                     borderRadius: '8px',
                                     textAlign: 'center',
-                                    cursor: isProgressionPlaying ? 'default' : 'pointer',
                                     opacity: isProgressionPlaying ? 0.8 : 1,
                                     transition: 'all 0.2s ease'
                                 }}
-                                title={isProgressionPlaying ? 'Playing...' : 'Click to replay progression'}
                             >
-                                <div style={{ fontSize: '12px', marginBottom: '8px', opacity: 0.8 }}>
-                                    {generatedProgression.name} {!isProgressionPlaying && '▶︎'}
-                                </div>
-                                <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', flexWrap: 'wrap' }}>
-                                    {generatedProgression.chords.map((chord, index) => (
-                                        <div
-                                            key={index}
-                                            style={{
-                                                padding: '5px 12px',
-                                                backgroundColor: currentProgressionChordIndex === index 
-                                                    ? 'var(--hover-color)' 
-                                                    : 'var(--button-color)',
-                                                borderRadius: '8px',
-                                                fontSize: '14px',
-                                                fontWeight: 'bold',
-                                                transition: 'all 0.3s ease',
-                                                transform: currentProgressionChordIndex === index ? 'scale(1.1)' : 'scale(1)',
-                                                color: currentProgressionChordIndex === index ? '#000' : 'inherit'
-                                            }}
-                                        >
-                                            {formatKeyForDisplay(chord.root)}{formatChordTypeForDisplay(chord.type as keyof typeof chordFormulas)}
-                                        </div>
-                                    ))}
-                                </div>
-                                <div style={{ fontSize: '11px', marginTop: '8px', opacity: 0.7, fontStyle: 'italic' }}>
-                                    {generatedProgression.description}
+                                {/* Save Tab Button - Top Right Corner */}
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setShowTabPopup(true);
+                                    }}
+                                    style={{
+                                        position: 'absolute',
+                                        top: '8px',
+                                        right: '8px',
+                                        padding: '4px 12px',
+                                        backgroundColor: 'rgba(74, 144, 226, 0.8)',
+                                        border: '1px solid rgba(74, 144, 226, 1)',
+                                        borderRadius: '6px',
+                                        color: 'white',
+                                        fontSize: '11px',
+                                        fontWeight: 'bold',
+                                        cursor: 'pointer',
+                                        transition: 'all 0.2s ease',
+                                        zIndex: 10
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        e.currentTarget.style.backgroundColor = 'rgba(74, 144, 226, 1)';
+                                        e.currentTarget.style.transform = 'translateY(-1px)';
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.currentTarget.style.backgroundColor = 'rgba(74, 144, 226, 0.8)';
+                                        e.currentTarget.style.transform = 'translateY(0)';
+                                    }}
+                                >
+                                    Save Tab
+                                </button>
+                                
+                                <div 
+                                    onClick={handleReplayProgression}
+                                    style={{
+                                        cursor: isProgressionPlaying ? 'default' : 'pointer'
+                                    }}
+                                    title={isProgressionPlaying ? 'Playing...' : 'Click to replay progression'}
+                                >
+                                    <div style={{ fontSize: '12px', marginBottom: '8px', opacity: 0.8 }}>
+                                        {generatedProgression.name} {!isProgressionPlaying && '▶︎'}
+                                    </div>
+                                    <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', flexWrap: 'wrap' }}>
+                                        {generatedProgression.chords.map((chord, index) => (
+                                            <div
+                                                key={index}
+                                                style={{
+                                                    padding: '5px 12px',
+                                                    backgroundColor: currentProgressionChordIndex === index 
+                                                        ? 'var(--hover-color)' 
+                                                        : 'var(--button-color)',
+                                                    borderRadius: '8px',
+                                                    fontSize: '14px',
+                                                    fontWeight: 'bold',
+                                                    transition: 'all 0.3s ease',
+                                                    transform: currentProgressionChordIndex === index ? 'scale(1.1)' : 'scale(1)',
+                                                    color: currentProgressionChordIndex === index ? '#000' : 'inherit'
+                                                }}
+                                            >
+                                                {formatKeyForDisplay(chord.root)}{formatChordTypeForDisplay(chord.type as keyof typeof chordFormulas)}
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <div style={{ fontSize: '11px', marginTop: '8px', opacity: 0.7, fontStyle: 'italic' }}>
+                                        {generatedProgression.description}
+                                    </div>
                                 </div>
                             </div>
                         )}
@@ -1471,11 +1530,11 @@ interface Theme {
                             </div>
                             <div className="right-controls">
                                 <button 
-                                    onClick={toggleMidiMode} 
-                                    className={`toggle-button arrow-button ${useMidiMode ? 'active' : ''}`} 
-                                    title="Synth Tone"
+                                    onClick={toggleToneMode} 
+                                    className={`toggle-button arrow-button ${toneMode !== 'acoustic' ? 'active' : ''}`} 
+                                    title={`Tone: ${toneMode === 'acoustic' ? 'Guitar' : toneMode === 'harp' ? 'Harp' : 'Synth'}`}
                                 >
-                                    ♫
+                                    {toneMode === 'acoustic' ? '♬' : toneMode === 'harp' ? '♫' : '♪'}
                                 </button>
                                 <button 
                                     onClick={handleGenerateProgression} 
@@ -1540,6 +1599,17 @@ interface Theme {
 
             </header>
             </div>
+            
+            {/* Tab Popup */}
+            {showTabPopup && generatedProgression && progressionPositions.length > 0 && (
+                <TabPopup
+                    chordPositions={progressionPositions.map(pos => pos[0])}
+                    chordNames={generatedProgression.chords.map(chord => 
+                        `${formatKeyForDisplay(chord.root)}${formatChordTypeForDisplay(chord.type as keyof typeof chordFormulas)}`
+                    )}
+                    onClose={() => setShowTabPopup(false)}
+                />
+            )}
         </div>
     );
 };

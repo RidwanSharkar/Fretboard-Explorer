@@ -3,9 +3,8 @@
 import * as Tone from 'tone';
 import { GuitarNote, ChordPosition } from '../models/Note';
 
-// Create note-to-URL mapping
-const baseUrl = `${window.location.origin}${import.meta.env.BASE_URL}acoustic/`.replace(/\/+/g, '/').replace(':/', '://');
-console.log("🎸 Loading guitar samples from:", baseUrl);
+// Define tone modes
+export type ToneMode = 'acoustic' | 'harp' | 'synth';
 
 // All note names we need to load (using music notation with #)
 const noteNames = [
@@ -16,39 +15,36 @@ const noteNames = [
 ];
 
 // Helper function to convert note name to filename (# -> sharp for file system)
-const createNoteUrl = (noteName: string): string => {
+const createNoteUrl = (noteName: string, directory: string): string => {
     const fileName = noteName.replace(/#/g, 'sharp');
+    const baseUrl = `${window.location.origin}${import.meta.env.BASE_URL}${directory}/`.replace(/\/+/g, '/').replace(':/', '://');
     return `${baseUrl}${fileName}.mp3`;
 };
 
-const noteUrls: { [key: string]: string } = {};
+// ACOUSTIC GUITAR SAMPLES
+const acousticBaseUrl = `${window.location.origin}${import.meta.env.BASE_URL}acoustic/`.replace(/\/+/g, '/').replace(':/', '://');
+console.log("🎸 Loading acoustic guitar samples from:", acousticBaseUrl);
+
+const acousticNoteUrls: { [key: string]: string } = {};
 noteNames.forEach(note => {
-    noteUrls[note] = createNoteUrl(note);
+    acousticNoteUrls[note] = createNoteUrl(note, 'acoustic');
 });
 
-console.log("🎸 Sample file mappings:");
-console.log("  A4  -> A4.mp3");
-console.log("  A#4 -> Asharp4.mp3");
-console.log("  C#5 -> Csharp5.mp3");
+const acousticPlayers = new Tone.Players(acousticNoteUrls).toDestination();
+console.log(`🎸 Created Tone.Players with ${Object.keys(acousticNoteUrls).length} acoustic samples`);
 
-// Use Tone.Players and preload all samples immediately
-const players = new Tone.Players(noteUrls).toDestination();
+// Track acoustic loading progress
+let acousticLoadedCount = 0;
+const acousticTotalCount = Object.keys(acousticNoteUrls).length;
+let allAcousticSamplesLoaded = false;
 
-console.log(`🎸 Created Tone.Players with ${Object.keys(noteUrls).length} samples`);
-
-// Track loading progress
-let loadedCount = 0;
-const totalCount = Object.keys(noteUrls).length;
-let allSamplesLoaded = false;
-
-// Monitor loading progress
-const checkLoaded = setInterval(() => {
+const checkAcousticLoaded = setInterval(() => {
     let currentLoaded = 0;
     const stillLoading: string[] = [];
     
     for (const noteName of noteNames) {
-        if (players.has(noteName)) {
-            const player = players.player(noteName);
+        if (acousticPlayers.has(noteName)) {
+            const player = acousticPlayers.player(noteName);
             if (player.loaded) {
                 currentLoaded++;
             } else {
@@ -57,38 +53,103 @@ const checkLoaded = setInterval(() => {
         }
     }
     
-    if (currentLoaded !== loadedCount) {
-        loadedCount = currentLoaded;
-        console.log(`🎸 Loading samples: ${loadedCount}/${totalCount}`);
+    if (currentLoaded !== acousticLoadedCount) {
+        acousticLoadedCount = currentLoaded;
+        console.log(`🎸 Loading acoustic samples: ${acousticLoadedCount}/${acousticTotalCount}`);
         
         if (stillLoading.length > 0 && stillLoading.length <= 5) {
             console.log("   Still loading:", stillLoading.join(", "));
         }
     }
     
-    if (loadedCount === totalCount && !allSamplesLoaded) {
-        allSamplesLoaded = true;
-        console.log("✓✓✓ All 42 guitar samples loaded successfully! ✓✓✓");
+    if (acousticLoadedCount === acousticTotalCount && !allAcousticSamplesLoaded) {
+        allAcousticSamplesLoaded = true;
+        console.log("✓✓✓ All 42 acoustic guitar samples loaded successfully! ✓✓✓");
         console.log("🎸 Ready to play!");
-        clearInterval(checkLoaded);
+        clearInterval(checkAcousticLoaded);
     }
 }, 500);
 
-// Add effects to the players for a richer sound
-const reverb = new Tone.Reverb({
+// Add effects to the acoustic players
+const acousticReverb = new Tone.Reverb({
     decay: 2.5,
     preDelay: 0.01
 }).toDestination();
 
-const compressor = new Tone.Compressor({
+const acousticCompressor = new Tone.Compressor({
     threshold: -20,
     ratio: 3,
     attack: 0.05,
     release: 0.1
 }).toDestination();
 
-players.connect(reverb);
-players.connect(compressor);
+acousticPlayers.connect(acousticReverb);
+acousticPlayers.connect(acousticCompressor);
+
+// HARP SAMPLES
+const harpBaseUrl = `${window.location.origin}${import.meta.env.BASE_URL}harp/`.replace(/\/+/g, '/').replace(':/', '://');
+console.log("🎵 Loading harp samples from:", harpBaseUrl);
+
+const harpNoteUrls: { [key: string]: string } = {};
+noteNames.forEach(note => {
+    harpNoteUrls[note] = createNoteUrl(note, 'harp');
+});
+
+const harpPlayers = new Tone.Players(harpNoteUrls).toDestination();
+console.log(`🎵 Created Tone.Players with ${Object.keys(harpNoteUrls).length} harp samples`);
+
+// Track harp loading progress
+let harpLoadedCount = 0;
+const harpTotalCount = Object.keys(harpNoteUrls).length;
+let allHarpSamplesLoaded = false;
+
+const checkHarpLoaded = setInterval(() => {
+    let currentLoaded = 0;
+    const stillLoading: string[] = [];
+    
+    for (const noteName of noteNames) {
+        if (harpPlayers.has(noteName)) {
+            const player = harpPlayers.player(noteName);
+            if (player.loaded) {
+                currentLoaded++;
+            } else {
+                stillLoading.push(noteName);
+            }
+        }
+    }
+    
+    if (currentLoaded !== harpLoadedCount) {
+        harpLoadedCount = currentLoaded;
+        console.log(`🎵 Loading harp samples: ${harpLoadedCount}/${harpTotalCount}`);
+        
+        if (stillLoading.length > 0 && stillLoading.length <= 5) {
+            console.log("   Still loading:", stillLoading.join(", "));
+        }
+    }
+    
+    if (harpLoadedCount === harpTotalCount && !allHarpSamplesLoaded) {
+        allHarpSamplesLoaded = true;
+        console.log("✓✓✓ All 42 harp samples loaded successfully! ✓✓✓");
+        console.log("🎵 Ready to play!");
+        clearInterval(checkHarpLoaded);
+    }
+}, 500);
+
+// Add effects to the harp players
+const harpReverb = new Tone.Reverb({
+    decay: 3.5,
+    preDelay: 0.02
+}).toDestination();
+
+const harpCompressor = new Tone.Compressor({
+    threshold: -18,
+    ratio: 2.5,
+    attack: 0.03,
+    release: 0.12
+}).toDestination();
+
+harpPlayers.connect(harpReverb);
+harpPlayers.connect(harpCompressor);
 
 // Fallback synth in case samples fail to load
 const fallbackSynth = new Tone.PluckSynth({
@@ -123,12 +184,14 @@ midiSynth.connect(midiDelay);
 
 // Function to stop all currently playing notes
 export const stopAllNotes = () => {
-    players.stopAll();
+    acousticPlayers.stopAll();
+    harpPlayers.stopAll();
     // Also stop the fallback synth if it's playing
     fallbackSynth.triggerRelease();
+    midiSynth.triggerRelease();
 };
 
-export const playNote = (string: number, fret: number, fretboard: GuitarNote[][], duration: string = '2n', staggerTime: number = 0, stopPrevious: boolean = false, useMidiMode: boolean = false) => {
+export const playNote = (string: number, fret: number, fretboard: GuitarNote[][], duration: string = '2n', staggerTime: number = 0, stopPrevious: boolean = false, toneMode: ToneMode = 'acoustic') => {
     // Stop all previous notes if this is the start of a new chord
     if (stopPrevious && staggerTime === 0) {
         stopAllNotes();
@@ -143,10 +206,13 @@ export const playNote = (string: number, fret: number, fretboard: GuitarNote[][]
     }
     
     // If MIDI mode is enabled, use the MIDI synth
-    if (useMidiMode) {
+    if (toneMode === 'synth') {
         midiSynth.triggerAttackRelease(fullNote, duration, startTime);
         return;
     }
+    
+    // Select the appropriate player based on tone mode
+    const players = toneMode === 'harp' ? harpPlayers : acousticPlayers;
     
     // Try to use samples if loaded
     if (players.has(fullNote)) {
@@ -176,7 +242,7 @@ export const playNote = (string: number, fret: number, fretboard: GuitarNote[][]
  * @param chordDuration - Duration of each chord in seconds (default: 1.5s)
  * @param onChordChange - Callback when each chord starts playing
  * @param onComplete - Callback when progression completes
- * @param useMidiMode - Whether to use MIDI synth instead of samples
+ * @param toneMode - Which tone mode to use (acoustic, harp, or midi)
  */
 export const playProgression = async (
     chordsPositions: ChordPosition[][],
@@ -184,7 +250,7 @@ export const playProgression = async (
     chordDuration: number = 1.5,
     onChordChange?: (chordIndex: number) => void,
     onComplete?: () => void,
-    useMidiMode: boolean = false
+    toneMode: ToneMode = 'acoustic'
 ) => {
     await Tone.start(); // Ensure Tone.js is started
     
@@ -207,7 +273,7 @@ export const playProgression = async (
         // Play each note in the chord with stagger
         sortedPositions.forEach((pos, index) => {
             const staggerTime = index * 0.05; // 50ms stagger between notes
-            playNote(pos.string, pos.fret, fretboard, '8n', staggerTime, false, useMidiMode);
+            playNote(pos.string, pos.fret, fretboard, '8n', staggerTime, false, toneMode);
         });
         
         // Wait for chord duration before playing next chord
