@@ -24,7 +24,7 @@ const TabPopup: React.FC<TabPopupProps> = ({ chordPositions, chordNames, onClose
       
       // Fill in the fret numbers from the chord positions
       chord.forEach(pos => {
-        const stringIndex = numStrings - 1 - pos.string; // Convert to 0-indexed from bottom
+        const stringIndex = pos.string; // Already 0-indexed from top (high e = 0)
         frets[stringIndex] = pos.fret.toString();
       });
       
